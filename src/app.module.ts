@@ -6,9 +6,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import typeormConfig from './config/typeorm.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSourceOptions } from 'typeorm';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
+    AuthModule,
     UsersModule,
     ConfigModule.forRoot({
       isGlobal: true,
@@ -24,6 +26,7 @@ import { DataSourceOptions } from 'typeorm';
         return typeOrmConfig;
       },
     }),
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

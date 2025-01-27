@@ -2,13 +2,13 @@ import { IsBoolean, IsEmail, IsNotEmpty, IsOptional, IsString, Matches, MaxLengt
 
 export class CreateUserDto {
     @IsNotEmpty()
-  @IsString()
+    @IsString()
   @MinLength(8)
   @MaxLength(15)
   @Matches(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*\W)(?!.*\s).{8,15}$/)
-  readonly password?: string;
+  readonly password: string;
 
-  @IsOptional()
+ 
   @IsNotEmpty()
   @IsString()
   @IsEmail()
@@ -17,7 +17,5 @@ export class CreateUserDto {
   })
   readonly email: string;
 
-  @IsOptional()
-  @IsBoolean()
-  readonly state: boolean;
+  
 }
