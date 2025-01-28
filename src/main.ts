@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import { loggerGlobal } from './middlewares/logger.middleware';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
@@ -11,6 +12,7 @@ async function bootstrap() {
   //   credentials: true,
   // });
 
+  app.use(loggerGlobal); // midd-loginLog global
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true, // validar DTO

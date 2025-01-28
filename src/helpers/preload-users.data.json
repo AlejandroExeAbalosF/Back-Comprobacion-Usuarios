@@ -1,0 +1,227 @@
+[
+  {
+    "name": "CLAUDIA",
+    "lastName": "ADMIN",
+    "document": 39674326,
+    "email": "admin@gmail.com",
+    "password": "Admin123.",
+    "rol": "admin"
+  },
+  {
+    "name": "FERNANDEZ",
+    "lastName": "ALBA EUGENIA",
+    "document": 27506979,
+    "email": "albaeugenia1021@gmail.com",
+    "rol": "user"
+  },
+  {
+    "name": "LOPEZ ULLONES",
+    "lastName": "PABLO DARIO",
+    "document": 29590451,
+    "email": "pablolullones@gmail.com",
+    "rol": "user"
+  },
+  {
+    "name": "FERNANDEZ",
+    "lastName": "ELIA",
+    "document": 18229820,
+    "email": "eliafernaneza@hotmail.com",
+    "rol": "user"
+  },
+  {
+    "name": "CALIVA",
+    "lastName": "NILDA AZUCENA",
+    "document": 16000036,
+    "email": "azucali@hotmail.com.ar",
+    "rol": "user"
+  },
+  {
+    "name": "DIB",
+    "lastName": "MARIA EUGENIA",
+    "document": 28633137,
+    "email": "eugeniadib@hotmail.com",
+    "rol": "user"
+  },
+  {
+    "name": "GOMEZ",
+    "lastName": "LUIS ALBERTO",
+    "document": 16061168,
+    "email": "gomezluisalberto674@gmail.com",
+    "rol": "user"
+  },
+  {
+    "name": "FERNANDEZ",
+    "lastName": "MARIANA BEATRIZ",
+    "document": 30863080,
+    "email": "mfernandezaunorsa@gmail.com",
+    "rol": "user"
+  },
+  {
+    "name": "CORDOBA",
+    "lastName": "MARIA CELESTE",
+    "document": 31338149,
+    "email": "mcc_149@hotmail.com",
+    "rol": "user"
+  },
+  {
+    "name": "GARCIA",
+    "lastName": "JIMENA",
+    "document": 24138888,
+    "email": "puntodeencuentroarg@gmail.com",
+    "rol": "user"
+  },
+  {
+    "name": "DAVILA",
+    "lastName": "ANGEL ROMAN",
+    "document": 20399030,
+    "email": "angelrdavila60@gmail.com",
+    "rol": "user"
+  },
+  {
+    "name": "PORTILLO",
+    "lastName": "JUAN JOSE",
+    "document": 30637484,
+    "email": "drportillojuanjosé@gmail.com",
+    "rol": "user"
+  },
+  {
+    "name": "GUERRA",
+    "lastName": "MABEL ADRIANA",
+    "document": 16883289,
+    "email": "mabelguerra@live.com.ar",
+    "rol": "user"
+  },
+  {
+    "name": "ROMERO",
+    "lastName": "DELIA AZUCENA",
+    "document": 23316494,
+    "email": "belenlila10@hotmail.com",
+    "rol": "user"
+  },
+  {
+    "name": "FLORES TORRES",
+    "lastName": "GABRIELA ANALIA",
+    "document": 28892832,
+    "email": "gabrielaft-30@hotmail.com",
+    "rol": "user"
+  },
+  {
+    "name": "MAGNO",
+    "lastName": "CINTIA MACARENA",
+    "document": 31035396,
+    "email": "cintiamagno_84@hotmail.com",
+    "rol": "user"
+  },
+  {
+    "name": "ROBLES",
+    "lastName": "MARY",
+    "document": 18229861,
+    "email": "mary.robles64@yahoo.com.ar",
+    "rol": "user"
+  },
+  {
+    "name": "ACOSTA",
+    "lastName": "AURORA BEATRIZ",
+    "document": 16170482,
+    "email": "auroraacosta63@hotmail.com",
+    "rol": "user"
+  },
+  {
+    "name": "TURK",
+    "lastName": "NATALIA IVANA",
+    "document": 30222463,
+    "email": "nturkabraham@gmail.com",
+    "rol": "user"
+  },
+  {
+    "name": "POSTIGLIONE GARCIA",
+    "lastName": "MARIA LAURA",
+    "document": 28037325,
+    "email": "laurapostiglione@yahoo.com.ar",
+    "rol": "user"
+  },
+  {
+    "name": "REYES ARREDONDO",
+    "lastName": "MARIANA DEL VALLE",
+    "document": 24464097,
+    "email": "marianareyescd@gmail.com",
+    "rol": "user"
+  },
+  {
+    "name": "ULDRY FUENTES",
+    "lastName": "EDMUNDO FEDERICO",
+    "document": 27972241,
+    "email": "fedeuldry@yahoo.com.ar",
+    "rol": "user"
+  },
+  {
+    "name": "ARECHAGA",
+    "lastName": "PILAR",
+    "document": 31338723,
+    "email": "arechagapilar@gmail.com",
+    "rol": "user"
+  },
+  {
+    "name": "BURGIO",
+    "lastName": "PATRICIA SANDRA",
+    "document": 18208622,
+    "email": "patoburgio@yahoo.com.ar",
+    "rol": "user"
+  },
+  {
+    "name": "BENTO",
+    "lastName": "VALERIA VIVIANA",
+    "document": 24671521,
+    "email": "bentovaleria@yahoo.com.ar",
+    "rol": "user"
+  },
+  {
+    "name": "OIENI",
+    "lastName": "FRANCA ANTONELLA",
+    "document": 39896000,
+    "email": "oienifran@gmail.com",
+    "rol": "user"
+  },
+  {
+    "name": "TULA",
+    "lastName": "GEORGINA MARCELA",
+    "document": 17354424,
+    "email": "marcelatula@hotmail.com",
+    "rol": "user"
+  },
+  {
+    "name": "BARCONTE",
+    "lastName": "FERNANDO NAHUEL",
+    "document": 38343168,
+    "email": "fer_kasta_lc@hotmail.com",
+    "rol": "user"
+  },
+  {
+    "name": "DINARTE VELAZQUEZ",
+    "lastName": "ROBERTO",
+    "document": 95182718,
+    "email": "rodinarte@gmail.com",
+    "rol": "user"
+  },
+  {
+    "name": "RIVERO RODÓ",
+    "lastName": "MARÍA VICTORIA",
+    "document": 32165924,
+    "email": "victoriariverorodo@hotmail.com.ar",
+    "rol": "user"
+  },
+  {
+    "name": "ARIAS",
+    "lastName": "JULIA ELENA",
+    "document": 20649257,
+    "email": "julyarias10@yahoo.com.ar",
+    "rol": "user"
+  },
+  {
+    "name": "VERDUN SAJAMA",
+    "lastName": "ANDREA NATALIA",
+    "document": 33497017,
+    "email": "",
+    "rol": "user"
+  }
+]

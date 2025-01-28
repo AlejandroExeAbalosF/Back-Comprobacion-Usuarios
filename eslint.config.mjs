@@ -41,9 +41,12 @@ export default tseslint.config(
           allow: ['constructors'],
         },
       ],
+      '@typescript-eslint/no-unsafe-call': 'warn',
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/no-floating-promises': 'warn',
-      '@typescript-eslint/no-unsafe-argument': 'warn'
+      '@typescript-eslint/no-unsafe-argument': 'warn',
+      '@typescript-eslint/no-inferrable-types': 'off',
+      
     },
   },
 );

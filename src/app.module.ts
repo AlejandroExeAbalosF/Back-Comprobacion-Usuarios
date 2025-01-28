@@ -7,6 +7,8 @@ import typeormConfig from './config/typeorm.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSourceOptions } from 'typeorm';
 import { AuthModule } from './modules/auth/auth.module';
+import { RegistrationsModule } from './modules/registrations/registrations.module';
+import { SeedModule } from './seed/seed.module';
 
 @Module({
   imports: [
@@ -26,7 +28,9 @@ import { AuthModule } from './modules/auth/auth.module';
         return typeOrmConfig;
       },
     }),
-    AuthModule,
+    // TypeOrmModule.forFeature([User]),
+    RegistrationsModule,
+    SeedModule, //sed module
   ],
   controllers: [AppController],
   providers: [AppService],

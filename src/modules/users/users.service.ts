@@ -8,39 +8,37 @@ import { CreateUserDto } from '../auth/dto/create-auth.dto';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectRepository(User)
-  private readonly userService: Repository<User>,
-  private readonly dataSource: DataSource,
-){}
+  constructor(
+    @InjectRepository(User)
+    private readonly userService: Repository<User>,
+    private readonly dataSource: DataSource,
+  ) {}
 
-  findAll() {
-    const users = this.userService.find()
+  async findAll() {
+    const users = this.userService.find();
 
-    if (!users)
-      throw new NotFoundException('No se encontraron usuarios');
+    if (!users) throw new NotFoundException('No se encontraron usuarios');
     return users;
   }
 
-  async create(createUserDto: CreateUserDto ) {
-    const hashedPassword = await bcrypt.hash(createUserDto.password, 10)
+  async searchDni(dni: number) {
+    return await this.userService.findOne({ where: { document: dni } });
+  }
+  async create(createUserDto: CreateUserDto) {
+    const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
     const userData = {
       ...CreateUserDto,
       password: hashedPassword,
-    }
+    };
     const queryRunner = await this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
-      let newUserSave = User;
-
-
-    } catch (error) {
-      
-    }
+      const newUserSave = User;
+    } catch (error) {}
     return 'This action adds a new user';
   }
-
 
   findOne(id: number) {
     return `This action returns a #${id} user`;
