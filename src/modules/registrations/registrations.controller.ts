@@ -25,9 +25,9 @@ export class RegistrationsController {
     @Body() registrationDto: CreateRegistrationDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    // console.log(
-    //   JSON.stringify(registrationDto) + ' ' + JSON.stringify(file),
-    // );
+    // console.log('Body:', registrationDto);
+    // console.log('File:', file);
+    // console.log(JSON.stringify(registrationDto) + ' ' + JSON.stringify(file));
     return this.registrationsService.registrationsByUser(registrationDto, file);
   }
 

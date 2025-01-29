@@ -5,6 +5,11 @@ import { loggerGlobal } from './middlewares/logger.middleware';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
+  // app.enableCors({
+  //   origin: 'http://localhost:5173', // Ajusta el origen según donde corre tu frontend
+  //   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  //   allowedHeaders: 'Content-Type,Authorization',
+  // });
   // Habilitar CORS solamente para recibir peticiones del front
   // app.enableCors({
   //   origin: ['http://localhost:3000', 'https://sih-back.onrender.com'],

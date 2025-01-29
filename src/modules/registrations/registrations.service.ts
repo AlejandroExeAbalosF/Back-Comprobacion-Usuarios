@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  PreconditionFailedException,
 } from '@nestjs/common';
 import { CreateRegistrationDto } from './dto/create-registration.dto';
 import { UpdateRegistrationDto } from './dto/update-registration.dto';
@@ -10,7 +11,7 @@ import { User } from '../users/entities/user.entity';
 import { DataSource, Repository } from 'typeorm';
 import { Registration } from './entities/registration.entity';
 import { UsersService } from '../users/users.service';
-import dayjs from 'dayjs';
+import * as dayjs from 'dayjs';
 
 @Injectable()
 export class RegistrationsService {
@@ -42,9 +43,7 @@ export class RegistrationsService {
       registrationDto.document,
     );
     if (!dniValidate) {
-      throw new NotFoundException(
-        `El documento ingresado no existe en la base de datos`,
-      );
+      throw new NotFoundException(`Documento no encontrado`);
     }
     //validar la fehca, si no es fin de semana o dias no laborales
 
@@ -59,6 +58,9 @@ export class RegistrationsService {
       // Obtener la fecha actual
       const currentDate = dayjs();
       if (lastRegistrationDate.isSame(currentDate, 'day')) {
+        if (lastRegistration.validated === false) {
+          throw new BadRequestException('Ya se ha registrado la Salida');
+        }
         const queryRunner = this.dataSource.createQueryRunner();
         await queryRunner.connect();
         await queryRunner.startTransaction();
@@ -75,6 +77,7 @@ export class RegistrationsService {
               exitCapture: file.buffer,
             },
           );
+          await queryRunner.commitTransaction();
           return {
             message: 'Registrada la Salida Correctamente',
           };
@@ -88,7 +91,6 @@ export class RegistrationsService {
       // return { lastRegistration };
     }
 
-    console.log('hola');
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
