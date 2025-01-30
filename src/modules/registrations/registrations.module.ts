@@ -5,10 +5,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../users/entities/user.entity';
 import { UsersService } from '../users/users.service';
 import { Registration } from './entities/registration.entity';
+import { NotificationsGateway } from '../gateways/notifications.gateway';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Registration, User])],
   controllers: [RegistrationsController],
-  providers: [RegistrationsService, UsersService],
+  providers: [RegistrationsService, UsersService, NotificationsGateway],
 })
 export class RegistrationsModule {}
