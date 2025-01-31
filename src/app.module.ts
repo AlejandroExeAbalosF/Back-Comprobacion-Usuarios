@@ -9,6 +9,8 @@ import { DataSourceOptions } from 'typeorm';
 import { AuthModule } from './modules/auth/auth.module';
 import { RegistrationsModule } from './modules/registrations/registrations.module';
 import { SeedModule } from './seed/seed.module';
+import { JwtModule } from '@nestjs/jwt';
+import { jwtConfig } from './config/jwt.config';
 
 @Module({
   imports: [
@@ -28,6 +30,7 @@ import { SeedModule } from './seed/seed.module';
         return typeOrmConfig;
       },
     }),
+    JwtModule.register(jwtConfig),
     // TypeOrmModule.forFeature([User]),
     RegistrationsModule,
     SeedModule, //sed module
