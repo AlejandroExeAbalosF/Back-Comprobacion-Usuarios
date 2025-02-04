@@ -61,6 +61,9 @@ export class User {
   })
   createdAt: Date;
 
+  @Column({ name: 'last_login', type: 'timestamp', nullable: true })
+  lastLogin: Date;
+
   @OneToMany(() => Registration, (prop) => prop.user, { eager: true })
   @JoinColumn()
   registrations: Registration[];

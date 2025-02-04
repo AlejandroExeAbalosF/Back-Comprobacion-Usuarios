@@ -106,6 +106,10 @@ export class UsersService {
   async searchDni(dni: number) {
     return await this.userService.findOne({ where: { document: dni } });
   }
+
+  async searchEmail(email: string) {
+    return await this.userService.findOne({ where: { email: email } });
+  }
   async create(createUserDto: CreateUserDto) {
     const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
     const userData = {

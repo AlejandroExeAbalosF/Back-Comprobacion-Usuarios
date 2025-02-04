@@ -14,8 +14,8 @@ export class Registration {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'boolean' })
-  validated: boolean;
+  @Column({ type: 'varchar' })
+  validated: string;
 
   @Column({ type: 'boolean', default: true })
   state: boolean;
@@ -27,18 +27,18 @@ export class Registration {
   //   present: string; // presente en el trabajo , en caso q no fuera asi se podria cambiar?
 
   @Column({
-    type: 'bytea',
+    type: 'text',
     name: 'entry_capture',
     nullable: true,
   })
-  entryCapture: Buffer; // Usamos Buffer para almacenar los datos binarios
+  entryCapture: string; // Usamos string para almacenar los datos binarios
 
   @Column({
-    type: 'bytea',
+    type: 'text',
     name: 'exit_capture',
     nullable: true,
   })
-  exitCapture: Buffer;
+  exitCapture: string;
 
   @Column({ name: 'entry_date', type: 'timestamp', nullable: true })
   entryDate: Date;

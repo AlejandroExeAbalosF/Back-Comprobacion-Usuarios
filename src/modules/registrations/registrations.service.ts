@@ -32,17 +32,27 @@ export class RegistrationsService {
     return 'This action adds a new registration';
   }
 
-  findAll() {
-    return `This action returns all registrations`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} registration`;
+  async getRegistrationsByUserId(userId: string): Promise<Registration[]> {
+    const registrations = await this.registrationRepository.find({
+      where: { user: { id: userId } },
+      order: { entryDate: 'DESC' }, // Ordena por entryDate de más reciente a más antiguo
+      relations: ['user'], // Incluye la relación con el usuario si es necesario
+    });
+    if (!registrations) {
+      throw new NotFoundException(`No se encontraron registros`);
+    }
+    // console.log(registrations);
+    return registrations;
+    // return this.registrationRepository.find({
+    //   where: { user: { id: userId } },
+    //   order: { entryDate: 'DESC' }, // Ordena por entryDate de más reciente a más antiguo
+    //   relations: ['user'], // Incluye la relación con el usuario si es necesario
+    // });
   }
 
   async registrationsByUser(
     registrationDto: CreateRegistrationDto,
-    file: Express.Multer.File,
+    file: string,
   ) {
     const dniValidate = await this.userService.searchDni(
       registrationDto.document,
@@ -62,7 +72,7 @@ export class RegistrationsService {
       const currentDate = dayjs();
 
       if (lastRegistrationDate.isSame(currentDate, 'day')) {
-        if (lastRegistration.validated === false) {
+        if (lastRegistration.validated === 'idle') {
           throw new BadRequestException('Ya se ha registrado la Salida');
         }
 
@@ -75,32 +85,35 @@ export class RegistrationsService {
             .createQueryBuilder()
             .update(Registration)
             .set({
-              validated: false,
+              validated: 'idle',
               exitDate: currentDate.toDate(),
-              exitCapture: file.buffer,
+              exitCapture: file,
             })
             .where({ id: lastRegistration.id })
             .returning(['exitDate', 'exitCapture', 'validated'])
             .execute();
 
           // Actualizamos el objeto manualmente
-          const updatedValues = (
-            updatedResult.raw as Pick<
-              Registration,
-              'exitDate' | 'exitCapture' | 'validated'
-            >[]
-          )[0];
+          const updatedValues: Pick<
+            Registration,
+            'exitDate' | 'exitCapture' | 'validated'
+          > = {
+            exitDate: updatedResult.raw[0].exit_date, // Convertimos snake_case a camelCase
+            exitCapture: updatedResult.raw[0].exit_capture,
+            validated: updatedResult.raw[0].validated,
+          };
 
           await queryRunner.commitTransaction();
 
           // Enviar la notificación directamente con `updatedValues`
           this.notificationsGateway.sendNotification({
+            id: dniValidate.id,
             idR: lastRegistration.id, // `id` sigue siendo el mismo
             name: dniValidate.name,
             lastName: dniValidate.lastName,
             document: dniValidate.document,
-            exitDate: updatedValues.exitDate,
-            exitCapture: updatedValues.exitCapture,
+            date: updatedValues.exitDate,
+            capture: updatedValues.exitCapture,
             validated: updatedValues.validated,
           });
 
@@ -122,8 +135,8 @@ export class RegistrationsService {
     try {
       const newRegistration = queryRunner.manager.create(Registration, {
         ...registrationDto,
-        entryCapture: file.buffer,
-        validated: true,
+        entryCapture: file,
+        validated: 'present',
         entryDate: new Date(),
         user: dniValidate,
       });
@@ -134,12 +147,13 @@ export class RegistrationsService {
 
       // Se envía la notificación directamente con los datos que ya tenemos
       this.notificationsGateway.sendNotification({
+        id: dniValidate.id,
         idR: newRegistration.id,
         name: dniValidate.name,
         lastName: dniValidate.lastName,
         document: dniValidate.document,
-        entryDate: newRegistration.entryDate,
-        entryCapture: newRegistration.entryCapture,
+        date: newRegistration.entryDate,
+        capture: newRegistration.entryCapture,
         validated: newRegistration.validated,
       });
 

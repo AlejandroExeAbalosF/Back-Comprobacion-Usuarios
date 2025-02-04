@@ -7,3 +7,11 @@ DB_NAME=db_validation_users
 DB_NAME_DEPLOY=
 DB_NAME_TEST=
 PORT=3306
+
+#JWT
+JWT_SECRET= 'gato'
+
+URL_FRONTEND=http://localhost:5173
+
+#Cookies HTTPOnly , cambiarlo a production cuando se deploye https
+NODE_ENV=development

@@ -49,12 +49,12 @@ export class OptionalFileInterceptorIMG implements NestInterceptor {
       }
 
       // Validar el tamaño del archivo
-      const maxSize = 200 * 1024; // 200KB
-      if (file.size > maxSize) {
-        throw new BadRequestException(
-          'El tamaño del archivo debe ser menor a 200KB',
-        );
-      }
+      // const maxSize = 200 * 1024; // 200KB
+      // if (file.size > maxSize) {
+      //   throw new BadRequestException(
+      //     'El tamaño del archivo debe ser menor a 200KB',
+      //   );
+      // }
     }
 
     return next.handle().pipe(

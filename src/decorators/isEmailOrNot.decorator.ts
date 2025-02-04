@@ -8,6 +8,10 @@ import { Injectable } from '@nestjs/common';
 @Injectable()
 export class IsNotEmailOrUsername implements ValidatorConstraintInterface {
   validate(value: string) {
+    // Verifica si el valor es una cadena
+    if (typeof value !== 'string') {
+      return false;
+    }
     const isEmail = value.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
     if (isEmail) {
       return true;
