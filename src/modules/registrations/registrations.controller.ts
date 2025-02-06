@@ -17,6 +17,9 @@ import { OptionalFileInterceptorIMG } from 'src/interceptors/fileValidation.inte
 import { diskStorage } from 'multer';
 import * as fs from 'fs';
 import { extname } from 'path';
+import { config as dotenvConfig } from 'dotenv';
+
+dotenvConfig({ path: '.env' });
 
 @Controller('registrations')
 export class RegistrationsController {
@@ -58,9 +61,14 @@ export class RegistrationsController {
     // console.log('Body:', registrationDto);
     // console.log('File:', file);
     // console.log(JSON.stringify(registrationDto) + ' ' + JSON.stringify(file));
+    // console.log('name', file);
+    const urlFile = file
+      ? process.env.URL_BACKEND + '/uploads/' + file.filename
+      : null;
+    // console.log(urlFile);
     return this.registrationsService.registrationsByUser(
       registrationDto,
-      file.filename,
+      urlFile,
     );
   }
 

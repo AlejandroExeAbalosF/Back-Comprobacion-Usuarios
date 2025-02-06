@@ -1,5 +1,4 @@
 import {
-  IsBoolean,
   IsEmail,
   IsNotEmpty,
   IsOptional,
@@ -15,7 +14,7 @@ export class CreateUserDto {
   @MinLength(8)
   @MaxLength(15)
   @Matches(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*\W)(?!.*\s).{8,15}$/)
-  readonly password?: string;
+  readonly password: string;
 
   @IsOptional()
   @IsNotEmpty()
@@ -25,8 +24,4 @@ export class CreateUserDto {
     message: 'Caracteres inválidos en el correo electrónico',
   })
   readonly email: string;
-
-  @IsOptional()
-  @IsBoolean()
-  readonly state: boolean;
 }

@@ -52,7 +52,7 @@ export class RegistrationsService {
 
   async registrationsByUser(
     registrationDto: CreateRegistrationDto,
-    file: string,
+    file: string | null,
   ) {
     const dniValidate = await this.userService.searchDni(
       registrationDto.document,

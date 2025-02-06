@@ -1,10 +1,15 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { DataSource, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from '../auth/dto/create-auth.dto';
+import { CreateUserEmpDto } from './dto/create-userEmp.dto';
 
 @Injectable()
 export class UsersService {
@@ -126,12 +131,40 @@ export class UsersService {
     return 'This action adds a new user';
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
+  async createEmployee(createUserDto: CreateUserEmpDto, file: string | null) {
+    const validatedEmail = await this.searchEmail(createUserDto.email);
 
+    if (validatedEmail)
+      throw new BadRequestException(
+        'Ya existe un usuario registrado con ese email.',
+      );
+
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      const newUser = queryRunner.manager.create(User, {
+        ...createUserDto,
+        image: file
+          ? file
+          : 'https://cdn-icons-png.flaticon.com/512/149/149071.png',
+      });
+      await queryRunner.manager.save(newUser);
+      await queryRunner.commitTransaction();
+      return { message: 'Empleado creado exitosamente', user: newUser };
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
+  }
   update(id: number, updateUserDto: UpdateUserDto) {
     return `This action updates a #${id} user`;
+  }
+
+  findOne(id: number) {
+    return `This action returns a #${id} user`;
   }
 
   remove(id: number) {

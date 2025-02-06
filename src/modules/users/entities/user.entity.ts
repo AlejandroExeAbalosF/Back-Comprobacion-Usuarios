@@ -33,30 +33,78 @@ export class User {
 
   @Column({
     type: 'varchar',
-    default:
-      'https://res.cloudinary.com/dcqdilhek/image/upload/fl_preserve_transparency/v1715136207/zmuncvwsnlws77vegwxq.jpg',
+    default: 'https://cdn-icons-png.flaticon.com/512/149/149071.png',
+    nullable: true,
   })
-  image: string;
+  image: string | null;
+
+  @Column({ type: 'varchar', length: 50, nullable: true })
+  sex: string;
+
+  @Column({ type: 'varchar', length: 50, nullable: true })
+  asset: string;
+
+  @Column({ type: 'varchar', length: 50, nullable: true })
+  situation: string;
+
+  @Column({
+    name: 'income_date',
+    type: 'date',
+    nullable: true,
+  })
+  incomeDate: Date | null;
+
+  @Column({
+    type: 'date',
+    name: 'birth_date',
+    nullable: true,
+  })
+  birthDate: Date | null;
 
   @Column({ type: 'bigint', nullable: true })
-  phone: number;
+  phone: number | null;
 
   @Column({ type: 'bigint', nullable: true })
-  cellphone: number;
+  cellphone: number | null;
 
+  @Column({ type: 'text', name: 'private_address', nullable: true })
+  privateAddress: string;
+
+  @Column({ type: 'varchar', length: 50, name: 'study_level', nullable: true })
+  studyLevel: string;
+
+  @Column({ type: 'text', nullable: true })
+  profession: string;
+
+  @Column({ type: 'text', nullable: true })
+  function: string;
+
+  @Column({ type: 'text', name: 'legal_instrument', nullable: true })
+  legalInstrument: string;
+
+  @Column({ type: 'text', name: 'labor_address', nullable: true })
+  laborAddress: string;
+
+  //! pasarlo a tablas
+  @Column({ type: 'text', nullable: true })
+  ministry: string;
+
+  @Column({ type: 'text', nullable: true })
+  secretariat: string;
+  //!
   @Column({ type: 'varchar', length: 50, nullable: false, unique: true })
   email: string;
 
   @Column({ type: 'boolean', default: true })
   state: boolean;
 
-  @Column({ type: 'varchar', default: 'owner' })
+  @Column({ type: 'varchar', default: 'user', nullable: true })
   rol: string;
 
   @Column({
     name: 'created_at',
     type: 'timestamp',
-    default: new Date(),
+    default: () => 'CURRENT_TIMESTAMP',
     nullable: false,
   })
   createdAt: Date;

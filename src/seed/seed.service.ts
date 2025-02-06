@@ -2,7 +2,7 @@ import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../modules/users/entities/user.entity';
 import { Repository } from 'typeorm';
-import * as usersData from '../helpers/preload-users.data.json';
+import * as usersData from '../helpers/preload-users.data copy.json';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -21,10 +21,7 @@ export class SeedService implements OnModuleInit {
     // try {
     await this.executeSeedUsers();
 
-    Logger.log(
-      'Seed de Usuarios cargado correctamente',
-      'PreloadData-SIH Secure Ingress Home',
-    );
+    Logger.log('Seed de Usuarios cargado correctamente', 'PreloadData');
     const message = { message: 'Seed de Usuarios cargado correctamente' };
 
     return message;
@@ -47,7 +44,12 @@ export class SeedService implements OnModuleInit {
           10,
         );
         const newUser = this.userRepository.create({
-          ...user,
+          name: user.name,
+          lastName: user.lastName,
+          email: user.email,
+          document: user.document,
+          ministry: user.ministry,
+          secretariat: user.secretariat,
           password: hashedPassword,
           rol: 'admin',
         });

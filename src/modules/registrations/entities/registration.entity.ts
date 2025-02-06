@@ -31,14 +31,14 @@ export class Registration {
     name: 'entry_capture',
     nullable: true,
   })
-  entryCapture: string; // Usamos string para almacenar los datos binarios
+  entryCapture: string | null; // Usamos string para almacenar los datos binarios
 
   @Column({
     type: 'text',
     name: 'exit_capture',
     nullable: true,
   })
-  exitCapture: string;
+  exitCapture: string | null;
 
   @Column({ name: 'entry_date', type: 'timestamp', nullable: true })
   entryDate: Date;
