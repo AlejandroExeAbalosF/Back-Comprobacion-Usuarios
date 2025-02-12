@@ -9,6 +9,7 @@ export class SeedController {
   //   @Roles(Role.SuperAdmin)
   exejutePreloadData() {
     const dataUsers = this.seedService.preloadDataUser();
-    return dataUsers;
+    const dataRegistrations = this.seedService.preloadDataRegistration();
+    return { dataUsers, dataRegistrations };
   }
 }

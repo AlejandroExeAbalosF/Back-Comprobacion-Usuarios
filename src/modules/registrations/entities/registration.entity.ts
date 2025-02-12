@@ -41,10 +41,16 @@ export class Registration {
   exitCapture: string | null;
 
   @Column({ name: 'entry_date', type: 'timestamp', nullable: true })
-  entryDate: Date;
+  entryDate: Date | null;
 
   @Column({ name: 'exit_date', type: 'timestamp', nullable: true })
-  exitDate: Date;
+  exitDate: Date | null;
+
+  @Column({ type: 'varchar', nullable: true })
+  description: string | null;
+
+  @Column({ type: 'varchar', nullable: true })
+  comment: string | null;
 
   @Column({
     name: 'created_at',

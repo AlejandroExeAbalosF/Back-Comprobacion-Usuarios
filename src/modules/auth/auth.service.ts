@@ -65,6 +65,7 @@ export class AuthService {
       image: userValidated.image,
       name: userValidated.name,
       lastName: userValidated.lastName,
+      secretariat: userValidated.secretariat,
     };
 
     const token = this.jwtService.sign(payload);

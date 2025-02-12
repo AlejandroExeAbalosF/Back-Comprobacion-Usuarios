@@ -18,6 +18,7 @@ interface JwtPayload {
   image: string;
   name: string;
   lastName: string;
+  secretariat: string;
   rol: 'superadmin' | 'admin' | 'user';
   iat: number;
   exp: number;

@@ -12,6 +12,8 @@ import { SeedModule } from './seed/seed.module';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConfig } from './config/jwt.config';
 
+import { TasksModule } from './modules/tasks/tasks.module';
+
 @Module({
   imports: [
     AuthModule,
@@ -33,7 +35,9 @@ import { jwtConfig } from './config/jwt.config';
     JwtModule.register(jwtConfig),
     // TypeOrmModule.forFeature([User]),
     RegistrationsModule,
-    SeedModule, //sed module
+    SeedModule,
+
+    TasksModule, //sed module
   ],
   controllers: [AppController],
   providers: [AppService],

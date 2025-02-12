@@ -16,6 +16,8 @@ import * as dayjs from 'dayjs';
 import { NotificationsGateway } from '../gateways/notifications.gateway';
 import { last } from 'rxjs';
 import { validate } from 'class-validator';
+import { CreateRegistrationEmpDniDto } from './dto/create-registrationEmpDni.dto';
+import { UserWithLastRegistration } from 'src/helpers/types';
 
 @Injectable()
 export class RegistrationsService {
@@ -51,7 +53,7 @@ export class RegistrationsService {
   }
 
   async registrationsByUser(
-    registrationDto: CreateRegistrationDto,
+    registrationDto: CreateRegistrationEmpDniDto,
     file: string | null,
   ) {
     const dniValidate = await this.userService.searchDni(
@@ -72,8 +74,13 @@ export class RegistrationsService {
       const currentDate = dayjs();
 
       if (lastRegistrationDate.isSame(currentDate, 'day')) {
-        if (lastRegistration.validated === 'idle') {
-          throw new BadRequestException('Ya se ha registrado la Salida');
+        if (
+          lastRegistration.validated === 'idle' ||
+          lastRegistration.validated === 'absent'
+        ) {
+          throw new BadRequestException(
+            'Ya se ha registrado la Salida o esta registrado como Ausente',
+          );
         }
 
         const queryRunner = this.dataSource.createQueryRunner();
@@ -94,6 +101,7 @@ export class RegistrationsService {
             .execute();
 
           // Actualizamos el objeto manualmente
+          console.log(updatedResult.raw[0]);
           const updatedValues: Pick<
             Registration,
             'exitDate' | 'exitCapture' | 'validated'
@@ -140,7 +148,7 @@ export class RegistrationsService {
         entryDate: new Date(),
         user: dniValidate,
       });
-
+      // console.log(newRegistration);
       await queryRunner.manager.save(newRegistration);
 
       await queryRunner.commitTransaction();
@@ -169,11 +177,156 @@ export class RegistrationsService {
   // async registrationsExit(){
 
   // }
-  update(id: number, updateRegistrationDto: UpdateRegistrationDto) {
-    return `This action updates a #${id} registration`;
+
+  async validationsRegistrationsToday(secretariat: string) {
+    // console.log('secretariat', secretariat.secretariatName);
+    const usersRegisters = await this.userRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect(
+        'user.registrations',
+        'registration',
+        `registration.id = (
+        SELECT r.id FROM registrations r
+        WHERE r."userId" = "user"."id"
+        ORDER BY r."entry_date" DESC
+        LIMIT 1
+      )`,
+      )
+      .where('user.secretariat = :secretariat', { secretariat })
+      .andWhere('user.state = :state', { state: true })
+      .andWhere('user.rol = :rol', { rol: 'user' })
+      .getMany();
+
+    if (usersRegisters.length === 0)
+      throw new NotFoundException(`No se encontraron registros`);
+    // console.log(usersRegisters);
+
+    for (const user of usersRegisters) {
+      if (user.registrations.length > 0) {
+        const lastRegistrationDate = dayjs(user.registrations[0].entryDate);
+        const currentDate = dayjs();
+        //el ultimo registro se realizao el dia de hoy?
+        if (lastRegistrationDate.isSame(currentDate, 'day')) {
+          // console.log(
+          //   'aver true',
+          //   lastRegistrationDate.isSame(currentDate, 'day'),
+          // );
+        } else {
+          // Creación de nuevo registro de ausencia
+          const queryRunner = this.dataSource.createQueryRunner();
+          await queryRunner.connect();
+          await queryRunner.startTransaction();
+          console.log('fecha actual ', currentDate.toDate());
+          try {
+            const newRegistration = queryRunner.manager.create(Registration, {
+              validated: 'absent',
+              entryDate: currentDate.toDate(),
+              user: user,
+            });
+            // console.log(newRegistration);
+            await queryRunner.manager.save(newRegistration);
+
+            await queryRunner.commitTransaction();
+
+            // Se envía la notificación directamente con los datos que ya tenemos
+            this.notificationsGateway.sendNotification({
+              id: user.id,
+              idR: newRegistration.id,
+              name: user.name,
+              lastName: user.lastName,
+              document: user.document,
+              date: newRegistration.entryDate,
+              capture: newRegistration.entryCapture,
+              validated: newRegistration.validated,
+            });
+            // console.log('aver nuevo register', newRegistration);
+          } catch (error) {
+            await queryRunner.rollbackTransaction();
+            throw error;
+          } finally {
+            await queryRunner.release();
+          }
+        }
+      }
+    }
+    return usersRegisters;
+  }
+
+  async validationsRegistrations() {
+    const usersRegisters = await this.userRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect(
+        'user.registrations',
+        'registration',
+        `registration.id = (
+        SELECT r.id FROM registrations r
+        WHERE r."userId" = "user"."id"
+        ORDER BY r."entry_date" DESC
+        LIMIT 1
+      )`,
+      )
+      .where('user.state = :state', { state: true })
+      .andWhere('user.rol = :rol', { rol: 'user' })
+      .getMany();
+
+    if (usersRegisters.length === 0) console.log(`No se encontraron registros`);
+
+    for (const user of usersRegisters) {
+      if (user.registrations.length > 0) {
+        const lastRegistrationDate = dayjs(user.registrations[0].entryDate);
+        const currentDate = dayjs();
+        //el ultimo registro se realizao el dia de hoy?
+        if (lastRegistrationDate.isSame(currentDate, 'day')) {
+          // console.log(
+          //   'aver true',
+          //   lastRegistrationDate.isSame(currentDate, 'day'),
+          // );
+        } else {
+          // Creación de nuevo registro de ausencia
+          const queryRunner = this.dataSource.createQueryRunner();
+          await queryRunner.connect();
+          await queryRunner.startTransaction();
+          console.log('fecha actual ', currentDate.toDate());
+          try {
+            const newRegistration = queryRunner.manager.create(Registration, {
+              validated: 'absent',
+              entryDate: currentDate.toDate(),
+              user: user,
+            });
+            // console.log(newRegistration);
+            await queryRunner.manager.save(newRegistration);
+
+            await queryRunner.commitTransaction();
+
+            // Se envía la notificación directamente con los datos que ya tenemos
+            this.notificationsGateway.sendNotification({
+              id: user.id,
+              idR: newRegistration.id,
+              name: user.name,
+              lastName: user.lastName,
+              document: user.document,
+              date: newRegistration.entryDate,
+              capture: newRegistration.entryCapture,
+              validated: newRegistration.validated,
+            });
+            // console.log('aver nuevo register', newRegistration);
+          } catch (error) {
+            await queryRunner.rollbackTransaction();
+            throw error;
+          } finally {
+            await queryRunner.release();
+          }
+        }
+      }
+    }
+    return { msg: 'Validacion Completa' };
+    // console.log(usersRegisters);
   }
 
   remove(id: number) {
     return `This action removes a #${id} registration`;
+  }
+  update(id: number, updateRegistrationDto: UpdateRegistrationDto) {
+    return `This action updates a #${id} registration`;
   }
 }

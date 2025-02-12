@@ -18,6 +18,8 @@ import { diskStorage } from 'multer';
 import * as fs from 'fs';
 import { extname } from 'path';
 import { config as dotenvConfig } from 'dotenv';
+import { CreateRegistrationEmpDniDto } from './dto/create-registrationEmpDni.dto';
+import { UserWithLastRegistration } from 'src/helpers/types';
 
 dotenvConfig({ path: '.env' });
 
@@ -55,7 +57,7 @@ export class RegistrationsController {
     OptionalFileInterceptorIMG,
   )
   registrations(
-    @Body() registrationDto: CreateRegistrationDto,
+    @Body() registrationDto: CreateRegistrationEmpDniDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
     // console.log('Body:', registrationDto);
@@ -72,9 +74,12 @@ export class RegistrationsController {
     );
   }
 
-  @Post()
-  create(@Body() createRegistrationDto: CreateRegistrationDto) {
-    return this.registrationsService.create(createRegistrationDto);
+  @Post('/validationsRegistrationsToday')
+  async validationsRegistrations(@Body() secretariat) {
+    console.log('secretariat', secretariat.secretariatName);
+    return await this.registrationsService.validationsRegistrationsToday(
+      secretariat.secretariatName,
+    );
   }
 
   @Patch(':id')

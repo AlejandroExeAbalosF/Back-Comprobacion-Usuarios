@@ -11,5 +11,6 @@ import { NotificationsGateway } from '../gateways/notifications.gateway';
   imports: [TypeOrmModule.forFeature([Registration, User])],
   controllers: [RegistrationsController],
   providers: [RegistrationsService, UsersService, NotificationsGateway],
+  exports: [RegistrationsService],
 })
 export class RegistrationsModule {}
