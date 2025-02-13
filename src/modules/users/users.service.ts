@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -159,8 +160,49 @@ export class UsersService {
       await queryRunner.release();
     }
   }
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async updateUser(
+    id: string,
+    updateUserDto: UpdateUserDto,
+    file: string | null,
+  ) {
+    const userExists = await this.userService.findOne({ where: { id: id } });
+    if (!userExists) throw new NotFoundException('No se encuentra el usuario');
+
+    if (updateUserDto?.document) {
+      const dniExists = await this.userService.findOneBy({
+        document: updateUserDto.document,
+      });
+      if (dniExists && userExists.document !== updateUserDto.document)
+        throw new BadRequestException('Ya existe un usuario con ese DNI');
+    }
+
+    if (userExists.rol === 'superadmin')
+      throw new UnauthorizedException('No se puede modificar ese usuario');
+
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const user = await queryRunner.manager.preload(User, {
+        id,
+        ...updateUserDto,
+        image: file ? file : userExists.image,
+      });
+      const userModified = await queryRunner.manager.save(user);
+      await queryRunner.manager.save(userModified);
+      await queryRunner.commitTransaction();
+
+      return {
+        message: `Usuario actualizado correctamente`,
+        user: userModified,
+      };
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   findOne(id: number) {

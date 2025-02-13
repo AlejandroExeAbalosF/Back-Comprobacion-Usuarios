@@ -9,6 +9,7 @@ import {
   UseGuards,
   UseInterceptors,
   UploadedFile,
+  Put,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -86,9 +87,40 @@ export class UsersController {
     // return { msj: 'hola' };
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  @Put('update/:id')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: (req, file, cb) => {
+          const uploadPath = './uploads';
+
+          // Verificar si la carpeta 'uploads' existe, si no, crearla
+          if (!fs.existsSync(uploadPath)) {
+            fs.mkdirSync(uploadPath, { recursive: true });
+          }
+
+          cb(null, uploadPath);
+        },
+        filename: (req, file, cb) => {
+          // Generar un nombre único para la imagen
+          const uniqueSuffix =
+            Date.now() + '-' + Math.round(Math.random() * 1e9);
+          cb(null, uniqueSuffix + extname(file.originalname));
+        },
+      }),
+    }),
+    OptionalFileInterceptorIMG,
+  )
+  updateUser(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    const urlFile = file
+      ? process.env.URL_BACKEND + '/uploads/' + file.filename
+      : null;
+    console.log('id', id, 'updateUserDto', updateUserDto, 'file', urlFile);
+    return this.usersService.updateUser(id, updateUserDto, urlFile);
   }
 
   @Delete(':id')

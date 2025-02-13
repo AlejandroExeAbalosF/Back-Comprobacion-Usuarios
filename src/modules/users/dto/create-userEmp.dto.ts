@@ -70,32 +70,32 @@ export class CreateUserEmpDto {
 
   @IsOptional()
   @IsString()
-  @Matches(/^[a-zA-Z0-9\s/_-]+$/)
+  @Matches(/^[\p{L}\p{N}\s,._&-]+$/u)
   readonly privateAddress: string;
 
   @IsOptional()
   @IsString()
-  @Matches(/^[a-zA-Z\s/_-]+$/)
+  @Matches(/^[\p{L}\p{N}\s,._&-]+$/u)
   readonly studyLevel: string;
 
   @IsOptional()
   @IsString()
-  @Matches(/^[\p{L}\s/_-]+$/u)
+  @Matches(/^[\p{L}\p{N}\s,._&-]+$/u)
   readonly profession: string;
 
   @IsOptional()
   @IsString()
-  @Matches(/^[\p{L}\s/_-]+$/u)
+  @Matches(/^[\p{L}\p{N}\s,._&-]+$/u)
   readonly function: string;
 
   @IsOptional()
   @IsString()
-  @Matches(/^[a-zA-Z\s/_-]+$/)
+  @Matches(/^[\p{L}\p{N}\s,._&-]+$/u)
   readonly asset: string;
 
   @IsOptional()
   @IsString()
-  @Matches(/^[a-zA-Z\s/_-]+$/)
+  @Matches(/^[\p{L}\p{N}\s,._&-]+$/u)
   readonly situation: string;
 
   @IsOptional()
@@ -104,23 +104,23 @@ export class CreateUserEmpDto {
 
   @IsOptional()
   @IsString()
-  @Matches(/^[a-zA-Z0-9\s/_-]+$/)
+  @Matches(/^[\p{L}\p{N}\s,._&-]+$/u)
   readonly legalInstrument: string;
 
   @IsOptional()
   @IsString()
-  @Matches(/^[a-zA-Z0-9\s/_-]+$/)
+  @Matches(/^[\p{L}\p{N}\s,._&-]+$/u)
   readonly laborAddress: string;
 
   //! pasarlo a tablas
   @IsOptional()
   @IsString()
-  @Matches(/^[a-zA-Z0-9\s/_-]+$/)
+  @Matches(/^[\p{L}\p{N}\s,._&-]+$/u)
   readonly ministry: string;
 
   @IsOptional()
   @IsString()
-  @Matches(/^[a-zA-Z0-9\s/_-]+$/)
+  @Matches(/^[\p{L}\p{N}\s,._&-]+$/u)
   readonly secretariat: string;
   //!
 }

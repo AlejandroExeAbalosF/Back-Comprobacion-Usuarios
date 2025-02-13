@@ -75,11 +75,11 @@ export class RegistrationsService {
 
       if (lastRegistrationDate.isSame(currentDate, 'day')) {
         if (
-          lastRegistration.validated === 'idle' ||
+          lastRegistration.validated === 'present' ||
           lastRegistration.validated === 'absent'
         ) {
           throw new BadRequestException(
-            'Ya se ha registrado la Salida o esta registrado como Ausente',
+            'Ya se ha registrado la Salida o esta registrado como Ausente ',
           );
         }
 
@@ -92,7 +92,7 @@ export class RegistrationsService {
             .createQueryBuilder()
             .update(Registration)
             .set({
-              validated: 'idle',
+              validated: 'present',
               exitDate: currentDate.toDate(),
               exitCapture: file,
             })
@@ -144,7 +144,7 @@ export class RegistrationsService {
       const newRegistration = queryRunner.manager.create(Registration, {
         ...registrationDto,
         entryCapture: file,
-        validated: 'present',
+        validated: 'working',
         entryDate: new Date(),
         user: dniValidate,
       });
