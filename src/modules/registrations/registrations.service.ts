@@ -240,6 +240,7 @@ export class RegistrationsService {
               validated: newRegistration.validated,
             });
             // console.log('aver nuevo register', newRegistration);
+            
           } catch (error) {
             await queryRunner.rollbackTransaction();
             throw error;
@@ -247,9 +248,44 @@ export class RegistrationsService {
             await queryRunner.release();
           }
         }
+      }else{
+        const currentDate = dayjs();
+         // Creación de nuevo registro de ausencia
+         const queryRunner = this.dataSource.createQueryRunner();
+         await queryRunner.connect();
+         await queryRunner.startTransaction();
+         try {
+           const newRegistration = queryRunner.manager.create(Registration, {
+             validated: 'absent',
+             entryDate: currentDate.toDate(),
+             user: user,
+           });
+           // console.log(newRegistration);
+           await queryRunner.manager.save(newRegistration);
+
+           await queryRunner.commitTransaction();
+
+           // Se envía la notificación directamente con los datos que ya tenemos
+           this.notificationsGateway.sendNotification({
+             id: user.id,
+             idR: newRegistration.id,
+             name: user.name,
+             lastName: user.lastName,
+             document: user.document,
+             date: newRegistration.entryDate,
+             capture: newRegistration.entryCapture,
+             validated: newRegistration.validated,
+           });
+           // console.log('aver nuevo register', newRegistration);
+         } catch (error) {
+           await queryRunner.rollbackTransaction();
+           throw error;
+         } finally {
+           await queryRunner.release();
+         }
       }
     }
-    return usersRegisters;
+    return { message: 'Validacion de Ausencia Exitosa' };
   }
 
   async validationsRegistrations() {
@@ -317,6 +353,41 @@ export class RegistrationsService {
             await queryRunner.release();
           }
         }
+      }else{
+        const currentDate = dayjs();
+         // Creación de nuevo registro de ausencia
+         const queryRunner = this.dataSource.createQueryRunner();
+         await queryRunner.connect();
+         await queryRunner.startTransaction();
+         try {
+           const newRegistration = queryRunner.manager.create(Registration, {
+             validated: 'absent',
+             entryDate: currentDate.toDate(),
+             user: user,
+           });
+           // console.log(newRegistration);
+           await queryRunner.manager.save(newRegistration);
+
+           await queryRunner.commitTransaction();
+
+           // Se envía la notificación directamente con los datos que ya tenemos
+           this.notificationsGateway.sendNotification({
+             id: user.id,
+             idR: newRegistration.id,
+             name: user.name,
+             lastName: user.lastName,
+             document: user.document,
+             date: newRegistration.entryDate,
+             capture: newRegistration.entryCapture,
+             validated: newRegistration.validated,
+           });
+           // console.log('aver nuevo register', newRegistration);
+         } catch (error) {
+           await queryRunner.rollbackTransaction();
+           throw error;
+         } finally {
+           await queryRunner.release();
+         }
       }
     }
     return { msg: 'Validacion Completa' };

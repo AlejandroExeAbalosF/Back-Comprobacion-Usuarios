@@ -5,7 +5,7 @@ import { RegistrationsService } from '../registrations/registrations.service';
 @Injectable()
 export class TasksService {
   constructor(private readonly registrationsService: RegistrationsService) {}
-  // @Cron('0 * * * * *')
+  //  @Cron('0 * * * * *')
   async verificarRegistroUsuarios() {
     // Aquí colocas la lógica para verificar el registro de cada usuario
     console.log('🔄 Verificando asistencia...');
@@ -20,7 +20,7 @@ export class TasksService {
     // });
   }
 
-  @Cron('30 * * * * *')
+  // @Cron('30 * * * * *')
   async verificar() {
     // Aquí colocas la lógica para verificar el registro de cada usuario
     console.log('Prueba de Cron');
