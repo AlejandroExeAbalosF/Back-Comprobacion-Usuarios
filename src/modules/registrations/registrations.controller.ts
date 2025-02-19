@@ -8,6 +8,7 @@ import {
   Delete,
   UseInterceptors,
   UploadedFile,
+  Put,
 } from '@nestjs/common';
 import { RegistrationsService } from './registrations.service';
 import { CreateRegistrationDto } from './dto/create-registration.dto';
@@ -82,13 +83,21 @@ export class RegistrationsController {
     );
   }
 
-  @Patch(':id')
-  update(
+  @Put(':id')
+  updateRegister(
     @Param('id') id: string,
     @Body() updateRegistrationDto: UpdateRegistrationDto,
   ) {
-    return this.registrationsService.update(+id, updateRegistrationDto);
+    return this.registrationsService.updateRegister(id, updateRegistrationDto);
   }
+
+  // @Patch(':id')
+  // update(
+  //   @Param('id') id: string,
+  //   @Body() updateRegistrationDto: UpdateRegistrationDto,
+  // ) {
+  //   return this.registrationsService.update(+id, updateRegistrationDto);
+  // }
 
   @Delete(':id')
   remove(@Param('id') id: string) {

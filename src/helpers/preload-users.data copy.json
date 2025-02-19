@@ -211,6 +211,7 @@
     "lastName": "DAVILA",
     "name": "ANGEL ROMAN",
     "document": 20399030,
+    "image": "http://localhost:3000/uploads/foto1perfil.jpg",
     "email": "angelrdavila60@gmail.com",
     "rol": "user",
     "sex": "M",

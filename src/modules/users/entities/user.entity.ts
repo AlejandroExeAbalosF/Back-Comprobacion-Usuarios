@@ -1,10 +1,13 @@
 import { Registration } from 'src/modules/registrations/entities/registration.entity';
+import { Secretariat } from 'src/modules/secretariats/entities/secretariat.entity';
 import {
   Column,
   Entity,
   Index,
   JoinColumn,
+  ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -15,6 +18,12 @@ export class User {
 
   @Column({ type: 'text', nullable: true })
   password: string;
+
+  @Column({ type: 'time', name: 'entry_hour', nullable: true })
+  entryHour: string; // Se almacena en formato 'HH:MM:SS'
+
+  @Column({ type: 'time', name: 'exit_hour', nullable: true })
+  exitHour: string; // Se almacena en formato 'HH:MM:SS'
 
   @Column({ type: 'varchar', length: 50, nullable: false }) // maximo 50 chars y no puede ser nulo
   name: string;
@@ -85,13 +94,6 @@ export class User {
   @Column({ type: 'text', name: 'labor_address', nullable: true })
   laborAddress: string;
 
-  //! pasarlo a tablas
-  @Column({ type: 'text', nullable: true })
-  ministry: string;
-
-  @Column({ type: 'text', nullable: true })
-  secretariat: string;
-  //!
   @Column({ type: 'varchar', length: 50, nullable: false, unique: true })
   email: string;
 
@@ -112,7 +114,12 @@ export class User {
   @Column({ name: 'last_login', type: 'timestamp', nullable: true })
   lastLogin: Date;
 
-  @OneToMany(() => Registration, (prop) => prop.user, { eager: true })
-  @JoinColumn()
+  @OneToMany(() => Registration, (prop) => prop.user)
   registrations: Registration[];
+
+  @ManyToOne(() => Secretariat, (secretariat) => secretariat.user, {
+    nullable: true,
+  })
+  @JoinColumn({ name: 'secretariat_id' })
+  secretariat: Secretariat;
 }

@@ -3,6 +3,7 @@ import {
   Column,
   Entity,
   Index,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -14,8 +15,8 @@ export class Registration {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'varchar' })
-  validated: string;
+  // @Column({ type: 'varchar' })
+  // validated: string;
 
   @Column({ type: 'boolean', default: true })
   state: boolean;
@@ -53,6 +54,12 @@ export class Registration {
   comment: string | null;
 
   @Column({
+    type: 'varchar',
+  })
+  type: string;
+  // enum: ['ASISTENCIA', 'AUSENTE', 'PERMISO', 'TARDANZA'],
+  //  'present' | 'absent' | 'permission' | 'delay'
+  @Column({
     name: 'created_at',
     type: 'timestamp',
     default: new Date(),
@@ -61,5 +68,6 @@ export class Registration {
   createdAt: Date;
 
   @ManyToOne(() => User, (user) => user.registrations)
+  @JoinColumn({ name: 'user_id' }) // Aquí es donde se define la clave foránea
   user: User;
 }

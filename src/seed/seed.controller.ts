@@ -10,6 +10,7 @@ export class SeedController {
   exejutePreloadData() {
     const dataUsers = this.seedService.preloadDataUser();
     const dataRegistrations = this.seedService.preloadDataRegistration();
-    return { dataUsers, dataRegistrations };
+    const dataMinistries = this.seedService.preloadDataMinistries();
+    return { dataUsers, dataRegistrations, dataMinistries };
   }
 }

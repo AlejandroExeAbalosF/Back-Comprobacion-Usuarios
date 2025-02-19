@@ -120,7 +120,6 @@ export class CreateUserEmpDto {
 
   @IsOptional()
   @IsString()
-  @Matches(/^[\p{L}\p{N}\s,._&-]+$/u)
-  readonly secretariat: string;
+  readonly secretariatId: string;
   //!
 }

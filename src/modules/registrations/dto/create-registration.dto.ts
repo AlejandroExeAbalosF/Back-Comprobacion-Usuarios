@@ -16,7 +16,7 @@ export class CreateRegistrationDto {
   @IsNotEmpty()
   @IsString()
   @MinLength(2)
-  readonly validated: string;
+  readonly type: string;
 
   @IsNotEmpty()
   @Transform(({ value }: { value: string | null }) =>

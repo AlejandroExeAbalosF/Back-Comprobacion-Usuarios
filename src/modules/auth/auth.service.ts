@@ -65,14 +65,15 @@ export class AuthService {
       image: userValidated.image,
       name: userValidated.name,
       lastName: userValidated.lastName,
-      secretariat: userValidated.secretariat,
+      nameSecretariat: userValidated.secretariat.name,
+      nameMinistry: userValidated.secretariat.ministry.name,
     };
-
+    console.log('payload', userValidated);
     const token = this.jwtService.sign(payload);
 
     const userLoginData = {
       token: token,
-      user: userValidated,
+      user: payload,
     };
     return userLoginData;
   }

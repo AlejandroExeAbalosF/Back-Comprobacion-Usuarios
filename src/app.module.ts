@@ -13,6 +13,9 @@ import { JwtModule } from '@nestjs/jwt';
 import { jwtConfig } from './config/jwt.config';
 
 import { TasksModule } from './modules/tasks/tasks.module';
+import { MinistriesModule } from './modules/ministries/ministries.module';
+import { SecretariatsModule } from './modules/secretariats/secretariats.module';
+import { NonWorkingDayModule } from './modules/non-working-day/non-working-day.module';
 
 @Module({
   imports: [
@@ -37,7 +40,13 @@ import { TasksModule } from './modules/tasks/tasks.module';
     RegistrationsModule,
     SeedModule,
 
-    TasksModule, //sed module
+    TasksModule,
+
+    MinistriesModule,
+
+    SecretariatsModule,
+
+    NonWorkingDayModule, //sed module
   ],
   controllers: [AppController],
   providers: [AppService],

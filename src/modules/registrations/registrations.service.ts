@@ -13,11 +13,14 @@ import { DataSource, Repository } from 'typeorm';
 import { Registration } from './entities/registration.entity';
 import { UsersService } from '../users/users.service';
 import * as dayjs from 'dayjs';
+import { startOfDay, isSameDay } from 'date-fns';
+import { toZonedTime, fromZonedTime } from 'date-fns-tz';
 import { NotificationsGateway } from '../gateways/notifications.gateway';
 import { last } from 'rxjs';
 import { validate } from 'class-validator';
 import { CreateRegistrationEmpDniDto } from './dto/create-registrationEmpDni.dto';
 import { UserWithLastRegistration } from 'src/helpers/types';
+import { Secretariat } from '../secretariats/entities/secretariat.entity';
 
 @Injectable()
 export class RegistrationsService {
@@ -25,6 +28,8 @@ export class RegistrationsService {
     @InjectRepository(Registration)
     private readonly registrationRepository: Repository<Registration>,
     @InjectRepository(User) private readonly userRepository: Repository<User>,
+    @InjectRepository(Secretariat)
+    private readonly secretariatRepository: Repository<Secretariat>,
     private readonly userService: UsersService,
     private readonly dataSource: DataSource,
     private readonly notificationsGateway: NotificationsGateway,
@@ -56,6 +61,9 @@ export class RegistrationsService {
     registrationDto: CreateRegistrationEmpDniDto,
     file: string | null,
   ) {
+    const timeZone = 'America/Argentina/Buenos_Aires';
+    const currentDate = toZonedTime(new Date(), timeZone); // Convertimos la fecha actual a Argentina
+
     const dniValidate = await this.userService.searchDni(
       registrationDto.document,
     );
@@ -70,16 +78,17 @@ export class RegistrationsService {
       .getOne();
 
     if (lastRegistration) {
-      const lastRegistrationDate = dayjs(lastRegistration.entryDate);
-      const currentDate = dayjs();
+      const lastRegistrationDate = toZonedTime(
+        lastRegistration.entryDate as Date,
+        timeZone,
+      );
 
-      if (lastRegistrationDate.isSame(currentDate, 'day')) {
-        if (
-          lastRegistration.validated === 'present' ||
-          lastRegistration.validated === 'absent'
-        ) {
+      if (
+        isSameDay(startOfDay(lastRegistrationDate), startOfDay(currentDate))
+      ) {
+        if (['present', 'absent'].includes(lastRegistration.type)) {
           throw new BadRequestException(
-            'Ya se ha registrado la Salida o esta registrado como Ausente ',
+            'Ya se ha registrado la Salida o está registrado como Ausente.',
           );
         }
 
@@ -88,27 +97,29 @@ export class RegistrationsService {
         await queryRunner.startTransaction();
 
         try {
+          const exitDateUtc = toZonedTime(currentDate, timeZone); // Convertimos a UTC antes de guardar
+
           const updatedResult = await queryRunner.manager
             .createQueryBuilder()
             .update(Registration)
             .set({
-              validated: 'present',
-              exitDate: currentDate.toDate(),
+              type: 'present',
+              exitDate: exitDateUtc,
               exitCapture: file,
             })
             .where({ id: lastRegistration.id })
-            .returning(['exitDate', 'exitCapture', 'validated'])
+            .returning(['exitDate', 'exitCapture', 'type'])
             .execute();
 
           // Actualizamos el objeto manualmente
-          console.log(updatedResult.raw[0]);
+          // console.log(updatedResult.raw[0]);
           const updatedValues: Pick<
             Registration,
-            'exitDate' | 'exitCapture' | 'validated'
+            'exitDate' | 'exitCapture' | 'type'
           > = {
             exitDate: updatedResult.raw[0].exit_date, // Convertimos snake_case a camelCase
             exitCapture: updatedResult.raw[0].exit_capture,
-            validated: updatedResult.raw[0].validated,
+            type: updatedResult.raw[0].type,
           };
 
           await queryRunner.commitTransaction();
@@ -120,9 +131,9 @@ export class RegistrationsService {
             name: dniValidate.name,
             lastName: dniValidate.lastName,
             document: dniValidate.document,
-            date: updatedValues.exitDate,
+            date: toZonedTime(updatedValues.exitDate as Date, timeZone),
             capture: updatedValues.exitCapture,
-            validated: updatedValues.validated,
+            type: updatedValues.type,
           });
 
           return { message: 'Registrada la Salida Correctamente' };
@@ -141,11 +152,13 @@ export class RegistrationsService {
     await queryRunner.startTransaction();
 
     try {
+      const entryDateUtc = fromZonedTime(currentDate, timeZone); // Convertimos a UTC antes de guardar
+
       const newRegistration = queryRunner.manager.create(Registration, {
         ...registrationDto,
         entryCapture: file,
-        validated: 'working',
-        entryDate: new Date(),
+        type: 'working',
+        entryDate: entryDateUtc,
         user: dniValidate,
       });
       // console.log(newRegistration);
@@ -160,10 +173,15 @@ export class RegistrationsService {
         name: dniValidate.name,
         lastName: dniValidate.lastName,
         document: dniValidate.document,
-        date: newRegistration.entryDate,
+        date: toZonedTime(newRegistration.entryDate as Date, timeZone), // newRegistration.entryDate,
         capture: newRegistration.entryCapture,
-        validated: newRegistration.validated,
+        type: newRegistration.type,
       });
+      console.log('horaUTC', newRegistration.entryDate);
+      console.log(
+        'horaLocal',
+        toZonedTime(newRegistration.entryDate as Date, timeZone),
+      );
 
       return { message: 'Registrada la Entrada Correctamente' };
     } catch (error) {
@@ -180,6 +198,11 @@ export class RegistrationsService {
 
   async validationsRegistrationsToday(secretariat: string) {
     // console.log('secretariat', secretariat.secretariatName);
+    const secretariatFinded = await this.secretariatRepository.findOneBy({
+      name: secretariat,
+    });
+    if (!secretariatFinded)
+      throw new NotFoundException(`Secretaria no encontrada`);
     const usersRegisters = await this.userRepository
       .createQueryBuilder('user')
       .leftJoinAndSelect(
@@ -187,16 +210,19 @@ export class RegistrationsService {
         'registration',
         `registration.id = (
         SELECT r.id FROM registrations r
-        WHERE r."userId" = "user"."id"
+        WHERE r."user_id" = "user"."id"
         ORDER BY r."entry_date" DESC
         LIMIT 1
       )`,
       )
-      .where('user.secretariat = :secretariat', { secretariat })
+      .where('user.secretariat_id = :secretariat', {
+        secretariat: secretariatFinded.id,
+      })
       .andWhere('user.state = :state', { state: true })
       .andWhere('user.rol = :rol', { rol: 'user' })
       .getMany();
 
+    // console.log(usersRegisters);
     if (usersRegisters.length === 0)
       throw new NotFoundException(`No se encontraron registros`);
     // console.log(usersRegisters);
@@ -219,7 +245,7 @@ export class RegistrationsService {
           console.log('fecha actual ', currentDate.toDate());
           try {
             const newRegistration = queryRunner.manager.create(Registration, {
-              validated: 'absent',
+              type: 'absent',
               entryDate: currentDate.toDate(),
               user: user,
             });
@@ -237,10 +263,10 @@ export class RegistrationsService {
               document: user.document,
               date: newRegistration.entryDate,
               capture: newRegistration.entryCapture,
-              validated: newRegistration.validated,
+              type: newRegistration.type,
             });
+            console.log('se crea el registro de ausencia');
             // console.log('aver nuevo register', newRegistration);
-            
           } catch (error) {
             await queryRunner.rollbackTransaction();
             throw error;
@@ -248,41 +274,41 @@ export class RegistrationsService {
             await queryRunner.release();
           }
         }
-      }else{
+      } else {
         const currentDate = dayjs();
-         // Creación de nuevo registro de ausencia
-         const queryRunner = this.dataSource.createQueryRunner();
-         await queryRunner.connect();
-         await queryRunner.startTransaction();
-         try {
-           const newRegistration = queryRunner.manager.create(Registration, {
-             validated: 'absent',
-             entryDate: currentDate.toDate(),
-             user: user,
-           });
-           // console.log(newRegistration);
-           await queryRunner.manager.save(newRegistration);
+        // Creación de nuevo registro de ausencia
+        const queryRunner = this.dataSource.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
+        try {
+          const newRegistration = queryRunner.manager.create(Registration, {
+            type: 'absent',
+            entryDate: currentDate.toDate(),
+            user: user,
+          });
+          // console.log(newRegistration);
+          await queryRunner.manager.save(newRegistration);
 
-           await queryRunner.commitTransaction();
+          await queryRunner.commitTransaction();
 
-           // Se envía la notificación directamente con los datos que ya tenemos
-           this.notificationsGateway.sendNotification({
-             id: user.id,
-             idR: newRegistration.id,
-             name: user.name,
-             lastName: user.lastName,
-             document: user.document,
-             date: newRegistration.entryDate,
-             capture: newRegistration.entryCapture,
-             validated: newRegistration.validated,
-           });
-           // console.log('aver nuevo register', newRegistration);
-         } catch (error) {
-           await queryRunner.rollbackTransaction();
-           throw error;
-         } finally {
-           await queryRunner.release();
-         }
+          // Se envía la notificación directamente con los datos que ya tenemos
+          this.notificationsGateway.sendNotification({
+            id: user.id,
+            idR: newRegistration.id,
+            name: user.name,
+            lastName: user.lastName,
+            document: user.document,
+            date: newRegistration.entryDate,
+            capture: newRegistration.entryCapture,
+            type: newRegistration.type,
+          });
+          // console.log('aver nuevo register', newRegistration);
+        } catch (error) {
+          await queryRunner.rollbackTransaction();
+          throw error;
+        } finally {
+          await queryRunner.release();
+        }
       }
     }
     return { message: 'Validacion de Ausencia Exitosa' };
@@ -325,7 +351,7 @@ export class RegistrationsService {
           console.log('fecha actual ', currentDate.toDate());
           try {
             const newRegistration = queryRunner.manager.create(Registration, {
-              validated: 'absent',
+              type: 'absent',
               entryDate: currentDate.toDate(),
               user: user,
             });
@@ -343,7 +369,7 @@ export class RegistrationsService {
               document: user.document,
               date: newRegistration.entryDate,
               capture: newRegistration.entryCapture,
-              validated: newRegistration.validated,
+              type: newRegistration.type,
             });
             // console.log('aver nuevo register', newRegistration);
           } catch (error) {
@@ -353,41 +379,41 @@ export class RegistrationsService {
             await queryRunner.release();
           }
         }
-      }else{
+      } else {
         const currentDate = dayjs();
-         // Creación de nuevo registro de ausencia
-         const queryRunner = this.dataSource.createQueryRunner();
-         await queryRunner.connect();
-         await queryRunner.startTransaction();
-         try {
-           const newRegistration = queryRunner.manager.create(Registration, {
-             validated: 'absent',
-             entryDate: currentDate.toDate(),
-             user: user,
-           });
-           // console.log(newRegistration);
-           await queryRunner.manager.save(newRegistration);
+        // Creación de nuevo registro de ausencia
+        const queryRunner = this.dataSource.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
+        try {
+          const newRegistration = queryRunner.manager.create(Registration, {
+            type: 'absent',
+            entryDate: currentDate.toDate(),
+            user: user,
+          });
+          // console.log(newRegistration);
+          await queryRunner.manager.save(newRegistration);
 
-           await queryRunner.commitTransaction();
+          await queryRunner.commitTransaction();
 
-           // Se envía la notificación directamente con los datos que ya tenemos
-           this.notificationsGateway.sendNotification({
-             id: user.id,
-             idR: newRegistration.id,
-             name: user.name,
-             lastName: user.lastName,
-             document: user.document,
-             date: newRegistration.entryDate,
-             capture: newRegistration.entryCapture,
-             validated: newRegistration.validated,
-           });
-           // console.log('aver nuevo register', newRegistration);
-         } catch (error) {
-           await queryRunner.rollbackTransaction();
-           throw error;
-         } finally {
-           await queryRunner.release();
-         }
+          // Se envía la notificación directamente con los datos que ya tenemos
+          this.notificationsGateway.sendNotification({
+            id: user.id,
+            idR: newRegistration.id,
+            name: user.name,
+            lastName: user.lastName,
+            document: user.document,
+            date: newRegistration.entryDate,
+            capture: newRegistration.entryCapture,
+            type: newRegistration.type,
+          });
+          // console.log('aver nuevo register', newRegistration);
+        } catch (error) {
+          await queryRunner.rollbackTransaction();
+          throw error;
+        } finally {
+          await queryRunner.release();
+        }
       }
     }
     return { msg: 'Validacion Completa' };
@@ -397,7 +423,37 @@ export class RegistrationsService {
   remove(id: number) {
     return `This action removes a #${id} registration`;
   }
-  update(id: number, updateRegistrationDto: UpdateRegistrationDto) {
-    return `This action updates a #${id} registration`;
+  async updateRegister(
+    id: string,
+    updateRegistrationDto: UpdateRegistrationDto,
+  ) {
+    const registerFinded = await this.registrationRepository.findOne({
+      where: { id: id },
+    });
+
+    if (!registerFinded) {
+      throw new NotFoundException(`Registro no encontrado`);
+    }
+
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      const updateRegister = queryRunner.manager.preload(Registration, {
+        id,
+        ...updateRegistrationDto,
+      });
+      const registerModified = await queryRunner.manager.save(updateRegister);
+      await queryRunner.commitTransaction();
+      return {
+        message: 'Registro modificado exitosamente',
+        register: registerModified,
+      };
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
   }
 }

@@ -11,12 +11,18 @@ import { DataSource, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from '../auth/dto/create-auth.dto';
 import { CreateUserEmpDto } from './dto/create-userEmp.dto';
+import { Ministry } from '../ministries/entities/ministry.entity';
+import { Secretariat } from '../secretariats/entities/secretariat.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userService: Repository<User>,
+    @InjectRepository(Ministry)
+    private readonly ministryRepository: Repository<Ministry>,
+    @InjectRepository(Secretariat)
+    private readonly secretariatRepository: Repository<Secretariat>,
     private readonly dataSource: DataSource,
   ) {}
 
@@ -66,11 +72,13 @@ export class UsersService {
         `registration.id = (
       SELECT r.id 
       FROM registrations r 
-      WHERE r."userId" = user.id 
+      WHERE r."user_id" = user.id 
       ORDER BY r.entry_date DESC 
       LIMIT 1
     )`,
       )
+      .leftJoinAndSelect('user.secretariat', 'secretariat')
+      .leftJoinAndSelect('secretariat.ministry', 'ministry')
       .where('user.rol = :rol', { rol: 'user' })
       .getMany();
 
@@ -114,7 +122,10 @@ export class UsersService {
   }
 
   async searchEmail(email: string) {
-    return await this.userService.findOne({ where: { email: email } });
+    return await this.userService.findOne({
+      where: { email: email },
+      relations: ['secretariat', 'secretariat.ministry'],
+    });
   }
   async create(createUserDto: CreateUserDto) {
     const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
@@ -144,11 +155,17 @@ export class UsersService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
+      const secretariatFinded = await this.secretariatRepository.findOneBy({
+        id: createUserDto.secretariatId,
+      });
+      if (!secretariatFinded)
+        throw new BadRequestException('No se encontro la secretaria');
       const newUser = queryRunner.manager.create(User, {
         ...createUserDto,
         image: file
           ? file
           : 'https://cdn-icons-png.flaticon.com/512/149/149071.png',
+        secretariat: secretariatFinded,
       });
       await queryRunner.manager.save(newUser);
       await queryRunner.commitTransaction();
@@ -184,13 +201,22 @@ export class UsersService {
     await queryRunner.startTransaction();
 
     try {
+      const secretariatFinded = await this.secretariatRepository.findOneBy({
+        id: updateUserDto.secretariatId,
+      });
+      if (!secretariatFinded)
+        throw new BadRequestException('No se encontró la secretaría');
+      // Extraer secretariatId para evitar pasarlo en el spread
+      const { secretariatId, ...userData } = updateUserDto;
+
       const user = await queryRunner.manager.preload(User, {
         id,
         ...updateUserDto,
         image: file ? file : userExists.image,
+        secretariat: secretariatFinded,
       });
+      // Guardar los cambios (una sola llamada a save es suficiente)
       const userModified = await queryRunner.manager.save(user);
-      await queryRunner.manager.save(userModified);
       await queryRunner.commitTransaction();
 
       return {

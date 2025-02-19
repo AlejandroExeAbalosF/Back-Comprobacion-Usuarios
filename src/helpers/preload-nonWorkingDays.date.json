@@ -1,0 +1,23 @@
+[
+  {
+    "start_date": "2025-01-01",
+    "end_date": "2025-01-01",
+    "description": "Feriado de pancho",
+    "is_optional": false,
+    "type": "FERIADO_FIJO"
+  },
+  {
+    "start_date": "2025-01-15",
+    "end_date": "2025-01-15",
+    "description": "Feriado de Patriotico",
+    "is_optional": false,
+    "type": "FERIADO_FIJO"
+  },
+  {
+    "start_date": "2025-01-17",
+    "end_date": "2025-01-22",
+    "description": "Feriado de Unico y diferente",
+    "is_optional": false,
+    "type": "FERIADO_MOVIL"
+  }
+]
