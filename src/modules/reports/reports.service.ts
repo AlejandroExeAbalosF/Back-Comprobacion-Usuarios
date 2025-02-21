@@ -251,8 +251,24 @@ export class ReportsService {
       );
 
       invoiceTableTop = invoiceTableTop + 14;
+      let contPresente = 0;
+      let contAusente = 0;
+      const contLlegadaTarde = 0;
+      const contSalidaTemprano = 0;
       days.map((day) => {
         const registro = registrosPorFecha[day.date];
+        contPresente = registro?.type
+          ? registro.type === 'present'
+            ? contPresente + 1
+            : contPresente
+          : contPresente;
+        contAusente = registro?.type
+          ? registro.type === 'absent'
+            ? contAusente + 1
+            : contAusente
+          : day.day !== 'Sáb' && day.day !== 'Dom'
+            ? contAusente + 1
+            : contAusente;
         // Define los datos a mostrar; si no hay registro, quedan vacíos
         // Convertir a la zona horaria de Argentina
         const entryZoned =
@@ -350,6 +366,11 @@ export class ReportsService {
         .fillColor('black')
         .text('Dias trabajados', 55, invoiceTableTop);
 
+      doc
+        .font('Helvetica-Bold')
+        .fillColor('black')
+        .text(`${contPresente}`, 125, invoiceTableTop);
+
       const xPositionss = [50, 120, 192, 250, 325, 541]; // posiciones de las columnas
       const yInicioo = invoiceTableTop - 4.5; // inicio de la celda
       const yFinn = invoiceTableTop + 10; // fin de la celda, ajusta la altura según lo necesites
@@ -382,6 +403,11 @@ export class ReportsService {
         .font('Helvetica-Bold')
         .fillColor('black')
         .text('Dias ausentes', 55, invoiceTableTop);
+
+      doc
+        .font('Helvetica-Bold')
+        .fillColor('black')
+        .text(`${contAusente}`, 125, invoiceTableTop);
 
       xPositionss.forEach((x) => {
         doc
