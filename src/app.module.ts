@@ -16,6 +16,7 @@ import { TasksModule } from './modules/tasks/tasks.module';
 import { MinistriesModule } from './modules/ministries/ministries.module';
 import { SecretariatsModule } from './modules/secretariats/secretariats.module';
 import { NonWorkingDayModule } from './modules/non-working-day/non-working-day.module';
+import { ReportsModule } from './modules/reports/reports.module';
 
 @Module({
   imports: [
@@ -46,7 +47,9 @@ import { NonWorkingDayModule } from './modules/non-working-day/non-working-day.m
 
     SecretariatsModule,
 
-    NonWorkingDayModule, //sed module
+    NonWorkingDayModule,
+
+    ReportsModule, //sed module
   ],
   controllers: [AppController],
   providers: [AppService],

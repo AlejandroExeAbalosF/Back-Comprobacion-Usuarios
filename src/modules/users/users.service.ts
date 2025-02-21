@@ -117,6 +117,26 @@ export class UsersService {
     if (!users) throw new NotFoundException('No se encontraron usuarios ');
     return users;
   }
+
+  async getUserWithRegistrationsByMonthAndYear(
+    userId: string,
+    year: number,
+    month: number,
+  ): Promise<User | null> {
+    return await this.userService
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.secretariat', 'secretariat')
+      .leftJoinAndSelect(
+        'user.registrations',
+        'registration',
+        `EXTRACT(YEAR FROM registration.entryDate) = :year AND EXTRACT(MONTH FROM registration.entryDate) = :month`,
+        { year, month },
+      )
+      .where('user.id = :userId', { userId })
+      .orderBy('registration.entryDate', 'ASC') // Ordena por entryDate ascendente
+      .getOne();
+  }
+
   async searchDni(dni: number) {
     return await this.userService.findOne({ where: { document: dni } });
   }
