@@ -1,0 +1,67 @@
+[
+  {
+    "name": "a",
+    "description": "Licencia anual ordinaria obligatoria",
+    "nameArt": "4"
+  },
+  {
+    "name": "b",
+    "description": "Licencias Especiales",
+    "nameArt": "4"
+  },
+  {
+    "name": "c",
+    "description": "Justificaciones",
+    "nameArt": "4"
+  },
+  {
+    "name": "d",
+    "description": "Franquicias",
+    "nameArt": "4"
+  },
+  {
+    "name": "e",
+    "description": "Permisos para Salidas Particulares y Oficiales",
+    "nameArt": "4"
+  },
+  {
+    "name": "a",
+    "description": "Licencia anual ordinaria obligatoria",
+    "nameArt": "83"
+  },
+  {
+    "name": "b",
+    "description": "Corto Tratamiento",
+    "nameArt": "83"
+  },
+  {
+    "name": "c",
+    "description": "Largo tratamiento",
+    "nameArt": "83"
+  },
+  {
+    "name": "d",
+    "description": "Atención a familiares",
+    "nameArt": "83"
+  },
+  {
+    "name": "e",
+    "description": "Atención hijos discapacitados",
+    "nameArt": "83"
+  },
+  {
+    "name": "f",
+    "description": "Para rendir exámenes",
+    "nameArt": "83"
+  },
+  {
+    "name": "g",
+    "description": "Maternidad",
+    "nameArt": "83"
+  },
+  {
+    "name": "h",
+    "description": "Fallecimiento",
+    "nameArt": "83"
+  }
+]

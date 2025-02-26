@@ -7,15 +7,24 @@ import * as registrationsData from '../helpers/preload-registrations.data.json';
 import * as registrations1Data from '../helpers/preload-1registers.data.json';
 import * as ministriesData from '../helpers/preload-ministries.data.json';
 import * as secretariatsData from '../helpers/preload-secretariat.data.json';
+import * as articulosData from '../helpers/preload-articulos.data.json';
+import * as incisosData from '../helpers/preload-incisos.data.json';
+import * as subIncisosData from '../helpers/preload-subIncisos.data.json';
 import * as bcrypt from 'bcrypt';
 import { CreateRegistrationDto } from 'src/modules/registrations/dto/create-registration.dto';
 import { Registration } from 'src/modules/registrations/entities/registration.entity';
 import { Ministry } from 'src/modules/ministries/entities/ministry.entity';
 import { Secretariat } from 'src/modules/secretariats/entities/secretariat.entity';
+import { Articulo } from 'src/modules/articulos/entities/articulo.entity';
+import { Inciso } from 'src/modules/articulos/entities/inciso.entity';
+import { SubInciso } from 'src/modules/articulos/entities/sub-inciso.entity';
+import { Shift } from 'src/modules/users/entities/shift.entity';
 
 @Injectable()
 export class SeedService implements OnModuleInit {
   constructor(
+    @InjectRepository(Shift)
+    private readonly shiftRepository: Repository<Shift>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     @InjectRepository(Registration)
@@ -24,10 +33,17 @@ export class SeedService implements OnModuleInit {
     private readonly ministryRepository: Repository<Ministry>,
     @InjectRepository(Secretariat)
     private readonly secretariatRepository: Repository<Secretariat>,
+    @InjectRepository(Articulo)
+    private readonly articuloRepository: Repository<Articulo>,
+    @InjectRepository(Inciso)
+    private readonly incisoRepository: Repository<Inciso>,
+    @InjectRepository(SubInciso)
+    private readonly subIncisoRepository: Repository<SubInciso>,
   ) {}
 
   async onModuleInit() {
     //preload on start
+    await this.preloadDataArticulos();
     await this.preloadDataMinistries();
     await this.preloadDataSecretariats();
     await this.preloadDataUser();
@@ -68,8 +84,22 @@ export class SeedService implements OnModuleInit {
     return message;
   }
 
+  async preloadDataArticulos() {
+    await this.executeSeedArticulos();
+    Logger.log('Seed de Articulos cargado correctamente', 'PreloadData');
+    const message = { message: 'Seed de Articulos cargado correctamente' };
+    return message;
+  }
   private async executeSeedUsers() {
     const users = usersData;
+    const shift = {
+      name: 'Mañana',
+      entryHour: '08:00:00',
+      exitHour: '14:00:00',
+    };
+
+    const newShift = this.shiftRepository.create(shift);
+    await this.shiftRepository.save(newShift);
 
     for (const user of users) {
       const userFinded = await this.userRepository.findOneBy({
@@ -108,6 +138,7 @@ export class SeedService implements OnModuleInit {
         const newUser = this.userRepository.create({
           ...userData,
           secretariat: secretariatFinded ? secretariatFinded : undefined,
+          shift: newShift,
         });
         await this.userRepository.save(newUser);
       }
@@ -152,6 +183,7 @@ export class SeedService implements OnModuleInit {
                 : null,
               exitDate: register.exitDate ? new Date(register.exitDate) : null,
               user: user,
+              status: register.status as 'PRESENTE' | 'AUSENTE' | 'TRABAJANDO',
             });
             await this.registrationRepository.save(newRegistrations);
           }
@@ -174,6 +206,7 @@ export class SeedService implements OnModuleInit {
             entryDate: register.entryDate ? new Date(register.entryDate) : null,
             exitDate: register.exitDate ? new Date(register.exitDate) : null,
             user: user,
+            status: register.status,
           });
           await this.registrationRepository.save(newRegistrations);
         }
@@ -216,6 +249,56 @@ export class SeedService implements OnModuleInit {
         ministry: ministryFinded,
       });
       await this.secretariatRepository.save(newSecretariat);
+    }
+  }
+
+  async executeSeedArticulos() {
+    const articles = articulosData;
+    const incisos = incisosData;
+    const subIncisos = subIncisosData;
+
+    for (const article of articles) {
+      // 1️⃣ Crear y guardar el artículo
+      const newArticle = this.articuloRepository.create({
+        name: article.name.toString(),
+        description: article.description,
+      });
+      await this.articuloRepository.save(newArticle);
+
+      // 2️⃣ Filtrar incisos que pertenecen a este artículo
+      const incisosFiltrados = incisos.filter(
+        (i) => i.nameArt === newArticle.name,
+      );
+
+      for (const inciso of incisosFiltrados) {
+        const newInciso = this.incisoRepository.create({
+          name: inciso.name.toString(),
+          description: inciso.description,
+          articulo: newArticle,
+        });
+        await this.incisoRepository.save(newInciso);
+      }
+
+      // 3️⃣ Obtener todos los incisos creados de este artículo de una sola vez
+      const incisosGuardados = await this.incisoRepository.find({
+        where: { articulo: newArticle },
+      });
+
+      for (const inciso of incisosGuardados) {
+        // 4️⃣ Filtrar y guardar subIncisos de manera dinámica
+        const subIncisosFiltrados = subIncisos.filter(
+          (s) => s.nameInc === inciso.name,
+        );
+
+        for (const subInciso of subIncisosFiltrados) {
+          const newSubInciso = this.subIncisoRepository.create({
+            name: subInciso.name.toString(),
+            description: subInciso.description,
+            inciso,
+          });
+          await this.subIncisoRepository.save(newSubInciso);
+        }
+      }
     }
   }
 }

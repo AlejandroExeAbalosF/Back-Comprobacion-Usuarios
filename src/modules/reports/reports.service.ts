@@ -110,9 +110,9 @@ function generateTableBody(
     .text(Semana, 117, y)
     .text(Entrada, 160, y)
     .text(Salida, 206, y)
-    .text(LlegadaTarde, 234, y)
-    .text(Ausente, 315, y)
-    .text(Justificación, 420, y);
+    .text(LlegadaTarde, 273, y)
+    .text(Ausente, 339, y)
+    .text(Justificación, 373, y);
 
   const xPositions = [50, 100, 146, 192, 238, 313, 370, 541]; // posiciones de las columnas
   const yInicio = y - 4.5; // inicio de la celda
@@ -257,13 +257,13 @@ export class ReportsService {
       const contSalidaTemprano = 0;
       days.map((day) => {
         const registro = registrosPorFecha[day.date];
-        contPresente = registro?.type
-          ? registro.type === 'present'
+        contPresente = registro?.status
+          ? registro.status === 'PRESENTE'
             ? contPresente + 1
             : contPresente
           : contPresente;
-        contAusente = registro?.type
-          ? registro.type === 'absent'
+        contAusente = registro?.status
+          ? registro.status === 'AUSENTE'
             ? contAusente + 1
             : contAusente
           : day.day !== 'Sáb' && day.day !== 'Dom'
@@ -281,13 +281,21 @@ export class ReportsService {
             : null;
 
         // Obtener solo hora y minutos en formato HH:mm
-        const entrada = entryZoned ? format(entryZoned, 'HH:mm') : '';
+        const entrada = entryZoned
+          ? registro.type === 'ARTICULO' || registro.type === 'FERIADO'
+            ? ''
+            : format(entryZoned, 'HH:mm')
+          : '';
         const salida = exitZoned ? format(exitZoned, 'HH:mm') : '';
         // console.log('entrada', entrada);
         // Puedes agregar lógica para "Llegada tarde" o "Ausente" según la información que tengas
-        const llegadaTarde = ''; // Por ejemplo, podrías calcular si la hora de entrada es posterior a la hora programada
-        const ausente = registro ? '' : 'Ausente'; // Si no hay registro, marcar como ausente
-        const justificacion = registro ? registro.description || '' : '';
+        const llegadaTarde = registro?.type === 'LLEGADA_TARDE' ? 'X' : ''; // Por ejemplo, podrías calcular si la hora de entrada es posterior a la hora programada
+        const ausente = registro?.status === 'AUSENTE' ? 'X' : ''; // Si no hay registro, marcar como ausente
+        const justificacion = registro
+          ? registro.type === 'ARTICULO'
+            ? 'Art.' + registro.articulo
+            : registro.type
+          : '';
 
         generateTableBody(
           doc,
@@ -296,9 +304,9 @@ export class ReportsService {
           day.day,
           entrada,
           salida,
-          '',
-          '',
-          '',
+          llegadaTarde,
+          ausente,
+          justificacion,
         );
         invoiceTableTop += 14; // Ajusta la altura de cada fila (cambia el valor según tu necesidad)
       });

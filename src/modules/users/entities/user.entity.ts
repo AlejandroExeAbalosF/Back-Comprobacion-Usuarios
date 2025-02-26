@@ -10,6 +10,7 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { Shift } from './shift.entity';
 
 @Entity({ name: 'users' })
 export class User {
@@ -122,4 +123,7 @@ export class User {
   })
   @JoinColumn({ name: 'secretariat_id' })
   secretariat: Secretariat;
+
+  @ManyToOne(() => Shift, (shift) => shift.users) // 👈 Cada usuario tiene un solo turno
+  shift: Shift;
 }

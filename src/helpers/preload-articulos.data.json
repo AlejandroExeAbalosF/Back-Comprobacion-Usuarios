@@ -1,0 +1,402 @@
+[
+  {
+    "name": 1,
+    "description": "Fíjase el presente régimen de licencia, Justificaciones y franquicias para el personal A.P."
+  },
+  {
+    "name": 2,
+    "description": "Facúltase a la Autoridad de aplicación a dictar normas reglamentarias de contenido operativo."
+  },
+  {
+    "name": 3,
+    "description": "Se considera licencia, toda inasistencia debidamente justificada por alguna causa prevista."
+  },
+  {
+    "name": 4,
+    "description": "Beneficios Previstos."
+  },
+  {
+    "name": 5,
+    "description": "Caducidad."
+  },
+  {
+    "name": 6,
+    "description": "Autoridad de Aplicación."
+  },
+  {
+    "name": 7,
+    "description": "Licencia Anual Ordinaria Obligatoria."
+  },
+  {
+    "name": 8,
+    "description": "Solicitud y usufructo."
+  },
+  {
+    "name": 9,
+    "description": "Postergación y fraccionamiento."
+  },
+  {
+    "name": 10,
+    "description": "Cómputo de Antigüedad."
+  },
+  {
+    "name": 11,
+    "description": "Extensión."
+  },
+  {
+    "name": 12,
+    "description": "Prestación Mínima."
+  },
+  {
+    "name": 13,
+    "description": "Periodos que no Generan Derecho a licencia."
+  },
+  {
+    "name": 14,
+    "description": "Licencia simultánea."
+  },
+  {
+    "name": 15,
+    "description": "Compensación económica."
+  },
+  {
+    "name": 16,
+    "description": "En caso de fallecimiento."
+  },
+  {
+    "name": 17,
+    "description": "Interrupción."
+  },
+  {
+    "name": 18,
+    "description": "Por Enfermedad."
+  },
+  {
+    "name": 19,
+    "description": "Casos de Fuerza Mayor."
+  },
+  {
+    "name": 20,
+    "description": "Cuando el agente deberá requerir intervención médica."
+  },
+  {
+    "name": 21,
+    "description": "El agente está obligado a someterse al control del Servicio Médico."
+  },
+  {
+    "name": 22,
+    "description": "Corto Tratamiento."
+  },
+  {
+    "name": 23,
+    "description": "Retiro del lugar de trabajo por afección o enfermedad."
+  },
+  {
+    "name": 24,
+    "description": "Largo tratamiento."
+  },
+  {
+    "name": 25,
+    "description": "Plazos - 50% de la remuneración."
+  },
+  {
+    "name": 26,
+    "description": "Agotado el término de la Licencia por Largo Tratamiento - 2 años."
+  },
+  {
+    "name": 27,
+    "description": "La recidiva de enfermedades crónicas no será considerada nueva enfermedad."
+  },
+  {
+    "name": 28,
+    "description": "Transformación del cómputo de licencias por corto tratamiento."
+  },
+  {
+    "name": 29,
+    "description": "Incapacidad total y permanente."
+  },
+  {
+    "name": 30,
+    "description": "Alta del Agente."
+  },
+  {
+    "name": 31,
+    "description": "Inexistencia de servicio Médico autorizado."
+  },
+  {
+    "name": 32,
+    "description": "Tratamiento de enfermedades profesionales o accidentes de trabajo (ART)."
+  },
+  {
+    "name": 33,
+    "description": "Cambio de Funciones."
+  },
+  {
+    "name": 34,
+    "description": "Baja del Agente."
+  },
+  {
+    "name": 35,
+    "description": "Reubicación."
+  },
+  {
+    "name": 36,
+    "description": "Reintegro anticipado del agente."
+  },
+  {
+    "name": 37,
+    "description": "Ausencia del lugar de residencia del agente."
+  },
+  {
+    "name": 38,
+    "description": "Incompatibilidades."
+  },
+  {
+    "name": 39,
+    "description": "Presentación de Declaración Jurada."
+  },
+  {
+    "name": 40,
+    "description": "Para atención a familiar enfermo."
+  },
+  {
+    "name": 41,
+    "description": "Atención a hijos discapacitados neurológicos."
+  },
+  {
+    "name": 42,
+    "description": "Licencia por maternidad - Periodo."
+  },
+  {
+    "name": 43,
+    "description": "Modificación del término de licencia."
+  },
+  {
+    "name": 44,
+    "description": "Deber de comunicación."
+  },
+  {
+    "name": 45,
+    "description": "Modificación de condiciones de trabajo por maternidad."
+  },
+  {
+    "name": 46,
+    "description": "Reducción horaria para madres de lactantes - franquicia."
+  },
+  {
+    "name": 47,
+    "description": "Tenencia con fines de adopción."
+  },
+  {
+    "name": 48,
+    "description": "El agente varón."
+  },
+  {
+    "name": 49,
+    "description": "Paternidad."
+  },
+  {
+    "name": 50,
+    "description": "Fallecimiento de familiar."
+  },
+  {
+    "name": 51,
+    "description": "Matrimonio."
+  },
+  {
+    "name": 52,
+    "description": "Para realizar estudios, investigaciones, becas."
+  },
+  {
+    "name": 53,
+    "description": "Plazo máximo de 1 año."
+  },
+  {
+    "name": 54,
+    "description": "La Autoridad podrá determinar el número máximo de agentes."
+  },
+  {
+    "name": 55,
+    "description": "Para rendir exámenes."
+  },
+  {
+    "name": 56,
+    "description": "Participación en concursos."
+  },
+  {
+    "name": 57,
+    "description": "Modificación de horarios."
+  },
+  {
+    "name": 58,
+    "description": "Asuntos Particulares."
+  },
+  {
+    "name": 59,
+    "description": "No podrá adicionarse a otras licencias que se hubieran otorgado."
+  },
+  {
+    "name": 60,
+    "description": "No podrá ausentarse ni hacer uso, hasta tanto sea notificado."
+  },
+  {
+    "name": 61,
+    "description": "Podrá reintegrarse antes del vencimiento del plazo acordado."
+  },
+  {
+    "name": 62,
+    "description": "El personal docente interino podrá usar este beneficio."
+  },
+  {
+    "name": 63,
+    "description": "Licencia por graves asuntos de familia o fuerza mayor."
+  },
+  {
+    "name": 64,
+    "description": "Para actividades culturales y deportivas no rentadas."
+  },
+  {
+    "name": 65,
+    "description": "Para deportistas, dirigente, director técnico, instructor, entrenador, etc."
+  },
+  {
+    "name": 66,
+    "description": "Reservista en Fuerzas Armadas o de seguridad."
+  },
+  {
+    "name": 67,
+    "description": "Licencia por razones Políticas - Cargos electivos."
+  },
+  {
+    "name": 68,
+    "description": "Ejercicio de Cargos Electivos o funciones superiores de Gobierno."
+  },
+  {
+    "name": 69,
+    "description": "Ejercicio de cargos sin estabilidad o de mayor jerarquía."
+  },
+  {
+    "name": 70,
+    "description": "Deberá acreditar cinco (5) años de antigüedad."
+  },
+  {
+    "name": 71,
+    "description": "Licencia Gremial."
+  },
+  {
+    "name": 72,
+    "description": "CAPITULO IV - JUSTIFICACIONES."
+  },
+  {
+    "name": 73,
+    "description": "Donación de Sangre - tres (3) veces al año."
+  },
+  {
+    "name": 74,
+    "description": "Razones Particulares."
+  },
+  {
+    "name": 75,
+    "description": "Actividades extraordinarias."
+  },
+  {
+    "name": 76,
+    "description": "Festividades Religiosas de otros credos."
+  },
+  {
+    "name": 77,
+    "description": "Fuerza Mayor (fenómenos meteorológicos)."
+  },
+  {
+    "name": 78,
+    "description": "Citaciones o trámites personales."
+  },
+  {
+    "name": 79,
+    "description": "Compensatorios."
+  },
+  {
+    "name": 80,
+    "description": "Capacitación y Perfeccionamiento profesional."
+  },
+  {
+    "name": 81,
+    "description": "Comisión de Servicios."
+  },
+  {
+    "name": 82,
+    "description": "Delegados Gremiales."
+  },
+  {
+    "name": 83,
+    "description": "Personal sin estabilidad."
+  },
+  {
+    "name": 84,
+    "description": "Reglamentación conforme a su situación de revista originaria."
+  },
+  {
+    "name": 85,
+    "description": "Personal Adscripto o afectado."
+  },
+  {
+    "name": 86,
+    "description": "Prohíbase la afectación de personal docente."
+  },
+  {
+    "name": 87,
+    "description": "Personal Contratado (excluido)."
+  },
+  {
+    "name": 88,
+    "description": "Inasistencia injustificadas - (10) cesantía."
+  },
+  {
+    "name": 89,
+    "description": "Inasistencia con aviso y sin aviso de docentes."
+  },
+  {
+    "name": 90,
+    "description": "Horario de Labor."
+  },
+  {
+    "name": 91,
+    "description": "Las faltas de puntualidad."
+  },
+  {
+    "name": 92,
+    "description": "Registro de antecedentes."
+  },
+  {
+    "name": 93,
+    "description": "Comunicar a los Superiores sobre irregularidades."
+  },
+  {
+    "name": 94,
+    "description": "Obligación de denunciar domicilio."
+  },
+  {
+    "name": 95,
+    "description": "Sanciones por impuntualidades."
+  },
+  {
+    "name": 96,
+    "description": "Sanciones por ausencias injustificadas."
+  },
+  {
+    "name": 97,
+    "description": "Causal de cesantía."
+  },
+  {
+    "name": 98,
+    "description": "Descuentos de haberes."
+  },
+  {
+    "name": 99,
+    "description": "Salidas Particulares."
+  },
+  {
+    "name": 100,
+    "description": "Salidas Oficiales."
+  }
+]

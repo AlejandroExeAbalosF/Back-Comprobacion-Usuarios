@@ -48,13 +48,27 @@ export class Registration {
   exitDate: Date | null;
 
   @Column({ type: 'varchar', nullable: true })
+  articulo: string | null;
+
+  @Column({ type: 'varchar', nullable: true })
   description: string | null;
 
   @Column({ type: 'varchar', nullable: true })
   comment: string | null;
 
+  @Column({ type: 'varchar', nullable: true })
+  justification: string | null;
+
+  @Column({
+    type: 'enum',
+    enum: ['PRESENTE', 'AUSENTE', 'TRABAJANDO', 'NO_LABORABLE'],
+    default: 'PRESENTE',
+  })
+  status: 'PRESENTE' | 'AUSENTE' | 'TRABAJANDO' | 'NO_LABORABLE';
+
   @Column({
     type: 'varchar',
+    nullable: true,
   })
   type: string;
   // enum: ['ASISTENCIA', 'AUSENTE', 'PERMISO', 'TARDANZA'],

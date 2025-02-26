@@ -2,6 +2,7 @@ import { Transform, Type } from 'class-transformer';
 import {
   IsDate,
   IsDateString,
+  IsIn,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -17,6 +18,11 @@ export class CreateRegistrationDto {
   @IsString()
   @MinLength(2)
   readonly type: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @IsIn(['PRESENTE', 'AUSENTE', 'TRABAJANDO', 'NO_LABORABLE']) // 👈 Solo permite estos valores
+  readonly status: 'PRESENTE' | 'AUSENTE' | 'TRABAJANDO' | 'NO_LABORABLE';
 
   @IsNotEmpty()
   @Transform(({ value }: { value: string | null }) =>

@@ -7,7 +7,8 @@
     "password": "Admin123.",
     "rol": "admin",
     "ministry": "Ministerio de Gobierno, Derechos Humanos y Trabajo",
-    "secretariat": "Secretaría de Derechos Humanos"
+    "secretariat": "Secretaría de Derechos Humanos",
+    "turno": "M"
   },
   {
     "lastName": "FERNANDEZ",
@@ -29,7 +30,8 @@
     "laborSchedule": "M",
     "laborAddress": "Sarmiento y Belgrano",
     "ministry": "Ministerio de Gobierno, Derechos Humanos y Trabajo",
-    "secretariat": "Secretaría de Derechos Humanos"
+    "secretariat": "Secretaría de Derechos Humanos",
+    "turno": "M"
   },
   {
     "lastName": "LOPEZ ULLONES",
@@ -51,7 +53,8 @@
     "laborSchedule": "R",
     "laborAddress": "Santiago del Estero 2291",
     "ministry": "Ministerio de Gobierno, Derechos Humanos y Trabajo",
-    "secretariat": "Secretaría de Derechos Humanos"
+    "secretariat": "Secretaría de Derechos Humanos",
+    "turno": "M"
   },
   {
     "lastName": "FERNANDEZ",
@@ -73,7 +76,8 @@
     "laborSchedule": "M",
     "laborAddress": "Santiago del Estero 2291",
     "ministry": "Ministerio de Gobierno, Derechos Humanos y Trabajo",
-    "secretariat": "Secretaría de Derechos Humanos"
+    "secretariat": "Secretaría de Derechos Humanos",
+    "turno": "M"
   },
   {
     "lastName": "CALIVA",
@@ -95,7 +99,8 @@
     "laborSchedule": "M",
     "laborAddress": "Santiago del Estero 2291",
     "ministry": "Ministerio de Gobierno, Derechos Humanos y Trabajo",
-    "secretariat": "Secretaría de Derechos Humanos"
+    "secretariat": "Secretaría de Derechos Humanos",
+    "turno": "M"
   },
   {
     "lastName": "DIB",
@@ -117,7 +122,8 @@
     "laborSchedule": "M",
     "laborAddress": "Santiago del Estero 2291",
     "ministry": "Ministerio de Gobierno, Derechos Humanos y Trabajo",
-    "secretariat": "Secretaría de Derechos Humanos"
+    "secretariat": "Secretaría de Derechos Humanos",
+    "turno": "M"
   },
   {
     "lastName": "GOMEZ",
@@ -139,7 +145,8 @@
     "laborSchedule": "M",
     "laborAddress": "Santiago del estero 2291",
     "ministry": "Ministerio de Gobierno, Derecho Humanos y Trabajo",
-    "secretariat": "Secretaría de Derechos Humanos"
+    "secretariat": "Secretaría de Derechos Humanos",
+    "turno": "M"
   },
   {
     "lastName": "FERNANDEZ",
@@ -161,7 +168,8 @@
     "laborSchedule": "M",
     "laborAddress": "Santiago del estero 2291",
     "ministry": "Ministerio de Gobierno, Derecho Humanos y Trabajo",
-    "secretariat": "Secretaría de Derechos Humanos"
+    "secretariat": "Secretaría de Derechos Humanos",
+    "turno": "M"
   },
   {
     "lastName": "CORDOBA",
@@ -183,7 +191,8 @@
     "laborSchedule": "M",
     "laborAddress": "Santiago del estero 2291",
     "ministry": "Ministerio de Gobierno, Derecho Humanos y Trabajo",
-    "secretariat": "Secretaría de Derechos Humanos"
+    "secretariat": "Secretaría de Derechos Humanos",
+    "turno": "M"
   },
   {
     "lastName": "GARCIA",
@@ -205,7 +214,8 @@
     "laborSchedule": "M",
     "laborAddress": "Santiago del estero 2291",
     "ministry": "Ministerio de Gobierno, Derechos Humanos y Trabajo",
-    "secretariat": "Secretaría de Derechos Humanos"
+    "secretariat": "Secretaría de Derechos Humanos",
+    "turno": "M"
   },
   {
     "lastName": "DAVILA",
@@ -228,7 +238,8 @@
     "laborSchedule": "M",
     "laborAddress": "Santiago del Estero 2291",
     "ministry": "Ministerio de Gobierno, Derechos Humanos y Trabajo",
-    "secretariat": "Secretaría de Derechos Humanos"
+    "secretariat": "Secretaría de Derechos Humanos",
+    "turno": "M"
   },
   {
     "lastName": "PORTILLO",
@@ -250,7 +261,8 @@
     "laborSchedule": "M",
     "laborAddress": "Santiago del estero 2291",
     "ministry": "Ministerio de Gobierno, Derecho Humanos y Trabajo",
-    "secretariat": "Secretaría de Derechos Humanos"
+    "secretariat": "Secretaría de Derechos Humanos",
+    "turno": "M"
   },
   {
     "lastName": "GUERRA",
@@ -272,7 +284,8 @@
     "laborSchedule": "M",
     "laborAddress": "Santiago del estero 2291",
     "ministry": "Ministerio de Gobierno, Derecho Humanos y Trabajo",
-    "secretariat": "Secretaría de Derechos Humanos"
+    "secretariat": "Secretaría de Derechos Humanos",
+    "turno": "M"
   },
   {
     "lastName": "ROMERO",
@@ -294,7 +307,8 @@
     "laborSchedule": "M",
     "laborAddress": "Santiago del estero 2291",
     "ministry": "Ministerio de Gobierno, Derechos Humanos y Trabajo",
-    "secretariat": "Secretaría de Derechos Humanos"
+    "secretariat": "Secretaría de Derechos Humanos",
+    "turno": "M"
   },
   {
     "lastName": "FLORES TORRES",
@@ -316,7 +330,8 @@
     "laborSchedule": "M",
     "laborAddress": "Santiago del estero 2291",
     "ministry": "Ministerio de Gobierno, Derechos Humanos y Trabajo",
-    "secretariat": "Secretaría de Derechos Humanos"
+    "secretariat": "Secretaría de Derechos Humanos",
+    "turno": "M"
   },
   {
     "lastName": "MAGNO",
@@ -338,7 +353,8 @@
     "laborSchedule": "M",
     "laborAddress": "Santiago del estero 2291",
     "ministry": "Ministerio de Gobierno, Derechos Humanos y Trabajo",
-    "secretariat": "Secretaría de Derechos Humanos"
+    "secretariat": "Secretaría de Derechos Humanos",
+    "turno": "M"
   },
   {
     "lastName": "ROBLES",
@@ -360,7 +376,8 @@
     "laborSchedule": "M",
     "laborAddress": "Santiago del Estero 2291",
     "ministry": "Ministerio de Gobierno, Derechos Humanos y Trabajo",
-    "secretariat": "Secretaría de Derechos Humanos"
+    "secretariat": "Secretaría de Derechos Humanos",
+    "turno": "M"
   },
   {
     "lastName": "ACOSTA",
@@ -382,7 +399,8 @@
     "laborSchedule": "M",
     "laborAddress": "Santiago del Estero 2291",
     "ministry": "Ministerio de Gobierno, Derechos Humanos y Trabajo",
-    "secretariat": "Secretaría de Derechos Humanos"
+    "secretariat": "Secretaría de Derechos Humanos",
+    "turno": "M"
   },
   {
     "lastName": "TURK",
@@ -404,7 +422,8 @@
     "laborSchedule": "M",
     "laborAddress": "Santiago del Estero 2291",
     "ministry": "Ministerio de Gobierno, Derechos Humanos y Trabajo",
-    "secretariat": "Secretaría de Derechos Humanos"
+    "secretariat": "Secretaría de Derechos Humanos",
+    "turno": "M"
   },
   {
     "lastName": "POSTIGLIONE GARCIA",
@@ -426,7 +445,8 @@
     "laborSchedule": "M",
     "laborAddress": "Santiago del Estero 2291",
     "ministry": "Ministerio de Gobierno, Derechos Humanos y Trabajo",
-    "secretariat": "Secretaría de Derechos Humanos"
+    "secretariat": "Secretaría de Derechos Humanos",
+    "turno": "M"
   },
   {
     "lastName": "REYES ARREDONDO",
@@ -448,7 +468,8 @@
     "laborSchedule": "",
     "laborAddress": "Santiago del Estero 2291",
     "ministry": "Ministerio de Gobierno, Derechos Humanos y Trabajo",
-    "secretariat": "Secretaría de Derechos Humanos"
+    "secretariat": "Secretaría de Derechos Humanos",
+    "turno": "M"
   },
   {
     "lastName": "ULDRY FUENTES",
@@ -470,7 +491,8 @@
     "laborSchedule": "",
     "laborAddress": "Santiago del Estero 2291",
     "ministry": "Ministerio de Gobierno, Derechos Humanos y Trabajo",
-    "secretariat": "Secretaría de Derechos Humanos"
+    "secretariat": "Secretaría de Derechos Humanos",
+    "turno": "M"
   },
   {
     "lastName": "ARECHAGA",
@@ -492,7 +514,8 @@
     "laborSchedule": "M",
     "laborAddress": "Santiago del Estero 2291",
     "ministry": "Ministerio de Gobierno, Derechos Humanos y Trabajo",
-    "secretariat": "Secretaría de Derechos Humanos"
+    "secretariat": "Secretaría de Derechos Humanos",
+    "turno": "M"
   },
   {
     "lastName": "BURGIO",
@@ -514,7 +537,8 @@
     "laborSchedule": "M",
     "laborAddress": "Santiago del Estero 2291",
     "ministry": "Ministerio de Gobierno, Derechos Humanos y Trabajo",
-    "secretariat": ""
+    "secretariat": "",
+    "turno": "M"
   },
   {
     "lastName": "BENTO",
@@ -536,7 +560,8 @@
     "laborSchedule": "M",
     "laborAddress": "Santiago del Estero 2291",
     "ministry": "Ministerio de Gobierno, Derechos Humanos y Trabajo",
-    "secretariat": "Secretaría de Derechos Humanos"
+    "secretariat": "Secretaría de Derechos Humanos",
+    "turno": "M"
   },
   {
     "lastName": "OIENI",
@@ -558,7 +583,8 @@
     "laborSchedule": "M",
     "laborAddress": "Santiago del Estero 2291",
     "ministry": "Ministerio de Gobierno, Derechos Humanos y Trabajo",
-    "secretariat": "Secretaría de Derechos Humanos"
+    "secretariat": "Secretaría de Derechos Humanos",
+    "turno": "M"
   },
   {
     "lastName": "TULA",
@@ -580,7 +606,8 @@
     "laborSchedule": "M",
     "laborAddress": "Santiago del Estero 2291",
     "ministry": "Ministerio de Gobierno, Derechos Humanos y Trabajo",
-    "secretariat": "Secretaría de Derechos Humanos"
+    "secretariat": "Secretaría de Derechos Humanos",
+    "turno": "M"
   },
   {
     "lastName": "BARCONTE",
@@ -602,7 +629,8 @@
     "laborSchedule": "M",
     "laborAddress": "Santiago del Estero 2291",
     "ministry": "Ministerio de Gobierno, Derechos Humanos y Trabajo",
-    "secretariat": "Secretaría de Derechos Humanos"
+    "secretariat": "Secretaría de Derechos Humanos",
+    "turno": "M"
   },
   {
     "lastName": "DINARTE VELAZQUEZ",
@@ -624,7 +652,8 @@
     "laborSchedule": "M",
     "laborAddress": "",
     "ministry": "Ministerio de Gobierno, Derechos Humanos y Trabajo",
-    "secretariat": "Secretaría de Derechos Humanos"
+    "secretariat": "Secretaría de Derechos Humanos",
+    "turno": "M"
   },
   {
     "lastName": "RIVERO RODÓ",
@@ -646,7 +675,8 @@
     "laborSchedule": "",
     "laborAddress": "Santiago del Estero 2291",
     "ministry": "Ministerio de Gobierno, Derechos Humanos y Trabajo",
-    "secretariat": "Secretaría de Derechos Humanos"
+    "secretariat": "Secretaría de Derechos Humanos",
+    "turno": "M"
   },
   {
     "lastName": "ARIAS",
@@ -668,7 +698,8 @@
     "laborSchedule": "",
     "laborAddress": "",
     "ministry": "",
-    "secretariat": ""
+    "secretariat": "",
+    "turno": "M"
   },
   {
     "lastName": "VERDUN SAJAMA",
@@ -690,6 +721,7 @@
     "laborSchedule": "",
     "laborAddress": "",
     "ministry": "",
-    "secretariat": ""
+    "secretariat": "",
+    "turno": "M"
   }
 ]

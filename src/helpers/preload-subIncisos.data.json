@@ -1,0 +1,107 @@
+[
+  {
+    "name": 1,
+    "description": "Por enfermedad",
+    "nameInc": "b"
+  },
+  {
+    "name": 2,
+    "description": "Por accidente de trabajo o enfermedad profesional",
+    "nameInc": "b"
+  },
+  {
+    "name": 3,
+    "description": "Por atención a familiares",
+    "nameInc": "b"
+  },
+  {
+    "name": 4,
+    "description": "Por Maternidad - lactancia - paternidad - adopción",
+    "nameInc": "b"
+  },
+  {
+    "name": 5,
+    "description": "Por fallecimiento de familiares",
+    "nameInc": "b"
+  },
+  {
+    "name": 6,
+    "description": "Por matrimonio",
+    "nameInc": "b"
+  },
+  {
+    "name": 7,
+    "description": "Por estudios",
+    "nameInc": "b"
+  },
+  {
+    "name": 8,
+    "description": "Por asuntos particulares",
+    "nameInc": "b"
+  },
+  {
+    "name": 9,
+    "description": "Por actividades culturales y/o deportivas",
+    "nameInc": "b"
+  },
+  {
+    "name": 10,
+    "description": "Por reservista incorporado a las Fuerzas Armadas o de Seguridad",
+    "nameInc": "b"
+  },
+  {
+    "name": 11,
+    "description": "Por razones Políticas",
+    "nameInc": "b"
+  },
+  {
+    "name": 12,
+    "description": "Por cargos de mayor jerarquía",
+    "nameInc": "b"
+  },
+  {
+    "name": 13,
+    "description": "Por representación gremial",
+    "nameInc": "b"
+  },
+  {
+    "name": 1,
+    "description": "Por Donación de Sangre",
+    "nameInc": "c"
+  },
+  {
+    "name": 2,
+    "description": "Por Razones Particulares",
+    "nameInc": "c"
+  },
+  {
+    "name": 3,
+    "description": "Por actividades extraordinarias de servicio",
+    "nameInc": "c"
+  },
+  {
+    "name": 4,
+    "description": "Por festividades Religiosas",
+    "nameInc": "c"
+  },
+  {
+    "name": 5,
+    "description": "Por fuerza mayor",
+    "nameInc": "c"
+  },
+  {
+    "name": 6,
+    "description": "Por citaciones o trámites personales",
+    "nameInc": "c"
+  },
+  {
+    "name": 1,
+    "description": "Por capacitación y perfeccionamiento de servicio",
+    "nameInc": "d"
+  },
+  {
+    "name": 2,
+    "description": "Por ejercicio de la delegación gremial",
+    "nameInc": "d"
+  }
+]

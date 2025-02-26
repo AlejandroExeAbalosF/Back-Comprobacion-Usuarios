@@ -79,6 +79,7 @@ export class UsersService {
       )
       .leftJoinAndSelect('user.secretariat', 'secretariat')
       .leftJoinAndSelect('secretariat.ministry', 'ministry')
+      .leftJoinAndSelect('user.shift', 'shift')
       .where('user.rol = :rol', { rol: 'user' })
       .getMany();
 
@@ -175,11 +176,13 @@ export class UsersService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      const secretariatFinded = await this.secretariatRepository.findOneBy({
-        id: createUserDto.secretariatId,
+      const secretariatFinded = await this.secretariatRepository.findOne({
+        where: { id: createUserDto.secretariatId },
+        relations: ['ministry'],
       });
       if (!secretariatFinded)
         throw new BadRequestException('No se encontro la secretaria');
+
       const newUser = queryRunner.manager.create(User, {
         ...createUserDto,
         image: file
@@ -189,7 +192,15 @@ export class UsersService {
       });
       await queryRunner.manager.save(newUser);
       await queryRunner.commitTransaction();
-      return { message: 'Empleado creado exitosamente', user: newUser };
+      // 🔥 Recargar la relación para incluir `ministry`
+      const userWithRelations = await queryRunner.manager.findOne(User, {
+        where: { id: newUser.id },
+        relations: ['secretariat', 'secretariat.ministry'], // Cargar las relaciones necesarias
+      });
+      return {
+        message: 'Empleado creado exitosamente',
+        user: userWithRelations,
+      };
     } catch (error) {
       await queryRunner.rollbackTransaction();
       throw error;

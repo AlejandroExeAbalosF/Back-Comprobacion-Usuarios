@@ -86,7 +86,7 @@ export class RegistrationsService {
       if (
         isSameDay(startOfDay(lastRegistrationDate), startOfDay(currentDate))
       ) {
-        if (['present', 'absent'].includes(lastRegistration.type)) {
+        if (['present', 'absent'].includes(lastRegistration.status)) {
           throw new BadRequestException(
             'Ya se ha registrado la Salida o está registrado como Ausente.',
           );
@@ -103,23 +103,23 @@ export class RegistrationsService {
             .createQueryBuilder()
             .update(Registration)
             .set({
-              type: 'present',
+              status: 'PRESENTE',
               exitDate: exitDateUtc,
               exitCapture: file,
             })
             .where({ id: lastRegistration.id })
-            .returning(['exitDate', 'exitCapture', 'type'])
+            .returning(['exitDate', 'exitCapture', 'status'])
             .execute();
 
           // Actualizamos el objeto manualmente
           // console.log(updatedResult.raw[0]);
           const updatedValues: Pick<
             Registration,
-            'exitDate' | 'exitCapture' | 'type'
+            'exitDate' | 'exitCapture' | 'status'
           > = {
             exitDate: updatedResult.raw[0].exit_date, // Convertimos snake_case a camelCase
             exitCapture: updatedResult.raw[0].exit_capture,
-            type: updatedResult.raw[0].type,
+            status: updatedResult.raw[0].status,
           };
 
           await queryRunner.commitTransaction();
@@ -133,7 +133,7 @@ export class RegistrationsService {
             document: dniValidate.document,
             date: toZonedTime(updatedValues.exitDate as Date, timeZone),
             capture: updatedValues.exitCapture,
-            type: updatedValues.type,
+            status: updatedValues.status,
           });
 
           return { message: 'Registrada la Salida Correctamente' };
@@ -157,7 +157,7 @@ export class RegistrationsService {
       const newRegistration = queryRunner.manager.create(Registration, {
         ...registrationDto,
         entryCapture: file,
-        type: 'working',
+        status: 'TRABAJANDO',
         entryDate: entryDateUtc,
         user: dniValidate,
       });
@@ -175,7 +175,7 @@ export class RegistrationsService {
         document: dniValidate.document,
         date: toZonedTime(newRegistration.entryDate as Date, timeZone), // newRegistration.entryDate,
         capture: newRegistration.entryCapture,
-        type: newRegistration.type,
+        status: newRegistration.status,
       });
       console.log('horaUTC', newRegistration.entryDate);
       console.log(
@@ -245,7 +245,7 @@ export class RegistrationsService {
           console.log('fecha actual ', currentDate.toDate());
           try {
             const newRegistration = queryRunner.manager.create(Registration, {
-              type: 'absent',
+              status: 'AUSENTE',
               entryDate: currentDate.toDate(),
               user: user,
             });
@@ -263,7 +263,7 @@ export class RegistrationsService {
               document: user.document,
               date: newRegistration.entryDate,
               capture: newRegistration.entryCapture,
-              type: newRegistration.type,
+              status: newRegistration.status,
             });
             console.log('se crea el registro de ausencia');
             // console.log('aver nuevo register', newRegistration);
@@ -282,7 +282,7 @@ export class RegistrationsService {
         await queryRunner.startTransaction();
         try {
           const newRegistration = queryRunner.manager.create(Registration, {
-            type: 'absent',
+            status: 'AUSENTE',
             entryDate: currentDate.toDate(),
             user: user,
           });
@@ -300,7 +300,7 @@ export class RegistrationsService {
             document: user.document,
             date: newRegistration.entryDate,
             capture: newRegistration.entryCapture,
-            type: newRegistration.type,
+            status: newRegistration.status,
           });
           // console.log('aver nuevo register', newRegistration);
         } catch (error) {
@@ -351,7 +351,7 @@ export class RegistrationsService {
           console.log('fecha actual ', currentDate.toDate());
           try {
             const newRegistration = queryRunner.manager.create(Registration, {
-              type: 'absent',
+              status: 'AUSENTE',
               entryDate: currentDate.toDate(),
               user: user,
             });
@@ -369,7 +369,7 @@ export class RegistrationsService {
               document: user.document,
               date: newRegistration.entryDate,
               capture: newRegistration.entryCapture,
-              type: newRegistration.type,
+              status: newRegistration.status,
             });
             // console.log('aver nuevo register', newRegistration);
           } catch (error) {
@@ -387,7 +387,7 @@ export class RegistrationsService {
         await queryRunner.startTransaction();
         try {
           const newRegistration = queryRunner.manager.create(Registration, {
-            type: 'absent',
+            status: 'AUSENTE',
             entryDate: currentDate.toDate(),
             user: user,
           });
@@ -405,7 +405,7 @@ export class RegistrationsService {
             document: user.document,
             date: newRegistration.entryDate,
             capture: newRegistration.entryCapture,
-            type: newRegistration.type,
+            status: newRegistration.status,
           });
           // console.log('aver nuevo register', newRegistration);
         } catch (error) {

@@ -20,10 +20,10 @@ export class NonWorkingDay {
   @Column({ type: 'int', nullable: true })
   year?: number; // Si es NULL, aplica todos los años
 
-  // @Column({
-  //   type: 'enum',
-  //   enum: ['FERIADO_FIJO', 'FERIADO_MOVIL', 'VACACIONES', 'CIERRE_ANUAL'],
-  //   default: 'FERIADO',
-  // })
-  // type: 'FERIADO_FIJO' | 'FERIADO_MOVIL' | 'VACACIONES' | 'CIERRE_ANUAL';
+  @Column({
+    type: 'enum',
+    enum: ['FERIADO_FIJO', 'FERIADO_MOVIL', 'VACACIONES', 'CIERRE_ANUAL'],
+    default: 'FERIADO_FIJO',
+  })
+  type: 'FERIADO_FIJO' | 'FERIADO_MOVIL' | 'VACACIONES' | 'CIERRE_ANUAL';
 }

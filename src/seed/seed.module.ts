@@ -10,15 +10,23 @@ import { NotificationsModule } from 'src/modules/gateways/notifications.module';
 import { Ministry } from 'src/modules/ministries/entities/ministry.entity';
 import { Secretariat } from 'src/modules/secretariats/entities/secretariat.entity';
 import { NonWorkingDay } from 'src/modules/non-working-day/entities/non-working-day.entity';
+import { Articulo } from 'src/modules/articulos/entities/articulo.entity';
+import { Inciso } from 'src/modules/articulos/entities/inciso.entity';
+import { SubInciso } from 'src/modules/articulos/entities/sub-inciso.entity';
+import { Shift } from 'src/modules/users/entities/shift.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       User,
+      Shift,
       Registration,
       Ministry,
       Secretariat,
       NonWorkingDay,
+      Articulo,
+      Inciso,
+      SubInciso,
     ]),
     NotificationsModule,
   ],
