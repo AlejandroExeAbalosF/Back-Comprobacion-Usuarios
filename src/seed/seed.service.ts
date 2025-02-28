@@ -299,16 +299,17 @@ export class SeedService implements OnModuleInit {
       for (const inciso of incisosGuardados) {
         // 4️⃣ Filtrar y guardar subIncisos de manera dinámica
         const subIncisosFiltrados = subIncisos.filter(
-          (s) => s.nameInc === inciso.name,
+          (s) => article.name + s.nameInc === article.name + inciso.name,
         );
 
         for (const subInciso of subIncisosFiltrados) {
+          if(subInciso.nameArt + subInciso.nameInc === article.name + inciso.name){
           const newSubInciso = this.subIncisoRepository.create({
             name: subInciso.name.toString(),
             description: subInciso.description,
             inciso,
           });
-          await this.subIncisoRepository.save(newSubInciso);
+          await this.subIncisoRepository.save(newSubInciso);}
         }
       }
     }

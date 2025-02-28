@@ -2,106 +2,127 @@
   {
     "name": 1,
     "description": "Por enfermedad",
-    "nameInc": "b"
+    "nameInc": "b",
+    "nameArt": "4"
   },
   {
     "name": 2,
     "description": "Por accidente de trabajo o enfermedad profesional",
-    "nameInc": "b"
+    "nameInc": "b",
+    "nameArt": "4"
   },
   {
     "name": 3,
     "description": "Por atención a familiares",
-    "nameInc": "b"
+    "nameInc": "b",
+    "nameArt": "4"
   },
   {
     "name": 4,
     "description": "Por Maternidad - lactancia - paternidad - adopción",
-    "nameInc": "b"
+    "nameInc": "b",
+    "nameArt": "4"
   },
   {
     "name": 5,
     "description": "Por fallecimiento de familiares",
-    "nameInc": "b"
+    "nameInc": "b",
+    "nameArt": "4"
   },
   {
     "name": 6,
     "description": "Por matrimonio",
-    "nameInc": "b"
+    "nameInc": "b",
+    "nameArt": "4"
   },
   {
     "name": 7,
     "description": "Por estudios",
-    "nameInc": "b"
+    "nameInc": "b",
+    "nameArt": "4"
   },
   {
     "name": 8,
     "description": "Por asuntos particulares",
-    "nameInc": "b"
+    "nameInc": "b",
+    "nameArt": "4"
   },
   {
     "name": 9,
     "description": "Por actividades culturales y/o deportivas",
-    "nameInc": "b"
+    "nameInc": "b",
+    "nameArt": "4"
   },
   {
     "name": 10,
     "description": "Por reservista incorporado a las Fuerzas Armadas o de Seguridad",
-    "nameInc": "b"
+    "nameInc": "b",
+    "nameArt": "4"
   },
   {
     "name": 11,
     "description": "Por razones Políticas",
-    "nameInc": "b"
+    "nameInc": "b",
+    "nameArt": "4"
   },
   {
     "name": 12,
     "description": "Por cargos de mayor jerarquía",
-    "nameInc": "b"
+    "nameInc": "b",
+    "nameArt": "4"
   },
   {
     "name": 13,
     "description": "Por representación gremial",
-    "nameInc": "b"
+    "nameInc": "b",
+    "nameArt": "4"
   },
   {
     "name": 1,
     "description": "Por Donación de Sangre",
-    "nameInc": "c"
+    "nameInc": "c",
+    "nameArt": "4"
   },
   {
     "name": 2,
     "description": "Por Razones Particulares",
-    "nameInc": "c"
+    "nameInc": "c",
+    "nameArt": "4"
   },
   {
     "name": 3,
     "description": "Por actividades extraordinarias de servicio",
-    "nameInc": "c"
+    "nameInc": "c",
+    "nameArt": "4"
   },
   {
     "name": 4,
     "description": "Por festividades Religiosas",
-    "nameInc": "c"
+    "nameInc": "c",
+    "nameArt": "4"
   },
   {
     "name": 5,
     "description": "Por fuerza mayor",
-    "nameInc": "c"
+    "nameInc": "c",
+    "nameArt": "4"
   },
   {
     "name": 6,
     "description": "Por citaciones o trámites personales",
-    "nameInc": "c"
+    "nameInc": "c",
+    "nameArt": "4"
   },
   {
     "name": 1,
     "description": "Por capacitación y perfeccionamiento de servicio",
-    "nameInc": "d"
+    "nameInc": "d",
+    "nameArt": "4"
   },
   {
     "name": 2,
     "description": "Por ejercicio de la delegación gremial",
-    "nameInc": "d"
+    "nameInc": "d",
+    "nameArt": "4"
   }
 ]
