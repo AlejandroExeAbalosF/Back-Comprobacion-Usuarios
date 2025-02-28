@@ -48,4 +48,26 @@ export class ReportsController {
     });
     res.end(pdfBuffer);
   }
+
+  @Get('excel/planilla-mes')
+  async generateExcelplanillaMes(
+    @Res() res: Response,
+    @Query() query: CreateReportDto,
+  ) {
+    const workbook = await this.reportsService.generateEXCELplanillaMes(query);
+    const { year, month } = query;
+    // Configurar la respuesta para la descarga
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    );
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="planilla-${year}-${month}.xlsx"`,
+    );
+
+    // Enviar el archivo al cliente
+    await workbook.xlsx.write(res);
+    res.end();
+  }
 }

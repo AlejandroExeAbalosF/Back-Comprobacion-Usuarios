@@ -18,6 +18,7 @@ import { CreateReportDto } from './dto/create-report.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsersService } from '../users/users.service';
 import { Registration } from '../registrations/entities/registration.entity';
+import * as ExcelJS from 'exceljs';
 
 const timeZone = 'America/Argentina/Buenos_Aires';
 
@@ -684,5 +685,223 @@ export class ReportsService {
       stream.on('finish', () => resolve(Buffer.concat(buffers)));
       stream.on('error', reject);
     });
+  }
+
+  async generateEXCELplanillaMes(
+    createExcel: CreateReportDto,
+  ): Promise<ExcelJS.Workbook> {
+    const userFind =
+      await this.userService.getUserWithRegistrationsByMonthAndYear(
+        createExcel.id,
+        createExcel.year,
+        createExcel.month,
+      );
+    // console.log('userFind', userFind);
+    // Indexar los registros por fecha (formato 'yyyy-MM-dd')
+    if (!userFind) throw new NotFoundException('Empleado no encontrado');
+    const registrosPorFecha: { [fecha: string]: Registration } = {};
+    if (userFind && userFind.registrations) {
+      userFind.registrations.forEach((registro) => {
+        if (registro.entryDate) {
+          const fechaKey = format(new Date(registro.entryDate), 'yyyy-MM-dd');
+          registrosPorFecha[fechaKey] = registro;
+        }
+      });
+    }
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Reporte');
+    const days = getDaysOfMonth(createExcel.year, createExcel.month);
+    worksheet.columns = [
+      { header: 'Fecha', key: 'Fecha', width: 20 },
+      { header: 'Semana', key: 'Semana', width: 10 },
+      { header: 'Entrada', key: 'Entrada', width: 20 },
+      { header: 'Salida', key: 'Salida', width: 15 },
+      { header: 'Llegada tarde', key: 'Llegada_tarde', width: 15 },
+      { header: 'Ausente', key: 'Ausente', width: 15 },
+      { header: 'Justificación', key: 'Justificación', width: 40 },
+    ];
+
+    let contPresente = 0;
+    let contAusente = 0;
+    let contLlegadaTarde = 0;
+    let contSalidaTemprano = 0;
+    days.map((day) => {
+      const registro = registrosPorFecha[day.date];
+      contPresente = registro?.status
+        ? registro.status === 'PRESENTE'
+          ? contPresente + 1
+          : contPresente
+        : contPresente;
+      contAusente = registro?.status
+        ? registro.status === 'AUSENTE'
+          ? contAusente + 1
+          : contAusente
+        : day.day !== 'Sáb' && day.day !== 'Dom'
+          ? contAusente + 1
+          : contAusente;
+
+      contLlegadaTarde = registro?.type
+        ? registro.type === 'LLEGADA_TARDE' ||
+          registro.type === 'LLEGADA_TARDE-SALIDA_TEMPRANA'
+          ? contLlegadaTarde + 1
+          : contLlegadaTarde
+        : contLlegadaTarde;
+
+      contSalidaTemprano = registro?.type
+        ? registro.type === 'SALIDA_TEMPRANA' ||
+          registro.type === 'LLEGADA_TARDE-SALIDA_TEMPRANA'
+          ? contSalidaTemprano + 1
+          : contSalidaTemprano
+        : contSalidaTemprano;
+      // Define los datos a mostrar; si no hay registro, quedan vacíos
+      // Convertir a la zona horaria de Argentina
+      const entryZoned =
+        registro?.entryDate && registro?.entryDate
+          ? toZonedTime(new Date(registro?.entryDate), timeZone)
+          : null;
+      const exitZoned =
+        registro?.exitDate && registro?.exitDate
+          ? toZonedTime(new Date(registro?.exitDate), timeZone)
+          : null;
+
+      // Obtener solo hora y minutos en formato HH:mm
+      const entrada = entryZoned
+        ? registro.type === 'ARTICULO' ||
+          registro.type === 'FERIADO' ||
+          registro.type === 'VACACIONES'
+          ? ''
+          : format(entryZoned, 'HH:mm')
+        : '';
+      const salida = exitZoned ? format(exitZoned, 'HH:mm') : '';
+      // console.log('entrada', entrada);
+      // Puedes agregar lógica para "Llegada tarde" o "Ausente" según la información que tengas
+      const llegadaTarde =
+        registro?.type === 'LLEGADA_TARDE' ||
+        registro?.type === 'LLEGADA_TARDE-SALIDA_TEMPRANA'
+          ? 'X'
+          : '';
+      const ausente = registro?.status === 'AUSENTE' ? 'X' : ''; // Si no hay registro, marcar como ausente
+      const justificacion = registro
+        ? registro.type === 'ARTICULO'
+          ? 'Art.' + registro.articulo
+          : registro.type
+        : '';
+      // Crear objeto asegurando que cada celda tenga un valor (mínimo una cadena vacía)
+      const rowData = {
+        Fecha: day.date || '',
+        Semana: day.day || '',
+        Entrada: entrada || '',
+        Salida: salida || '',
+        Llegada_tarde: llegadaTarde || '',
+        Ausente: ausente || '',
+        Justificación: justificacion || '',
+      };
+
+      // Agregar fila al Excel
+      const row = worksheet.addRow(rowData);
+      // Verificar si el día es Sábado o Domingo
+      if (day.day === 'Sáb' || day.day === 'Dom') {
+        row.eachCell((cell) => {
+          cell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'aeacab' }, // Color gris claro
+          };
+        });
+      }
+      // 🔹 Formatear todas las celdas de la fila
+      row.eachCell((cell, colNumber) => {
+        cell.alignment = { horizontal: 'center', vertical: 'middle' }; // Centrar contenido
+        cell.border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'thin' },
+        };
+        // Asegurar que las celdas sin contenido tengan un string vacío
+        if (!cell.value) {
+          cell.value = ''; // Forzar que tenga contenido
+        }
+      });
+    });
+    // 📌 Aplicar estilo a los encabezados (Negrita y fondo de color)
+    const headerRow = worksheet.getRow(1);
+    headerRow.eachCell((cell) => {
+      cell.font = { bold: true, color: { argb: 'FFFFFF' } };
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: '4472C4' },
+      };
+      cell.alignment = { horizontal: 'center', vertical: 'middle' };
+    });
+    // Definir las claves de las columnas en orden
+    // const columns = [
+    //   'Fecha',
+    //   'Semana',
+    //   'Entrada',
+    //   'Salida',
+    //   'Llegada_tarde',
+    //   'Ausente',
+    //   'Justificación',
+    // ];
+
+    // // 🔹 Ajustar automáticamente el ancho de las columnas
+    // columns.forEach((col, index) => {
+    //   worksheet.getColumn(index + 1).width = col.length + 5; // Ajusta el ancho dinámicamente
+    // });
+
+    worksheet.addRow([]); // Fila vacía
+    const totalRow1 = worksheet.addRow(['Totales']);
+    const totalRow2 = worksheet.addRow([
+      'Días Trabajados:',
+      contPresente,
+      'Llegadas Tardes:',
+      contLlegadaTarde,
+    ]);
+    const totalRow3 = worksheet.addRow([
+      'Días Ausentes:',
+      contAusente,
+      'Salidas Tempranas:',
+      contSalidaTemprano,
+    ]);
+
+    // Aplicar estilos a cada fila
+    [totalRow1, totalRow2, totalRow3].forEach((row) => {
+      row.eachCell((cell) => {
+        cell.alignment = { horizontal: 'center', vertical: 'middle' }; // Centrar contenido
+        cell.font = { bold: true }; // Negrita
+        cell.border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'thin' },
+        };
+        if (!cell.value) {
+          cell.value = ''; // Evitar que Excel ignore la celda si está vacía
+        }
+      });
+    });
+    // const data = [
+    //   { id: 1, name: 'Juan Pérez', attendance: 95.5 },
+    //   { id: 2, name: 'Ana López', attendance: 87.2 },
+    //   { id: 3, name: 'Carlos Ramírez', attendance: 92.8 },
+    // ];
+
+    // data.forEach((item) => {
+    //   worksheet.addRow(item);
+    // });
+
+    // worksheet.getRow(1).eachCell((cell) => {
+    //   cell.font = { bold: true, color: { argb: 'FFFFFF' } };
+    //   cell.fill = {
+    //     type: 'pattern',
+    //     pattern: 'solid',
+    //     fgColor: { argb: '4472C4' },
+    //   };
+    //   cell.alignment = { horizontal: 'center' };
+    // });
+
+    return Promise.resolve(workbook);
   }
 }
