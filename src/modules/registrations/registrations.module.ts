@@ -8,10 +8,11 @@ import { Registration } from './entities/registration.entity';
 import { NotificationsGateway } from '../gateways/notifications.gateway';
 import { UsersModule } from '../users/users.module';
 import { Secretariat } from '../secretariats/entities/secretariat.entity';
+import { Shift } from '../users/entities/shift.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Registration, User, Secretariat]),
+    TypeOrmModule.forFeature([Registration, User, Shift, Secretariat]),
     UsersModule,
   ],
   controllers: [RegistrationsController],

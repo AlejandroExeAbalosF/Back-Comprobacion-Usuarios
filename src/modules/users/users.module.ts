@@ -6,10 +6,11 @@ import { User } from './entities/user.entity';
 import { Ministry } from '../ministries/entities/ministry.entity';
 import { Secretariat } from '../secretariats/entities/secretariat.entity';
 import { MinistriesModule } from '../ministries/ministries.module';
+import { Shift } from './entities/shift.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Ministry, Secretariat]),
+    TypeOrmModule.forFeature([User, Shift, Ministry, Secretariat]),
     MinistriesModule,
   ],
   controllers: [UsersController],

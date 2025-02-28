@@ -223,7 +223,10 @@ export class ReportsService {
       // Linena Separadora =>
       const days = getDaysOfMonth(createPDF.year, createPDF.month);
       generateHr(doc, 125);
-      doc.font('Helvetica-Bold').text('Nombre, Apellido', 50, 130);
+      doc
+        .font('Helvetica-Bold')
+        .text('Nombre, Apellido', 50, 130)
+        .text(`Turno: ${userFind?.shift?.name}`, 205, 130, { align: 'right' });
       doc
         .font('Helvetica-Bold')
         .fillColor('black')
@@ -253,8 +256,8 @@ export class ReportsService {
       invoiceTableTop = invoiceTableTop + 14;
       let contPresente = 0;
       let contAusente = 0;
-      const contLlegadaTarde = 0;
-      const contSalidaTemprano = 0;
+      let contLlegadaTarde = 0;
+      let contSalidaTemprano = 0;
       days.map((day) => {
         const registro = registrosPorFecha[day.date];
         contPresente = registro?.status
@@ -269,6 +272,20 @@ export class ReportsService {
           : day.day !== 'Sáb' && day.day !== 'Dom'
             ? contAusente + 1
             : contAusente;
+
+        contLlegadaTarde = registro?.type
+          ? registro.type === 'LLEGADA_TARDE' ||
+            registro.type === 'LLEGADA_TARDE-SALIDA_TEMPRANA'
+            ? contLlegadaTarde + 1
+            : contLlegadaTarde
+          : contLlegadaTarde;
+
+        contSalidaTemprano = registro?.type
+          ? registro.type === 'SALIDA_TEMPRANA' ||
+            registro.type === 'LLEGADA_TARDE-SALIDA_TEMPRANA'
+            ? contSalidaTemprano + 1
+            : contSalidaTemprano
+          : contSalidaTemprano;
         // Define los datos a mostrar; si no hay registro, quedan vacíos
         // Convertir a la zona horaria de Argentina
         const entryZoned =
@@ -282,14 +299,20 @@ export class ReportsService {
 
         // Obtener solo hora y minutos en formato HH:mm
         const entrada = entryZoned
-          ? registro.type === 'ARTICULO' || registro.type === 'FERIADO'
+          ? registro.type === 'ARTICULO' ||
+            registro.type === 'FERIADO' ||
+            registro.type === 'VACACIONES'
             ? ''
             : format(entryZoned, 'HH:mm')
           : '';
         const salida = exitZoned ? format(exitZoned, 'HH:mm') : '';
         // console.log('entrada', entrada);
         // Puedes agregar lógica para "Llegada tarde" o "Ausente" según la información que tengas
-        const llegadaTarde = registro?.type === 'LLEGADA_TARDE' ? 'X' : ''; // Por ejemplo, podrías calcular si la hora de entrada es posterior a la hora programada
+        const llegadaTarde =
+          registro?.type === 'LLEGADA_TARDE' ||
+          registro?.type === 'LLEGADA_TARDE-SALIDA_TEMPRANA'
+            ? 'X'
+            : '';
         const ausente = registro?.status === 'AUSENTE' ? 'X' : ''; // Si no hay registro, marcar como ausente
         const justificacion = registro
           ? registro.type === 'ARTICULO'
@@ -343,10 +366,10 @@ export class ReportsService {
         .font('Helvetica-Bold')
         .fillColor('black')
         .text('Totales', 55, invoiceTableTop);
-
+      //primer 3 lineas verticales
       const xPositions = [50, 192]; // posiciones de las columnas
       const yInicio = invoiceTableTop - 4.5; // inicio de la celda
-      const yFin = invoiceTableTop + 10; // fin de la celda, ajusta la altura según lo necesites
+      const yFin = invoiceTableTop + 14; // fin de la celda, ajusta la altura según lo necesites
 
       xPositions.forEach((x) => {
         doc
@@ -372,15 +395,26 @@ export class ReportsService {
       doc
         .font('Helvetica-Bold')
         .fillColor('black')
-        .text('Dias trabajados', 55, invoiceTableTop);
+        .text('Dias trabajados', 55, invoiceTableTop)
+        .text(`${contPresente}`, 125, invoiceTableTop)
+        .text(`Llegadas Tardes`, 250, invoiceTableTop)
+        .text(`${contLlegadaTarde}`, 318, invoiceTableTop);
 
       doc
         .font('Helvetica-Bold')
         .fillColor('black')
         .text(`${contPresente}`, 125, invoiceTableTop);
 
-      const xPositionss = [50, 120, 192, 250, 325, 541]; // posiciones de las columnas
-      const yInicioo = invoiceTableTop - 4.5; // inicio de la celda
+      invoiceTableTop = invoiceTableTop + 14;
+
+      // Dibujar fondo gris claro
+      doc
+        .fillColor('#c4c0c0') // Color gris claro
+        .rect(startX, invoiceTableTop - 4, rowWidth, rowHeight) // Rectángulo de fondo
+        .fill(); // Rellenar
+
+      const xPositionss = [50, 120, 192, 313, 541]; // posiciones de las columnas
+      const yInicioo = invoiceTableTop - 17.5; // inicio de la celda
       const yFinn = invoiceTableTop + 10; // fin de la celda, ajusta la altura según lo necesites
 
       xPositionss.forEach((x) => {
@@ -391,15 +425,6 @@ export class ReportsService {
           .lineTo(x, yFinn)
           .stroke();
       });
-
-      invoiceTableTop = invoiceTableTop + 14;
-
-      // Dibujar fondo gris claro
-      doc
-        .fillColor('#c4c0c0') // Color gris claro
-        .rect(startX, invoiceTableTop - 4, rowWidth, rowHeight) // Rectángulo de fondo
-        .fill(); // Rellenar
-
       doc
         .strokeColor('black')
         .lineWidth(1)
@@ -410,21 +435,16 @@ export class ReportsService {
       doc
         .font('Helvetica-Bold')
         .fillColor('black')
-        .text('Dias ausentes', 55, invoiceTableTop);
+        .text('Dias ausentes', 55, invoiceTableTop)
+        .text(`${contAusente}`, 125, invoiceTableTop)
+        .text(`Salidas Temprano`, 250, invoiceTableTop)
+        .text(`${contSalidaTemprano}`, 318, invoiceTableTop);
 
       doc
         .font('Helvetica-Bold')
         .fillColor('black')
         .text(`${contAusente}`, 125, invoiceTableTop);
 
-      xPositionss.forEach((x) => {
-        doc
-          .strokeColor('black')
-          .lineWidth(1)
-          .moveTo(x, invoiceTableTop - 4.5)
-          .lineTo(x, invoiceTableTop + 10)
-          .stroke();
-      });
       invoiceTableTop = invoiceTableTop + 14;
 
       doc
@@ -432,6 +452,231 @@ export class ReportsService {
         .lineWidth(1)
         .moveTo(49.5, invoiceTableTop - 4)
         .lineTo(541, invoiceTableTop - 4)
+        .stroke();
+
+      // ✅ Finalizar el documento correctamente
+      doc.end();
+      stream.on('finish', () => resolve(Buffer.concat(buffers)));
+      stream.on('error', reject);
+    });
+  }
+
+  async generatePDFporcentajeMes(createPDF: CreateReportDto): Promise<Buffer> {
+    const userFind =
+      await this.userService.getUserWithRegistrationsByMonthAndYear(
+        createPDF.id,
+        createPDF.year,
+        createPDF.month,
+      );
+    if (!userFind) throw new NotFoundException('Empleado no encontrado');
+    return await new Promise((resolve, reject) => {
+      const doc: PDFKit.PDFDocument = new PDFDocumentWithTables({
+        size: 'letter',
+        bufferPages: true,
+        autoFirstPage: false,
+      });
+      const buffers: Buffer[] = [];
+      const stream = new Writable({
+        write(chunk, _, callback) {
+          buffers.push(chunk);
+          callback();
+        },
+      });
+      doc.pipe(stream);
+      doc.addPage({
+        margins: {
+          top: 50,
+          bottom: 50,
+          left: 72,
+          right: 72,
+        },
+      });
+      // ✅ Encabezado
+
+      try {
+        doc.image('src/helpers/svgviewer-png-output.png', 50, 55, {
+          width: 120,
+        });
+      } catch (error) {
+        console.warn('⚠️ No se pudo cargar la imagen del logo:', error);
+      }
+      doc
+        .fillColor('#444444')
+        .fontSize(13)
+        .text(userFind.secretariat.name, 205, 55, { align: 'right' })
+        .fontSize(10)
+        .text('Argentina, Salta, Calle 123', 205, 80, { align: 'right' })
+        .fontSize(10)
+        .text('0387-000000', 205, 90, { align: 'right' })
+        .fontSize(10)
+        .text('', 205, 100, { align: 'right' })
+        .fontSize(10)
+        .text('www.vu.cor.ar', 205, 110, { align: 'right' })
+        .moveDown();
+      // Linena Separadora =>
+      // const days = getDaysOfMonth(createPDF.year, createPDF.month);
+      const days = getDaysOfMonth(createPDF.year, createPDF.month);
+      generateHr(doc, 125);
+      doc
+        .font('Helvetica-Bold')
+        .text('Nombre, Apellido', 50, 130)
+        .text(`Turno: ${userFind?.shift?.name}`, 205, 130, { align: 'right' });
+      doc
+        .font('Helvetica-Bold')
+        .fillColor('black')
+        .text(userFind.name + ',' + ' ' + userFind.lastName, 50, 143);
+
+      doc
+        .font('Helvetica-Bold')
+        .fillColor('black')
+        .text(days[0].date + ' hasta ' + days[days.length - 1].date, 205, 143, {
+          align: 'right',
+        });
+      // Tabla de fechas
+      let invoiceTableTop = 160;
+
+      // Encabezado de la tabla
+      //linea horizontal
+      doc
+        .strokeColor('black')
+        .lineWidth(1)
+        .moveTo(200, invoiceTableTop - 4)
+        .lineTo(500, invoiceTableTop - 4)
+        .stroke();
+      // contenido
+      doc
+        .font('Helvetica-Bold')
+        .fillColor('black')
+        .fontSize(9)
+        .text('Original', 260, invoiceTableTop)
+        .text('Final', 413, invoiceTableTop);
+
+      // linea verticales
+      const xPositionsEncabezado = [200, 350, 500]; // posiciones de las columnas
+      xPositionsEncabezado.forEach((x) => {
+        doc
+          .strokeColor('black')
+          .lineWidth(1)
+          .moveTo(x, invoiceTableTop - 4.5) // inicio de la celda
+          .lineTo(x, invoiceTableTop + 10) // fin de la celda, ajusta la altura según lo necesites
+          .stroke();
+      });
+      invoiceTableTop = invoiceTableTop + 14;
+      //linea horizontal final de encabezado
+      doc
+        .strokeColor('black')
+        .lineWidth(1)
+        .moveTo(100, invoiceTableTop - 4)
+        .lineTo(500, invoiceTableTop - 4)
+        .stroke();
+
+      // Cuerpo de la tabla
+      // lineas horizontales
+      doc
+        .strokeColor('black')
+        .lineWidth(1)
+        .moveTo(100, invoiceTableTop + 10)
+        .lineTo(500, invoiceTableTop + 10)
+        .stroke();
+      doc
+        .strokeColor('black')
+        .lineWidth(1)
+        .moveTo(100, invoiceTableTop + 24)
+        .lineTo(500, invoiceTableTop + 24)
+        .stroke();
+      doc
+        .strokeColor('black')
+        .lineWidth(1)
+        .moveTo(100, invoiceTableTop + 38)
+        .lineTo(350, invoiceTableTop + 38)
+        .stroke();
+      doc
+        .strokeColor('black')
+        .lineWidth(1)
+        .moveTo(100, invoiceTableTop + 52)
+        .lineTo(500, invoiceTableTop + 52)
+        .stroke();
+      doc
+        .strokeColor('black')
+        .lineWidth(1)
+        .moveTo(100, invoiceTableTop + 66)
+        .lineTo(500, invoiceTableTop + 66)
+        .stroke();
+      // contenido
+      const registers = userFind.registrations;
+      let contPresente = 0;
+      let contAusente = 0;
+      let contLlegadaTarde = 0;
+      registers.map((register) => {
+        contPresente = register?.status
+          ? register.status === 'PRESENTE'
+            ? contPresente + 1
+            : contPresente
+          : contPresente;
+        contAusente = register?.status
+          ? register.status === 'AUSENTE'
+            ? contAusente + 1
+            : contAusente
+          : contAusente;
+        contLlegadaTarde = register?.type
+          ? register.type === 'LLEGADA_TARDE' ||
+            register.type === 'LLEGADA_TARDE-SALIDA_TEMPRANA'
+            ? contLlegadaTarde + 1
+            : contLlegadaTarde
+          : contLlegadaTarde;
+      });
+      const totalDiasHabiles = contPresente + contAusente;
+      const porcentajeAsistencia = Number(
+        ((contPresente / totalDiasHabiles) * 100).toFixed(2),
+      );
+      const porcentajeFaltas = Number(
+        ((contAusente / totalDiasHabiles) * 100).toFixed(2),
+      );
+      const porcentajeRetardos = Number(
+        ((contLlegadaTarde / totalDiasHabiles) * 100).toFixed(2),
+      );
+      const totalDiasHabilAusentes = contAusente + contPresente;
+      const totalPorcetajeHabilFaltas = porcentajeAsistencia + porcentajeFaltas;
+      doc
+        .font('Helvetica-Bold')
+        .fillColor('black')
+        .fontSize(9)
+        .text('Asistencias', 110, invoiceTableTop)
+        .text(`${contPresente}`, 203, invoiceTableTop)
+        .text(`${porcentajeAsistencia} %`, 265, invoiceTableTop)
+        .text('Faltas', 110, invoiceTableTop + 14)
+        .text(`${contAusente}`, 203, invoiceTableTop + 14)
+        .text(`${porcentajeFaltas} %`, 265, invoiceTableTop + 14)
+        .text('Retardos', 110, invoiceTableTop + 28)
+        .text(`${contLlegadaTarde}`, 203, invoiceTableTop + 28)
+        .text(`${porcentajeRetardos} %`, 265, invoiceTableTop + 28)
+        .text('Permisos', 110, invoiceTableTop + 42)
+        .text('Total', 110, invoiceTableTop + 56)
+        .text(`${totalDiasHabilAusentes}`, 203, invoiceTableTop + 56)
+        .text(`${totalPorcetajeHabilFaltas} %`, 265, invoiceTableTop + 56);
+
+      //lineas verticales
+      const xPositionsCuerpo = [100, 200, 260, 350, 500]; // posiciones de las columnas
+      xPositionsCuerpo.forEach((x) => {
+        doc
+          .strokeColor('black')
+          .lineWidth(1)
+          .moveTo(x, invoiceTableTop - 4.5) // inicio de la celda
+          .lineTo(x, invoiceTableTop + 66) // fin de la celda, ajusta la altura según lo necesites
+          .stroke();
+      });
+
+      doc
+        .strokeColor('black')
+        .lineWidth(1)
+        .moveTo(410, invoiceTableTop - 4.5) // inicio de la celda
+        .lineTo(410, invoiceTableTop + 24) // fin de la celda, ajusta la altura según lo necesites
+        .stroke();
+      doc
+        .strokeColor('black')
+        .lineWidth(1)
+        .moveTo(410, invoiceTableTop + 52) // inicio de la celda
+        .lineTo(410, invoiceTableTop + 66) // fin de la celda, ajusta la altura según lo necesites
         .stroke();
 
       // ✅ Finalizar el documento correctamente

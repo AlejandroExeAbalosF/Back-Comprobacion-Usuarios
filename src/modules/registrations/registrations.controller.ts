@@ -83,12 +83,18 @@ export class RegistrationsController {
     );
   }
 
-  @Put(':id')
-  updateRegister(
+  @Put('update/:id')
+  async updateRegister(
     @Param('id') id: string,
     @Body() updateRegistrationDto: UpdateRegistrationDto,
   ) {
-    return this.registrationsService.updateRegister(id, updateRegistrationDto);
+    // console.log('id', id);
+    // console.log('updateRegistrationDto', updateRegistrationDto);
+    // return { id };
+    return await this.registrationsService.updateRegister(
+      id,
+      updateRegistrationDto,
+    );
   }
 
   // @Patch(':id')

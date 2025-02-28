@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { ArticulosService } from './articulos.service';
 import { CreateArticuloDto } from './dto/create-articulo.dto';
 import { UpdateArticuloDto } from './dto/update-articulo.dto';
@@ -17,13 +25,21 @@ export class ArticulosController {
     return this.articulosService.findAll();
   }
 
+  @Get('allArticulosIncisosSubIncisos')
+  getArticulosIncisosSubIncisos() {
+    return this.articulosService.getArticulosIncisosSubIncisos();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.articulosService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateArticuloDto: UpdateArticuloDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateArticuloDto: UpdateArticuloDto,
+  ) {
     return this.articulosService.update(+id, updateArticuloDto);
   }
 

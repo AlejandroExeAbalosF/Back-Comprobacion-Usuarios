@@ -70,7 +70,7 @@ export class Registration {
     type: 'varchar',
     nullable: true,
   })
-  type: string;
+  type: string | null;
   // enum: ['ASISTENCIA', 'AUSENTE', 'PERMISO', 'TARDANZA'],
   //  'present' | 'absent' | 'permission' | 'delay'
   @Column({

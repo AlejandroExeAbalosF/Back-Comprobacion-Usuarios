@@ -13,10 +13,13 @@ import { CreateUserDto } from '../auth/dto/create-auth.dto';
 import { CreateUserEmpDto } from './dto/create-userEmp.dto';
 import { Ministry } from '../ministries/entities/ministry.entity';
 import { Secretariat } from '../secretariats/entities/secretariat.entity';
+import { Shift } from './entities/shift.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
+    @InjectRepository(Shift)
+    private readonly shiftRepository: Repository<Shift>,
     @InjectRepository(User)
     private readonly userService: Repository<User>,
     @InjectRepository(Ministry)
@@ -26,11 +29,10 @@ export class UsersService {
     private readonly dataSource: DataSource,
   ) {}
 
-  async findAll() {
-    const users = this.userService.find();
-
-    if (!users) throw new NotFoundException('No se encontraron usuarios');
-    return users;
+  async findAllShift() {
+    const shifts = await this.shiftRepository.find();
+    if (!shifts) throw new NotFoundException('No se encontraron turnos');
+    return shifts;
   }
 
   async getUsersWithLastRegistration() {
@@ -126,6 +128,7 @@ export class UsersService {
   ): Promise<User | null> {
     return await this.userService
       .createQueryBuilder('user')
+      .leftJoinAndSelect('user.shift', 'shift')
       .leftJoinAndSelect('user.secretariat', 'secretariat')
       .leftJoinAndSelect(
         'user.registrations',
@@ -139,7 +142,10 @@ export class UsersService {
   }
 
   async searchDni(dni: number) {
-    return await this.userService.findOne({ where: { document: dni } });
+    return await this.userService.findOne({
+      where: { document: dni },
+      relations: ['secretariat', 'secretariat.ministry', 'shift'],
+    });
   }
 
   async searchEmail(email: string) {
@@ -172,6 +178,19 @@ export class UsersService {
         'Ya existe un usuario registrado con ese email.',
       );
 
+    // Obtener el turno seleccionado
+    const shift = await this.shiftRepository.findOne({
+      where: { id: createUserDto.shiftId },
+    });
+
+    if (!shift) {
+      throw new BadRequestException('Turno inválido');
+    }
+
+    // Comparar horarios
+    const isCustomEntry = createUserDto.entryHour !== shift.entryHour;
+    const isCustomExit = createUserDto.exitHour !== shift.exitHour;
+
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -189,13 +208,16 @@ export class UsersService {
           ? file
           : 'https://cdn-icons-png.flaticon.com/512/149/149071.png',
         secretariat: secretariatFinded,
+        shift: shift,
+        entryHour: isCustomEntry ? createUserDto.entryHour : null,
+        exitHour: isCustomExit ? createUserDto.exitHour : null,
       });
       await queryRunner.manager.save(newUser);
       await queryRunner.commitTransaction();
       // 🔥 Recargar la relación para incluir `ministry`
       const userWithRelations = await queryRunner.manager.findOne(User, {
         where: { id: newUser.id },
-        relations: ['secretariat', 'secretariat.ministry'], // Cargar las relaciones necesarias
+        relations: ['secretariat', 'secretariat.ministry', 'shift'], // Cargar las relaciones necesarias
       });
       return {
         message: 'Empleado creado exitosamente',
@@ -227,6 +249,19 @@ export class UsersService {
     if (userExists.rol === 'superadmin')
       throw new UnauthorizedException('No se puede modificar ese usuario');
 
+    // Obtener el turno seleccionado
+    const shift = await this.shiftRepository.findOne({
+      where: { id: updateUserDto.shiftId },
+    });
+
+    if (!shift) {
+      throw new BadRequestException('Turno inválido');
+    }
+
+    // Comparar horarios
+    const isCustomEntry = updateUserDto.entryHour !== shift.entryHour;
+    const isCustomExit = updateUserDto.exitHour !== shift.exitHour;
+
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
@@ -245,14 +280,21 @@ export class UsersService {
         ...updateUserDto,
         image: file ? file : userExists.image,
         secretariat: secretariatFinded,
+        shift: shift,
+        entryHour: isCustomEntry ? updateUserDto.entryHour : null,
+        exitHour: isCustomExit ? updateUserDto.exitHour : null,
       });
       // Guardar los cambios (una sola llamada a save es suficiente)
       const userModified = await queryRunner.manager.save(user);
       await queryRunner.commitTransaction();
+      const userWithRelations = await queryRunner.manager.findOne(User, {
+        where: { id: userModified?.id },
+        relations: ['secretariat', 'secretariat.ministry', 'shift'], // Cargar las relaciones necesarias
+      });
 
       return {
         message: `Usuario actualizado correctamente`,
-        user: userModified,
+        user: userWithRelations,
       };
     } catch (error) {
       await queryRunner.rollbackTransaction();

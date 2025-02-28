@@ -13,7 +13,15 @@ import { DataSource, Repository } from 'typeorm';
 import { Registration } from './entities/registration.entity';
 import { UsersService } from '../users/users.service';
 import * as dayjs from 'dayjs';
-import { startOfDay, isSameDay } from 'date-fns';
+import {
+  startOfDay,
+  isSameDay,
+  format,
+  addMinutes,
+  isBefore,
+  setHours,
+  setMinutes,
+} from 'date-fns';
 import { toZonedTime, fromZonedTime } from 'date-fns-tz';
 import { NotificationsGateway } from '../gateways/notifications.gateway';
 import { last } from 'rxjs';
@@ -21,6 +29,9 @@ import { validate } from 'class-validator';
 import { CreateRegistrationEmpDniDto } from './dto/create-registrationEmpDni.dto';
 import { UserWithLastRegistration } from 'src/helpers/types';
 import { Secretariat } from '../secretariats/entities/secretariat.entity';
+import { Shift } from '../users/entities/shift.entity';
+
+const toleranceMinutes = 10;
 
 @Injectable()
 export class RegistrationsService {
@@ -28,6 +39,8 @@ export class RegistrationsService {
     @InjectRepository(Registration)
     private readonly registrationRepository: Repository<Registration>,
     @InjectRepository(User) private readonly userRepository: Repository<User>,
+    @InjectRepository(Shift)
+    private readonly shiftRepository: Repository<Shift>,
     @InjectRepository(Secretariat)
     private readonly secretariatRepository: Repository<Secretariat>,
     private readonly userService: UsersService,
@@ -63,17 +76,33 @@ export class RegistrationsService {
   ) {
     const timeZone = 'America/Argentina/Buenos_Aires';
     const currentDate = toZonedTime(new Date(), timeZone); // Convertimos la fecha actual a Argentina
+    const entryTime = toZonedTime(new Date(), timeZone);
 
-    const dniValidate = await this.userService.searchDni(
+    const userValidate = await this.userService.searchDni(
       registrationDto.document,
     );
-    if (!dniValidate) {
+    if (!userValidate) {
       throw new NotFoundException(`Documento no encontrado`);
     }
 
+    // 📌 1. Obtener turno del usuario
+    // const userShift = await this.shiftRepository.findOne({
+    //   where: { id: userValidate.shift.id },
+    // });
+    // if (!userShift) {
+    //   throw new NotFoundException(`Turno no encontrado para el usuario`);
+    // }
+
+    const shiftEntryHour = userValidate.entryHour
+      ? userValidate.entryHour
+      : userValidate.shift.entryHour; // Hora de entrada del turno (HH:mm:ss)
+    const shiftExitHour = userValidate.exitHour
+      ? userValidate.exitHour
+      : userValidate.shift.exitHour; // Hora de salida del turno (HH:mm:ss)
+
     const lastRegistration = await this.registrationRepository
       .createQueryBuilder('registration')
-      .where('registration.user = :userId', { userId: dniValidate.id })
+      .where('registration.user = :userId', { userId: userValidate.id })
       .orderBy('registration.entryDate', 'DESC')
       .getOne();
 
@@ -99,6 +128,24 @@ export class RegistrationsService {
         try {
           const exitDateUtc = toZonedTime(currentDate, timeZone); // Convertimos a UTC antes de guardar
 
+          // 📌 2. Validar salida temprana
+          // Parseamos la hora de entrada "HH:mm" a un objeto Date
+          const [hours, minutes] = shiftExitHour.split(':');
+          entryTime.setHours(Number(hours), Number(minutes), 0); // Establecemos la hora de entrada
+
+          // Formateamos las fechas para comparación (opcional)
+          const formattedEntryTimeWithTolerance = format(entryTime, 'HH:mm');
+          const currentTime = format(currentDate, 'HH:mm');
+
+          // Comparación
+          console.log('Hora de Salida:', formattedEntryTimeWithTolerance);
+          console.log('Hora actual:', currentTime);
+          const isEarly = isBefore(currentDate, entryTime); // Comparamos la hora de entrada con la hora actual
+          if (isEarly) {
+            console.log('Salida temprana');
+          } else {
+            console.log('Salida dentro del horario');
+          }
           const updatedResult = await queryRunner.manager
             .createQueryBuilder()
             .update(Registration)
@@ -106,34 +153,41 @@ export class RegistrationsService {
               status: 'PRESENTE',
               exitDate: exitDateUtc,
               exitCapture: file,
+              type: isEarly
+                ? lastRegistration.type
+                  ? lastRegistration.type + '-SALIDA_TEMPRANA'
+                  : 'SALIDA_TEMPRANA'
+                : lastRegistration.type,
             })
             .where({ id: lastRegistration.id })
-            .returning(['exitDate', 'exitCapture', 'status'])
+            .returning(['exitDate', 'exitCapture', 'status', 'type'])
             .execute();
 
           // Actualizamos el objeto manualmente
           // console.log(updatedResult.raw[0]);
           const updatedValues: Pick<
             Registration,
-            'exitDate' | 'exitCapture' | 'status'
+            'exitDate' | 'exitCapture' | 'status' | 'type'
           > = {
             exitDate: updatedResult.raw[0].exit_date, // Convertimos snake_case a camelCase
             exitCapture: updatedResult.raw[0].exit_capture,
             status: updatedResult.raw[0].status,
+            type: updatedResult.raw[0].type,
           };
 
           await queryRunner.commitTransaction();
 
           // Enviar la notificación directamente con `updatedValues`
           this.notificationsGateway.sendNotification({
-            id: dniValidate.id,
+            id: userValidate.id,
             idR: lastRegistration.id, // `id` sigue siendo el mismo
-            name: dniValidate.name,
-            lastName: dniValidate.lastName,
-            document: dniValidate.document,
+            name: userValidate.name,
+            lastName: userValidate.lastName,
+            document: userValidate.document,
             date: toZonedTime(updatedValues.exitDate as Date, timeZone),
             capture: updatedValues.exitCapture,
             status: updatedValues.status,
+            type: updatedValues.type,
           });
 
           return { message: 'Registrada la Salida Correctamente' };
@@ -153,13 +207,40 @@ export class RegistrationsService {
 
     try {
       const entryDateUtc = fromZonedTime(currentDate, timeZone); // Convertimos a UTC antes de guardar
+      // Parseamos la hora de entrada "HH:mm" a un objeto Date
+      const [hours, minutes] = shiftEntryHour.split(':');
+      entryTime.setHours(Number(hours), Number(minutes), 0); // Establecemos la hora de entrada
+      // Agregamos 10 minutos de tolerancia
+      const entryTimeWithTolerance = addMinutes(entryTime, toleranceMinutes);
 
+      // Formateamos las fechas para comparación (opcional)
+      // const formattedEntryTimeWithTolerance = format(
+      //   entryTimeWithTolerance,
+      //   'HH:mm',
+      // );
+      // const currentTime = format(currentDate, 'HH:mm');
+
+      // Comparación
+      // console.log(
+      //   'Hora de entrada con tolerancia:',
+      //   formattedEntryTimeWithTolerance,
+      // );
+      // console.log('Hora actual:', currentTime);
+
+      // Verificar si la hora actual está dentro de los 10 minutos de tolerancia
+      const isLate = isBefore(currentDate, entryTimeWithTolerance);
+      // if (isLate) {
+      //   console.log('La entrada está dentro de la tolerancia.');
+      // } else {
+      //   console.log('La entrada está tarde.');
+      // }
+      entryTime.setHours(Number(hours), Number(minutes), 0);
       const newRegistration = queryRunner.manager.create(Registration, {
-        ...registrationDto,
         entryCapture: file,
         status: 'TRABAJANDO',
         entryDate: entryDateUtc,
-        user: dniValidate,
+        user: userValidate,
+        type: !isLate ? 'LLEGADA_TARDE' : null,
       });
       // console.log(newRegistration);
       await queryRunner.manager.save(newRegistration);
@@ -168,14 +249,15 @@ export class RegistrationsService {
 
       // Se envía la notificación directamente con los datos que ya tenemos
       this.notificationsGateway.sendNotification({
-        id: dniValidate.id,
+        id: userValidate.id,
         idR: newRegistration.id,
-        name: dniValidate.name,
-        lastName: dniValidate.lastName,
-        document: dniValidate.document,
+        name: userValidate.name,
+        lastName: userValidate.lastName,
+        document: userValidate.document,
         date: toZonedTime(newRegistration.entryDate as Date, timeZone), // newRegistration.entryDate,
         capture: newRegistration.entryCapture,
         status: newRegistration.status,
+        type: newRegistration.type,
       });
       console.log('horaUTC', newRegistration.entryDate);
       console.log(
@@ -427,6 +509,7 @@ export class RegistrationsService {
     id: string,
     updateRegistrationDto: UpdateRegistrationDto,
   ) {
+    const timeZone = 'America/Argentina/Buenos_Aires';
     const registerFinded = await this.registrationRepository.findOne({
       where: { id: id },
     });
@@ -434,14 +517,52 @@ export class RegistrationsService {
     if (!registerFinded) {
       throw new NotFoundException(`Registro no encontrado`);
     }
+    console.log('updateRegistrationDto', updateRegistrationDto);
+    const dateUpdated: { entryDate?: Date; exitDate?: Date } = {};
+    if (updateRegistrationDto.entryHour) {
+      // Descomponer la hora (hh:mm)
+      const [hours, minutes] = updateRegistrationDto.entryHour
+        .split(':')
+        .map(Number);
 
+      // Actualizar la hora y los minutos en la fecha UTC
+      const updatedDate = setHours(registerFinded.entryDate as Date, hours); // Establecer la hora
+      const updatedDateWithMinutes = setMinutes(updatedDate, minutes); // Establecer los minutos
+      // Aquí actualizamos la propiedad entryDate de dateUpdated
+      dateUpdated.entryDate = updatedDateWithMinutes;
+    }
+    if (updateRegistrationDto.exitHour) {
+      const [hours, minutes] = updateRegistrationDto.exitHour
+        .split(':')
+        .map(Number);
+      // Actualizar la hora y los minutos en la fecha UTC
+      const updatedDate = setHours(
+        registerFinded.exitDate
+          ? registerFinded.exitDate
+          : (registerFinded.entryDate as Date),
+        hours,
+      ); // Establecer la hora
+      const updatedDateWithMinutes = setMinutes(updatedDate, minutes); // Establecer los minutos
+      // Aquí actualizamos la propiedad entryDate de dateUpdated
+      dateUpdated.exitDate = updatedDateWithMinutes;
+    }
+    console.log('entryDate', registerFinded.entryDate);
+    console.log('updatedDateWithMinutes', dateUpdated);
+    const { entryHour, exitHour } = updateRegistrationDto;
+    // const entryHornUpdateDate = updateRegistrationDto.entryHour ?
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
-      const updateRegister = queryRunner.manager.preload(Registration, {
+      const updateRegister = await queryRunner.manager.preload(Registration, {
         id,
         ...updateRegistrationDto,
+        entryDate: dateUpdated.entryDate
+          ? dateUpdated.entryDate
+          : registerFinded.entryDate,
+        exitDate: dateUpdated.exitDate
+          ? dateUpdated.exitDate
+          : registerFinded.exitDate,
       });
       const registerModified = await queryRunner.manager.save(updateRegister);
       await queryRunner.commitTransaction();

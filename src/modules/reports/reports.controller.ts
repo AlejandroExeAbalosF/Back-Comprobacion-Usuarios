@@ -30,4 +30,22 @@ export class ReportsController {
     });
     res.end(pdfBuffer);
   }
+
+  @Get('pdf/porcentaje-mes')
+  // @UsePipes(new ValidationPipe({ transform: true })) // Convierte los valores a números automáticamente
+  async generatePDFporcentajeMes(
+    @Res() res: Response,
+    @Query() query: CreateReportDto,
+  ) {
+    // @Query() query: CreateReportDto, // @Res() res: Response,
+    const { year, month } = query;
+
+    const pdfBuffer = await this.reportsService.generatePDFporcentajeMes(query);
+    res.set({
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': `attachment; filename="porcentaje-${year}-${month}.pdf"`,
+      'Content-Length': pdfBuffer.length,
+    });
+    res.end(pdfBuffer);
+  }
 }

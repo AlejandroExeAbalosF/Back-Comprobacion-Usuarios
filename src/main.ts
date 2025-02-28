@@ -6,6 +6,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import * as cookieParser from 'cookie-parser';
 import { config as dotenvConfig } from 'dotenv';
+import { json, urlencoded } from 'express';
 
 dotenvConfig({ path: '.env' });
 
@@ -32,6 +33,11 @@ async function bootstrap() {
   //   credentials: true,
   // });
   // Servir la carpeta 'uploads' de forma pública
+  // ⚠️ Agrega esto para que NestJS procese JSON correctamente
+  // app.use(json());
+  // app.use(express.urlencoded({ extended: true }));
+  // app.use(json()); // 💡 Asegura que acepte JSON
+  // app.use(urlencoded({ extended: true })); // 💡 Permite recibir datos form-urlencoded
   app.useStaticAssets(join(__dirname, '..', 'uploads'), { prefix: '/uploads' });
   app.use(loggerGlobal); // midd-loginLog global
   app.useGlobalPipes(

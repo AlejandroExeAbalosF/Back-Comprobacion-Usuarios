@@ -92,14 +92,22 @@ export class SeedService implements OnModuleInit {
   }
   private async executeSeedUsers() {
     const users = usersData;
-    const shift = {
-      name: 'Mañana',
-      entryHour: '08:00:00',
-      exitHour: '14:00:00',
-    };
-
-    const newShift = this.shiftRepository.create(shift);
-    await this.shiftRepository.save(newShift);
+    const shifts = [
+      {
+        name: 'M',
+        entryHour: '08:00:00',
+        exitHour: '14:00:00',
+      },
+      {
+        name: 'T',
+        entryHour: '15:00:00',
+        exitHour: '21:00:00',
+      },
+    ];
+    for (const shift of shifts) {
+      const newShift = this.shiftRepository.create(shift);
+      await this.shiftRepository.save(newShift);
+    }
 
     for (const user of users) {
       const userFinded = await this.userRepository.findOneBy({
@@ -134,11 +142,15 @@ export class SeedService implements OnModuleInit {
           name: user?.secretariat as string | undefined,
         });
         // if (!secretariatFinded) continue;
+        const shiftFinded = await this.shiftRepository.findOneBy({
+          name: user.turno,
+        });
+        if (!shiftFinded) continue;
         const { secretariat, ...userData } = user;
         const newUser = this.userRepository.create({
           ...userData,
           secretariat: secretariatFinded ? secretariatFinded : undefined,
-          shift: newShift,
+          shift: shiftFinded,
         });
         await this.userRepository.save(newUser);
       }

@@ -21,10 +21,10 @@ export class User {
   password: string;
 
   @Column({ type: 'time', name: 'entry_hour', nullable: true })
-  entryHour: string; // Se almacena en formato 'HH:MM:SS'
+  entryHour: string | null; // Se almacena en formato 'HH:MM:SS'
 
   @Column({ type: 'time', name: 'exit_hour', nullable: true })
-  exitHour: string; // Se almacena en formato 'HH:MM:SS'
+  exitHour: string | null; // Se almacena en formato 'HH:MM:SS'
 
   @Column({ type: 'varchar', length: 50, nullable: false }) // maximo 50 chars y no puede ser nulo
   name: string;
