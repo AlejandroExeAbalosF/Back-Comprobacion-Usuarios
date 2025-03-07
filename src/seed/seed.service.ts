@@ -10,6 +10,7 @@ import * as secretariatsData from '../helpers/preload-secretariat.data.json';
 import * as articulosData from '../helpers/preload-articulos.data.json';
 import * as incisosData from '../helpers/preload-incisos.data.json';
 import * as subIncisosData from '../helpers/preload-subIncisos.data.json';
+import * as nonWorkingDayData from '../helpers/preload-nonWorkingDays.date.json';
 import * as bcrypt from 'bcrypt';
 import { CreateRegistrationDto } from 'src/modules/registrations/dto/create-registration.dto';
 import { Registration } from 'src/modules/registrations/entities/registration.entity';
@@ -19,6 +20,7 @@ import { Articulo } from 'src/modules/articulos/entities/articulo.entity';
 import { Inciso } from 'src/modules/articulos/entities/inciso.entity';
 import { SubInciso } from 'src/modules/articulos/entities/sub-inciso.entity';
 import { Shift } from 'src/modules/users/entities/shift.entity';
+import { NonWorkingDay } from 'src/modules/non-working-day/entities/non-working-day.entity';
 
 @Injectable()
 export class SeedService implements OnModuleInit {
@@ -27,6 +29,8 @@ export class SeedService implements OnModuleInit {
     private readonly shiftRepository: Repository<Shift>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(NonWorkingDay)
+    private readonly nonWorkingDayRepository: Repository<NonWorkingDay>,
     @InjectRepository(Registration)
     private readonly registrationRepository: Repository<Registration>,
     @InjectRepository(Ministry)
@@ -47,6 +51,7 @@ export class SeedService implements OnModuleInit {
     await this.preloadDataMinistries();
     await this.preloadDataSecretariats();
     await this.preloadDataUser();
+    await this.preloadNonWorkingDays();
     await this.preloadDataRegistration();
   }
 
@@ -86,6 +91,13 @@ export class SeedService implements OnModuleInit {
 
   async preloadDataArticulos() {
     await this.executeSeedArticulos();
+    Logger.log('Seed de Articulos cargado correctamente', 'PreloadData');
+    const message = { message: 'Seed de Articulos cargado correctamente' };
+    return message;
+  }
+
+  async preloadNonWorkingDays() {
+    await this.executeSeedNonWorkingDays();
     Logger.log('Seed de Articulos cargado correctamente', 'PreloadData');
     const message = { message: 'Seed de Articulos cargado correctamente' };
     return message;
@@ -274,6 +286,7 @@ export class SeedService implements OnModuleInit {
       const newArticle = this.articuloRepository.create({
         name: article.name.toString(),
         description: article.description,
+        statusType: article.statusType as 'AUSENTE' | 'PRESENTE',
       });
       await this.articuloRepository.save(newArticle);
 
@@ -303,15 +316,36 @@ export class SeedService implements OnModuleInit {
         );
 
         for (const subInciso of subIncisosFiltrados) {
-          if(subInciso.nameArt + subInciso.nameInc === article.name + inciso.name){
-          const newSubInciso = this.subIncisoRepository.create({
-            name: subInciso.name.toString(),
-            description: subInciso.description,
-            inciso,
-          });
-          await this.subIncisoRepository.save(newSubInciso);}
+          if (
+            subInciso.nameArt + subInciso.nameInc ===
+            article.name + inciso.name
+          ) {
+            const newSubInciso = this.subIncisoRepository.create({
+              name: subInciso.name.toString(),
+              description: subInciso.description,
+
+              inciso,
+            });
+            await this.subIncisoRepository.save(newSubInciso);
+          }
         }
       }
+    }
+  }
+
+  async executeSeedNonWorkingDays() {
+    const nonWorkingDays = nonWorkingDayData.map((nonWorkingDay) => ({
+      ...nonWorkingDay,
+      type: nonWorkingDay.type as
+        | 'FERIADO_FIJO'
+        | 'FERIADO_MOVIL'
+        | 'VACACIONES_GENERAL'
+        | 'CIERRE_ANUAL',
+    }));
+    for (const nonWorkingDay of nonWorkingDays) {
+      const newNonWorkingDay =
+        this.nonWorkingDayRepository.create(nonWorkingDay);
+      await this.nonWorkingDayRepository.save(newNonWorkingDay);
     }
   }
 }

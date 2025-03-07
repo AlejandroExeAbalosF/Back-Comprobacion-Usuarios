@@ -22,10 +22,11 @@ export class ReportsController {
     @Query() query: CreateReportDto,
   ) {
     const { year, month } = query;
-    const pdfBuffer = await this.reportsService.generatePDFplanillaMes(query);
+    const { name, pdfBuffer } =
+      await this.reportsService.generatePDFplanillaMes(query);
     res.set({
       'Content-Type': 'application/pdf',
-      'Content-Disposition': `attachment; filename="planilla-${year}-${month}.pdf"`,
+      'Content-Disposition': `attachment; filename="planilla-${name}-${year}-${month}.pdf"`,
       'Content-Length': pdfBuffer.length,
     });
     res.end(pdfBuffer);
@@ -40,10 +41,11 @@ export class ReportsController {
     // @Query() query: CreateReportDto, // @Res() res: Response,
     const { year, month } = query;
 
-    const pdfBuffer = await this.reportsService.generatePDFporcentajeMes(query);
+    const { name, pdfBuffer } =
+      await this.reportsService.generatePDFporcentajeMes(query);
     res.set({
       'Content-Type': 'application/pdf',
-      'Content-Disposition': `attachment; filename="porcentaje-${year}-${month}.pdf"`,
+      'Content-Disposition': `attachment; filename="porcentaje-${name}-${year}-${month}.pdf"`,
       'Content-Length': pdfBuffer.length,
     });
     res.end(pdfBuffer);
@@ -54,7 +56,8 @@ export class ReportsController {
     @Res() res: Response,
     @Query() query: CreateReportDto,
   ) {
-    const workbook = await this.reportsService.generateEXCELplanillaMes(query);
+    const { name, excelBuffer } =
+      await this.reportsService.generateEXCELplanillaMes(query);
     const { year, month } = query;
     // Configurar la respuesta para la descarga
     res.setHeader(
@@ -63,11 +66,11 @@ export class ReportsController {
     );
     res.setHeader(
       'Content-Disposition',
-      `attachment; filename="planilla-${year}-${month}.xlsx"`,
+      `attachment; filename="planilla-${name}-${year}-${month}.xlsx"`,
     );
 
     // Enviar el archivo al cliente
-    await workbook.xlsx.write(res);
+    await excelBuffer.xlsx.write(res);
     res.end();
   }
 }

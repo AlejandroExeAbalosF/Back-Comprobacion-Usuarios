@@ -304,8 +304,13 @@ export class UsersService {
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: string) {
+    const userFinded = await this.userService.findOne({
+      where: { id: id },
+      relations: ['secretariat', 'secretariat.ministry', 'shift'],
+    });
+    if (!userFinded) throw new NotFoundException('No se encontro el usuario');
+    return userFinded;
   }
 
   remove(id: number) {

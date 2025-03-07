@@ -27,6 +27,7 @@ import { Shift } from 'src/modules/users/entities/shift.entity';
       Articulo,
       Inciso,
       SubInciso,
+      NonWorkingDay,
     ]),
     NotificationsModule,
   ],

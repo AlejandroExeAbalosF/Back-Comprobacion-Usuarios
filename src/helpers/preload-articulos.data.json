@@ -1,402 +1,507 @@
 [
   {
+    "statusType": "AUSENTE",
     "name": 1,
     "description": "Fíjase el presente régimen de licencia, Justificaciones y franquicias para el personal A.P."
   },
   {
+    "statusType": "AUSENTE",
     "name": 2,
     "description": "Facúltase a la Autoridad de aplicación a dictar normas reglamentarias de contenido operativo."
   },
   {
+    "statusType": "AUSENTE",
     "name": 3,
     "description": "Se considera licencia, toda inasistencia debidamente justificada por alguna causa prevista."
   },
   {
+    "statusType": "AUSENTE",
     "name": 4,
     "description": "Beneficios Previstos."
   },
   {
+    "statusType": "AUSENTE",
     "name": 5,
     "description": "Caducidad."
   },
   {
+    "statusType": "AUSENTE",
     "name": 6,
     "description": "Autoridad de Aplicación."
   },
   {
+    "statusType": "AUSENTE",
     "name": 7,
     "description": "Licencia Anual Ordinaria Obligatoria."
   },
   {
+    "statusType": "AUSENTE",
     "name": 8,
     "description": "Solicitud y usufructo."
   },
   {
+    "statusType": "AUSENTE",
     "name": 9,
     "description": "Postergación y fraccionamiento."
   },
   {
+    "statusType": "AUSENTE",
     "name": 10,
     "description": "Cómputo de Antigüedad."
   },
   {
+    "statusType": "AUSENTE",
     "name": 11,
     "description": "Extensión."
   },
   {
+    "statusType": "AUSENTE",
     "name": 12,
     "description": "Prestación Mínima."
   },
   {
+    "statusType": "AUSENTE",
     "name": 13,
     "description": "Periodos que no Generan Derecho a licencia."
   },
   {
+    "statusType": "AUSENTE",
     "name": 14,
     "description": "Licencia simultánea."
   },
   {
+    "statusType": "AUSENTE",
     "name": 15,
     "description": "Compensación económica."
   },
   {
+    "statusType": "AUSENTE",
     "name": 16,
     "description": "En caso de fallecimiento."
   },
   {
+    "statusType": "AUSENTE",
     "name": 17,
     "description": "Interrupción."
   },
   {
+    "statusType": "AUSENTE",
     "name": 18,
     "description": "Por Enfermedad."
   },
   {
+    "statusType": "AUSENTE",
     "name": 19,
     "description": "Casos de Fuerza Mayor."
   },
   {
+    "statusType": "AUSENTE",
     "name": 20,
     "description": "Cuando el agente deberá requerir intervención médica."
   },
   {
+    "statusType": "AUSENTE",
     "name": 21,
     "description": "El agente está obligado a someterse al control del Servicio Médico."
   },
   {
+    "statusType": "AUSENTE",
     "name": 22,
     "description": "Corto Tratamiento."
   },
   {
+    "statusType": "AUSENTE",
     "name": 23,
     "description": "Retiro del lugar de trabajo por afección o enfermedad."
   },
   {
+    "statusType": "AUSENTE",
     "name": 24,
     "description": "Largo tratamiento."
   },
   {
+    "statusType": "AUSENTE",
     "name": 25,
     "description": "Plazos - 50% de la remuneración."
   },
   {
+    "statusType": "AUSENTE",
     "name": 26,
     "description": "Agotado el término de la Licencia por Largo Tratamiento - 2 años."
   },
   {
+    "statusType": "AUSENTE",
     "name": 27,
     "description": "La recidiva de enfermedades crónicas no será considerada nueva enfermedad."
   },
   {
+    "statusType": "AUSENTE",
     "name": 28,
     "description": "Transformación del cómputo de licencias por corto tratamiento."
   },
   {
+    "statusType": "AUSENTE",
     "name": 29,
     "description": "Incapacidad total y permanente."
   },
   {
+    "statusType": "AUSENTE",
     "name": 30,
     "description": "Alta del Agente."
   },
   {
+    "statusType": "AUSENTE",
     "name": 31,
     "description": "Inexistencia de servicio Médico autorizado."
   },
   {
+    "statusType": "AUSENTE",
     "name": 32,
     "description": "Tratamiento de enfermedades profesionales o accidentes de trabajo (ART)."
   },
   {
+    "statusType": "AUSENTE",
     "name": 33,
     "description": "Cambio de Funciones."
   },
   {
+    "statusType": "AUSENTE",
     "name": 34,
     "description": "Baja del Agente."
   },
   {
+    "statusType": "AUSENTE",
     "name": 35,
     "description": "Reubicación."
   },
   {
+    "statusType": "AUSENTE",
     "name": 36,
     "description": "Reintegro anticipado del agente."
   },
   {
+    "statusType": "AUSENTE",
     "name": 37,
     "description": "Ausencia del lugar de residencia del agente."
   },
   {
+    "statusType": "AUSENTE",
     "name": 38,
     "description": "Incompatibilidades."
   },
   {
+    "statusType": "AUSENTE",
     "name": 39,
     "description": "Presentación de Declaración Jurada."
   },
   {
+    "statusType": "AUSENTE",
     "name": 40,
     "description": "Para atención a familiar enfermo."
   },
   {
+    "statusType": "AUSENTE",
     "name": 41,
     "description": "Atención a hijos discapacitados neurológicos."
   },
   {
+    "statusType": "AUSENTE",
     "name": 42,
     "description": "Licencia por maternidad - Periodo."
   },
   {
+    "statusType": "AUSENTE",
     "name": 43,
     "description": "Modificación del término de licencia."
   },
   {
+    "statusType": "AUSENTE",
     "name": 44,
     "description": "Deber de comunicación."
   },
   {
+    "statusType": "AUSENTE",
     "name": 45,
     "description": "Modificación de condiciones de trabajo por maternidad."
   },
   {
+    "statusType": "AUSENTE",
     "name": 46,
     "description": "Reducción horaria para madres de lactantes - franquicia."
   },
   {
+    "statusType": "AUSENTE",
     "name": 47,
     "description": "Tenencia con fines de adopción."
   },
   {
+    "statusType": "AUSENTE",
     "name": 48,
     "description": "El agente varón."
   },
   {
+    "statusType": "AUSENTE",
     "name": 49,
     "description": "Paternidad."
   },
   {
+    "statusType": "AUSENTE",
     "name": 50,
     "description": "Fallecimiento de familiar."
   },
   {
+    "statusType": "AUSENTE",
     "name": 51,
     "description": "Matrimonio."
   },
   {
+    "statusType": "AUSENTE",
     "name": 52,
     "description": "Para realizar estudios, investigaciones, becas."
   },
   {
+    "statusType": "AUSENTE",
     "name": 53,
     "description": "Plazo máximo de 1 año."
   },
   {
+    "statusType": "AUSENTE",
     "name": 54,
     "description": "La Autoridad podrá determinar el número máximo de agentes."
   },
   {
+    "statusType": "AUSENTE",
     "name": 55,
     "description": "Para rendir exámenes."
   },
   {
+    "statusType": "AUSENTE",
     "name": 56,
     "description": "Participación en concursos."
   },
   {
+    "statusType": "PRESENTE",
     "name": 57,
     "description": "Modificación de horarios."
   },
   {
+    "statusType": "AUSENTE",
     "name": 58,
     "description": "Asuntos Particulares."
   },
   {
+    "statusType": "AUSENTE",
     "name": 59,
     "description": "No podrá adicionarse a otras licencias que se hubieran otorgado."
   },
   {
+    "statusType": "AUSENTE",
     "name": 60,
     "description": "No podrá ausentarse ni hacer uso, hasta tanto sea notificado."
   },
   {
+    "statusType": "AUSENTE",
     "name": 61,
     "description": "Podrá reintegrarse antes del vencimiento del plazo acordado."
   },
   {
+    "statusType": "AUSENTE",
     "name": 62,
     "description": "El personal docente interino podrá usar este beneficio."
   },
   {
+    "statusType": "AUSENTE",
     "name": 63,
     "description": "Licencia por graves asuntos de familia o fuerza mayor."
   },
   {
+    "statusType": "AUSENTE",
     "name": 64,
     "description": "Para actividades culturales y deportivas no rentadas."
   },
   {
+    "statusType": "AUSENTE",
     "name": 65,
     "description": "Para deportistas, dirigente, director técnico, instructor, entrenador, etc."
   },
   {
+    "statusType": "AUSENTE",
     "name": 66,
     "description": "Reservista en Fuerzas Armadas o de seguridad."
   },
   {
+    "statusType": "AUSENTE",
     "name": 67,
     "description": "Licencia por razones Políticas - Cargos electivos."
   },
   {
+    "statusType": "AUSENTE",
     "name": 68,
     "description": "Ejercicio de Cargos Electivos o funciones superiores de Gobierno."
   },
   {
+    "statusType": "AUSENTE",
     "name": 69,
     "description": "Ejercicio de cargos sin estabilidad o de mayor jerarquía."
   },
   {
+    "statusType": "AUSENTE",
     "name": 70,
     "description": "Deberá acreditar cinco (5) años de antigüedad."
   },
   {
+    "statusType": "AUSENTE",
     "name": 71,
     "description": "Licencia Gremial."
   },
   {
+    "statusType": "AUSENTE",
     "name": 72,
     "description": "CAPITULO IV - JUSTIFICACIONES."
   },
   {
+    "statusType": "AUSENTE",
     "name": 73,
     "description": "Donación de Sangre - tres (3) veces al año."
   },
   {
+    "statusType": "AUSENTE",
     "name": 74,
     "description": "Razones Particulares."
   },
   {
+    "statusType": "AUSENTE",
     "name": 75,
     "description": "Actividades extraordinarias."
   },
   {
+    "statusType": "AUSENTE",
     "name": 76,
     "description": "Festividades Religiosas de otros credos."
   },
   {
+    "statusType": "AUSENTE",
     "name": 77,
     "description": "Fuerza Mayor (fenómenos meteorológicos)."
   },
   {
+    "statusType": "AUSENTE",
     "name": 78,
     "description": "Citaciones o trámites personales."
   },
   {
+    "statusType": "AUSENTE",
     "name": 79,
     "description": "Compensatorios."
   },
   {
+    "statusType": "AUSENTE",
     "name": 80,
     "description": "Capacitación y Perfeccionamiento profesional."
   },
   {
+    "statusType": "AUSENTE",
     "name": 81,
     "description": "Comisión de Servicios."
   },
   {
+    "statusType": "AUSENTE",
     "name": 82,
     "description": "Delegados Gremiales."
   },
   {
+    "statusType": "AUSENTE",
     "name": 83,
     "description": "Personal sin estabilidad."
   },
   {
+    "statusType": "AUSENTE",
     "name": 84,
     "description": "Reglamentación conforme a su situación de revista originaria."
   },
   {
+    "statusType": "AUSENTE",
     "name": 85,
     "description": "Personal Adscripto o afectado."
   },
   {
+    "statusType": "AUSENTE",
     "name": 86,
     "description": "Prohíbase la afectación de personal docente."
   },
   {
+    "statusType": "AUSENTE",
     "name": 87,
     "description": "Personal Contratado (excluido)."
   },
   {
+    "statusType": "AUSENTE",
     "name": 88,
     "description": "Inasistencia injustificadas - (10) cesantía."
   },
   {
+    "statusType": "AUSENTE",
     "name": 89,
     "description": "Inasistencia con aviso y sin aviso de docentes."
   },
   {
+    "statusType": "AUSENTE",
     "name": 90,
     "description": "Horario de Labor."
   },
   {
+    "statusType": "AUSENTE",
     "name": 91,
     "description": "Las faltas de puntualidad."
   },
   {
+    "statusType": "AUSENTE",
     "name": 92,
     "description": "Registro de antecedentes."
   },
   {
+    "statusType": "AUSENTE",
     "name": 93,
     "description": "Comunicar a los Superiores sobre irregularidades."
   },
   {
+    "statusType": "AUSENTE",
     "name": 94,
     "description": "Obligación de denunciar domicilio."
   },
   {
+    "statusType": "AUSENTE",
     "name": 95,
     "description": "Sanciones por impuntualidades."
   },
   {
+    "statusType": "AUSENTE",
     "name": 96,
     "description": "Sanciones por ausencias injustificadas."
   },
   {
+    "statusType": "AUSENTE",
     "name": 97,
     "description": "Causal de cesantía."
   },
   {
+    "statusType": "AUSENTE",
     "name": 98,
     "description": "Descuentos de haberes."
   },
   {
+    "statusType": "PRESENTE",
     "name": 99,
     "description": "Salidas Particulares."
   },
   {
+    "statusType": "PRESENTE",
     "name": 100,
     "description": "Salidas Oficiales."
+  },
+  {
+    "statusType": "PRESENTE",
+    "name": "Memorandum 03/24 de la Coordinacion Administrativa",
+    "description": "Salidas Profesionales Privadas de Abogados."
   }
 ]

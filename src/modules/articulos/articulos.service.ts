@@ -22,31 +22,87 @@ export class ArticulosService {
   }
 
   async findAll() {
-    const articulos = await this.articuloRepository.find({
-      relations: ['incisos', 'incisos.subIncisos'],
-    });
-    if (!articulos) throw new NotFoundException('No se encontraron Articulos');
+    // const articulos = await this.articuloRepository.find({
+    //   relations: ['incisos', 'incisos.subIncisos'],
+    // });
+    const results = await this.articuloRepository
+      .createQueryBuilder('articulo')
+      .leftJoinAndSelect('articulo.incisos', 'inciso')
+      .leftJoinAndSelect('inciso.subIncisos', 'subInciso')
+      // Ordenar entidad principal (primero números, luego texto)
+      .orderBy(
+        `CASE 
+        WHEN articulo.name ~ '^[0-9]+$' THEN 0 
+        ELSE 1 
+      END`,
+        'ASC',
+      )
+      .addOrderBy(
+        `CASE 
+        WHEN articulo.name ~ '^[0-9]+$' THEN CAST(articulo.name AS INTEGER) 
+        ELSE NULL 
+      END`,
+        'ASC',
+        'NULLS LAST',
+      )
+      .addOrderBy('articulo.name', 'ASC') // Ordena los textos alfabéticamente
+      // Ordenar incisos (primero números, luego texto)
+      .addOrderBy(
+        `CASE 
+        WHEN inciso.name ~ '^[0-9]+$' THEN 0 
+        ELSE 1 
+      END`,
+        'ASC',
+      )
+      .addOrderBy(
+        `CASE 
+        WHEN inciso.name ~ '^[0-9]+$' THEN CAST(inciso.name AS INTEGER) 
+        ELSE NULL 
+      END`,
+        'ASC',
+        'NULLS LAST',
+      )
+      .addOrderBy('inciso.name', 'ASC') // Ordena los textos alfabéticamente
+      // Ordenar subincisos (primero números, luego texto)
+      .addOrderBy(
+        `CASE 
+        WHEN subInciso.name ~ '^[0-9]+$' THEN 0 
+        ELSE 1 
+      END`,
+        'ASC',
+      )
+      .addOrderBy(
+        `CASE 
+        WHEN subInciso.name ~ '^[0-9]+$' THEN CAST(subInciso.name AS INTEGER) 
+        ELSE NULL 
+      END`,
+        'ASC',
+        'NULLS LAST',
+      )
+      .addOrderBy('subInciso.name', 'ASC') // Ordena los textos alfabéticamente
+      .getMany();
+    if (!results) throw new NotFoundException('No se encontraron Articulos');
     // Ordenar los artículos numéricamente si el nombre es un número
-    articulos.sort((a, b) => {
-      const numA = parseFloat(a.name); // Convertir el nombre a número
-      const numB = parseFloat(b.name); // Convertir el nombre a número
-      return numA - numB; // Comparar los números
-    });
+    // articulos.sort((a, b) => {
+    //   const numA = parseFloat(a.name); // Convertir el nombre a número
+    //   const numB = parseFloat(b.name); // Convertir el nombre a número
+    //   return numA - numB; // Comparar los números
+    // });
 
-    // Ordenar los incisos alfabéticamente dentro de cada artículo
-    articulos.forEach((articulo) => {
-      articulo.incisos.sort((a, b) => a.name.localeCompare(b.name));
+    // // Ordenar los incisos alfabéticamente dentro de cada artículo
+    // articulos.forEach((articulo) => {
+    //   articulo.incisos.sort((a, b) => a.name.localeCompare(b.name));
 
-      // Ordenar los subincisos alfabéticamente dentro de cada inciso
-      articulo.incisos.forEach((inciso) => {
-        inciso.subIncisos.sort((a, b) => {
-          const numA = parseFloat(a.name);
-          const numB = parseFloat(b.name);
-          return numA - numB;
-        });
-      });
-    });
-    return articulos;
+    //   // Ordenar los subincisos alfabéticamente dentro de cada inciso
+    //   articulo.incisos.forEach((inciso) => {
+    //     inciso.subIncisos.sort((a, b) => {
+    //       const numA = parseFloat(a.name);
+    //       const numB = parseFloat(b.name);
+    //       return numA - numB;
+    //     });
+    //   });
+    // });
+    return results;
   }
 
   async getArticulosIncisosSubIncisos() {

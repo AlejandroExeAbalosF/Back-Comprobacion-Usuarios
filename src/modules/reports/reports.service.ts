@@ -157,7 +157,7 @@ function formatToArgentineTime(dateString: string): string {
 @Injectable()
 export class ReportsService {
   constructor(private readonly userService: UsersService) {}
-  async generatePDFplanillaMes(createPDF: CreateReportDto): Promise<Buffer> {
+  async generatePDFplanillaMes(createPDF: CreateReportDto) {
     const userFind =
       await this.userService.getUserWithRegistrationsByMonthAndYear(
         createPDF.id,
@@ -177,7 +177,7 @@ export class ReportsService {
       });
     }
     // console.log('registrosPorFecha', registrosPorFecha);
-    return await new Promise((resolve, reject) => {
+    const pdfBuffer: Buffer = await new Promise((resolve, reject) => {
       const doc: PDFKit.PDFDocument = new PDFDocumentWithTables({
         size: 'letter',
         bufferPages: true,
@@ -460,9 +460,13 @@ export class ReportsService {
       stream.on('finish', () => resolve(Buffer.concat(buffers)));
       stream.on('error', reject);
     });
+    return {
+      name: userFind.name + ' ' + userFind.lastName,
+      pdfBuffer: pdfBuffer,
+    };
   }
 
-  async generatePDFporcentajeMes(createPDF: CreateReportDto): Promise<Buffer> {
+  async generatePDFporcentajeMes(createPDF: CreateReportDto) {
     const userFind =
       await this.userService.getUserWithRegistrationsByMonthAndYear(
         createPDF.id,
@@ -470,7 +474,7 @@ export class ReportsService {
         createPDF.month,
       );
     if (!userFind) throw new NotFoundException('Empleado no encontrado');
-    return await new Promise((resolve, reject) => {
+    const pdfBuffer: Buffer = await new Promise((resolve, reject) => {
       const doc: PDFKit.PDFDocument = new PDFDocumentWithTables({
         size: 'letter',
         bufferPages: true,
@@ -685,11 +689,13 @@ export class ReportsService {
       stream.on('finish', () => resolve(Buffer.concat(buffers)));
       stream.on('error', reject);
     });
+    return {
+      name: userFind.name + ' ' + userFind.lastName,
+      pdfBuffer: pdfBuffer,
+    };
   }
 
-  async generateEXCELplanillaMes(
-    createExcel: CreateReportDto,
-  ): Promise<ExcelJS.Workbook> {
+  async generateEXCELplanillaMes(createExcel: CreateReportDto) {
     const userFind =
       await this.userService.getUserWithRegistrationsByMonthAndYear(
         createExcel.id,
@@ -901,7 +907,11 @@ export class ReportsService {
     //   };
     //   cell.alignment = { horizontal: 'center' };
     // });
-
-    return Promise.resolve(workbook);
+    // Promise.resolve(workbook);
+    const buffer: ExcelJS.Workbook = await Promise.resolve(workbook);
+    return {
+      name: userFind.name + ' ' + userFind.lastName,
+      excelBuffer: buffer,
+    };
   }
 }

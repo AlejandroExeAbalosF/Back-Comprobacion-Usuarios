@@ -9,6 +9,9 @@ export class Articulo {
   @Column({ type: 'varchar', length: 255 })
   name: string;
 
+  @Column({ type: 'enum', enum: ['PRESENTE', 'AUSENTE'] })
+  statusType: 'PRESENTE' | 'AUSENTE';
+
   @Column({ type: 'text', nullable: true })
   description: string;
 

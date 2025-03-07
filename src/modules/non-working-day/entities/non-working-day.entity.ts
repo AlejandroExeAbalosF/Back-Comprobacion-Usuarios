@@ -11,7 +11,7 @@ export class NonWorkingDay {
   @Column({ type: 'date' })
   end_date: string; // Fin del período
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   description: string;
 
   @Column({ type: 'boolean', default: false })
@@ -22,8 +22,17 @@ export class NonWorkingDay {
 
   @Column({
     type: 'enum',
-    enum: ['FERIADO_FIJO', 'FERIADO_MOVIL', 'VACACIONES', 'CIERRE_ANUAL'],
+    enum: [
+      'FERIADO_FIJO',
+      'FERIADO_MOVIL',
+      'VACACIONES_GENERAL',
+      'CIERRE_ANUAL',
+    ],
     default: 'FERIADO_FIJO',
   })
-  type: 'FERIADO_FIJO' | 'FERIADO_MOVIL' | 'VACACIONES' | 'CIERRE_ANUAL';
+  type:
+    | 'FERIADO_FIJO'
+    | 'FERIADO_MOVIL'
+    | 'VACACIONES_GENERAL'
+    | 'CIERRE_ANUAL';
 }
