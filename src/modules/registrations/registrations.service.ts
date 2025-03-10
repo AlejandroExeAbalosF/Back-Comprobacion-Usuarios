@@ -30,6 +30,7 @@ import { CreateRegistrationEmpDniDto } from './dto/create-registrationEmpDni.dto
 import { UserWithLastRegistration } from 'src/helpers/types';
 import { Secretariat } from '../secretariats/entities/secretariat.entity';
 import { Shift } from '../users/entities/shift.entity';
+import { NonWorkingDayService } from '../non-working-day/non-working-day.service';
 
 const toleranceMinutes = 10;
 
@@ -46,6 +47,7 @@ export class RegistrationsService {
     private readonly userService: UsersService,
     private readonly dataSource: DataSource,
     private readonly notificationsGateway: NotificationsGateway,
+    private readonly nonWorkingDayService: NonWorkingDayService,
   ) {}
 
   create(createRegistrationDto: CreateRegistrationDto) {
@@ -308,11 +310,15 @@ export class RegistrationsService {
     if (usersRegisters.length === 0)
       throw new NotFoundException(`No se encontraron registros`);
     // console.log(usersRegisters);
+    const currentDate = new Date();
 
     for (const user of usersRegisters) {
+      const validateNonWorkingDay =
+        await this.nonWorkingDayService.isTodayNonWorkingDay(currentDate);
+      console.log('validateNonWorkingDay', validateNonWorkingDay);
       if (user.registrations.length > 0) {
         const lastRegistrationDate = dayjs(user.registrations[0].entryDate);
-        const currentDate = dayjs();
+
         //el ultimo registro se realizao el dia de hoy?
         if (lastRegistrationDate.isSame(currentDate, 'day')) {
           // console.log(
@@ -324,11 +330,13 @@ export class RegistrationsService {
           const queryRunner = this.dataSource.createQueryRunner();
           await queryRunner.connect();
           await queryRunner.startTransaction();
-          console.log('fecha actual ', currentDate.toDate());
+          console.log('fecha actual ', currentDate);
+
           try {
             const newRegistration = queryRunner.manager.create(Registration, {
-              status: 'AUSENTE',
-              entryDate: currentDate.toDate(),
+              status:
+                validateNonWorkingDay.length > 0 ? 'NO_LABORABLE' : 'AUSENTE',
+              entryDate: currentDate,
               user: user,
             });
             // console.log(newRegistration);
@@ -357,15 +365,15 @@ export class RegistrationsService {
           }
         }
       } else {
-        const currentDate = dayjs();
         // Creación de nuevo registro de ausencia
         const queryRunner = this.dataSource.createQueryRunner();
         await queryRunner.connect();
         await queryRunner.startTransaction();
         try {
           const newRegistration = queryRunner.manager.create(Registration, {
-            status: 'AUSENTE',
-            entryDate: currentDate.toDate(),
+            status:
+              validateNonWorkingDay.length > 0 ? 'NO_LABORABLE' : 'AUSENTE',
+            entryDate: currentDate,
             user: user,
           });
           // console.log(newRegistration);

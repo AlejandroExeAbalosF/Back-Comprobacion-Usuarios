@@ -51,7 +51,7 @@ export class SeedService implements OnModuleInit {
     await this.preloadDataMinistries();
     await this.preloadDataSecretariats();
     await this.preloadDataUser();
-    await this.preloadNonWorkingDays();
+    // await this.preloadNonWorkingDays();
     await this.preloadDataRegistration();
   }
 

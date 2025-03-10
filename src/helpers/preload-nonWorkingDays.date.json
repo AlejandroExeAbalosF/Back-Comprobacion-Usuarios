@@ -1,29 +1,29 @@
 [
   {
-    "start_date": "2025-01-01",
-    "end_date": "2025-01-01",
+    "startDate": "2025-01-01",
+    "endDate": "2025-01-01",
     "description": "Año Nuevo",
     "is_optional": false,
     "type": "FERIADO_FIJO"
   },
   {
-    "start_date": "2025-01-15",
-    "end_date": "2025-01-15",
+    "startDate": "2025-01-15",
+    "endDate": "2025-01-15",
     "description": "Feriado de Patriotico",
     "is_optional": false,
     "type": "FERIADO_FIJO"
   },
   {
-    "start_date": "2025-03-03",
-    "end_date": "2025-03-04",
+    "startDate": "2025-03-03",
+    "endDate": "2025-03-04",
     "description": "Carnaval",
     "year": 2025,
     "is_optional": false,
     "type": "FERIADO_MOVIL"
   },
   {
-    "start_date": "2024-02-12",
-    "end_date": "2024-02-13",
+    "startDate": "2024-02-12",
+    "endDate": "2024-02-13",
     "year": 2024,
     "description": "Carnaval",
     "is_optional": false,

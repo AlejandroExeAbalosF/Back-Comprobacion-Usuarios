@@ -3,13 +3,13 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 @Entity('non_working_days')
 export class NonWorkingDay {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
-  @Column({ type: 'date' })
-  start_date: string; // Inicio del período
+  @Column({ name: 'start_date', type: 'date' })
+  startDate: Date; // Inicio del período
 
-  @Column({ type: 'date' })
-  end_date: string; // Fin del período
+  @Column({ name: 'end_date', type: 'date' })
+  endDate: Date; // Fin del período
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   description: string;
@@ -35,4 +35,12 @@ export class NonWorkingDay {
     | 'FERIADO_MOVIL'
     | 'VACACIONES_GENERAL'
     | 'CIERRE_ANUAL';
+
+  @Column({
+    name: 'created_at',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+    nullable: false,
+  })
+  createdAt: Date;
 }

@@ -8,5 +8,6 @@ import { NonWorkingDay } from './entities/non-working-day.entity';
   imports: [TypeOrmModule.forFeature([NonWorkingDay])],
   controllers: [NonWorkingDayController],
   providers: [NonWorkingDayService],
+  exports: [NonWorkingDayService],
 })
 export class NonWorkingDayModule {}

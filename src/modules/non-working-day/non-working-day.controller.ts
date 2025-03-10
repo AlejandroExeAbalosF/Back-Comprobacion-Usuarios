@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Put,
+} from '@nestjs/common';
 import { NonWorkingDayService } from './non-working-day.service';
 import { CreateNonWorkingDayDto } from './dto/create-non-working-day.dto';
 import { UpdateNonWorkingDayDto } from './dto/update-non-working-day.dto';
@@ -9,6 +18,7 @@ export class NonWorkingDayController {
 
   @Post()
   create(@Body() createNonWorkingDayDto: CreateNonWorkingDayDto) {
+    // return createNonWorkingDayDto;
     return this.nonWorkingDayService.create(createNonWorkingDayDto);
   }
 
@@ -22,9 +32,12 @@ export class NonWorkingDayController {
     return this.nonWorkingDayService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateNonWorkingDayDto: UpdateNonWorkingDayDto) {
-    return this.nonWorkingDayService.update(+id, updateNonWorkingDayDto);
+  @Put(':id')
+  update(
+    @Param('id') id: string,
+    @Body() updateNonWorkingDayDto: UpdateNonWorkingDayDto,
+  ) {
+    return this.nonWorkingDayService.update(id, updateNonWorkingDayDto);
   }
 
   @Delete(':id')
