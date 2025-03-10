@@ -18,6 +18,7 @@ import { SecretariatsModule } from './modules/secretariats/secretariats.module';
 import { NonWorkingDayModule } from './modules/non-working-day/non-working-day.module';
 import { ReportsModule } from './modules/reports/reports.module';
 import { ArticulosModule } from './modules/articulos/articulos.module';
+import { EmployeeAbsencesModule } from './modules/employee-absences/employee-absences.module';
 
 @Module({
   imports: [
@@ -53,6 +54,8 @@ import { ArticulosModule } from './modules/articulos/articulos.module';
     ReportsModule,
 
     ArticulosModule,
+
+    EmployeeAbsencesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

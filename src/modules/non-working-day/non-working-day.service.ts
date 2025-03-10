@@ -135,59 +135,77 @@ export class NonWorkingDayService {
 
   async isTodayNonWorkingDay(currentDate: Date) {
     const timeZone = 'America/Argentina/Buenos_Aires';
-    const today = toZonedTime(currentDate, timeZone); // Ignorar la hora (00:00:00.000)
+    const today = currentDate; // Ignorar la hora (00:00:00.000)
     console.log('today', today);
+const todayDate = currentDate.toISOString().split('T')[0]; // Obtiene solo la parte de la fecha
+console.log('todayDate', todayDate);
+// if (todayDate >= startDate && todayDate <= endDate) {
+//   console.log('La fecha actual está dentro del rango');
+// } else {
+//   console.log('La fecha actual está fuera del rango');
     // Obtener todos los días no laborables
     const nonWorkingDays = await this.nonWorkingDayRepository.find();
 
     // Filtrar los días no laborables que coincidan con la fecha actual
     const matchingDays = nonWorkingDays.filter((day) => {
       // Convertir startDate y endDate a objetos Date y ignorar la hora
-      const startDate = toZonedTime(
-        day.startDate instanceof Date ? day.startDate : new Date(day.startDate),
-        timeZone,
-      );
-      const endDate = toZonedTime(
-        day.endDate instanceof Date ? day.endDate : new Date(day.endDate),
-        timeZone,
-      );
-      if (day.type === 'FERIADO_FIJO') {
-        // Si es feriado fijo, comparar solo el día y el mes
-        const fixedHolidayDateStart = new Date(
-          today.getFullYear(),
-          startDate.getMonth(),
-          startDate.getDate(),
-        );
-        const fixedHolidayDateEnd = new Date(
-          today.getFullYear(),
-          startDate.getMonth(),
-          startDate.getDate(),
-        );
-        console.log('fixedHolidayDateStart', fixedHolidayDateStart);
-        console.log('fixedHolidayDateEnd', fixedHolidayDateEnd);
-        console.log(isSameDay(fixedHolidayDateStart, today));
-        return isWithinInterval(today, {
-          start: fixedHolidayDateStart,
-          end: fixedHolidayDateEnd,
-        });
-      } else {
-        console.log('startDate', startDate, 'endDate', endDate);
-        console.log(
-          isWithinInterval(today, { start: startDate, end: endDate }),
-        );
-        console.log(isSameDay(today, startDate));
-        console.log(isSameDay(today, endDate));
-        // Si no es feriado fijo, verificar si la fecha actual está dentro del rango
-        return (
-          isWithinInterval(today, { start: startDate, end: endDate }) ||
-          isSameDay(today, startDate) ||
-          isSameDay(today, endDate)
-        );
-      }
+      // const startDate = day.startDate.toISOString();
+      // const endDate = day.endDate.toISOString();
+      // console.log('startDate', startDate);
+      // if (todayDate >= startDate && todayDate <= endDate) {
+      //   return true;
+      // } else {
+      //   return false;
+      // }
+      
+      return true
+      // console.log('day', day);
+      // const startDate = toZonedTime(
+      //   day.startDate instanceof Date ? day.startDate : new Date(day.startDate),
+      //   timeZone,
+      // );
+      // const endDate = toZonedTime(
+      //   day.endDate instanceof Date ? day.endDate : new Date(day.endDate),
+      //   timeZone,
+      // );
+      // if (day.type === 'FERIADO_FIJO') {
+      //   // Si es feriado fijo, comparar solo el día y el mes
+      //   const fixedHolidayDateStart = new Date(
+      //     today.getFullYear(),
+      //     startDate.getMonth(),
+      //     startDate.getDate(),
+      //   );
+      //   const fixedHolidayDateEnd = new Date(
+      //     today.getFullYear(),
+      //     startDate.getMonth(),
+      //     startDate.getDate(),
+      //   );
+      //   console.log('fixedHolidayDateStart', fixedHolidayDateStart);
+      //   console.log('fixedHolidayDateEnd', fixedHolidayDateEnd);
+      //   console.log(isSameDay(fixedHolidayDateStart, today));
+      //   return isWithinInterval(today, {
+      //     start: fixedHolidayDateStart,
+      //     end: fixedHolidayDateEnd,
+      //   });
+      // } else {
+      //   console.log('startDate', startDate, 'endDate', endDate);
+      //   console.log(
+      //     isWithinInterval(today, { start: startDate, end: endDate }),
+      //   );
+      //   console.log(isSameDay(today, startDate));
+      //   console.log(isSameDay(today, endDate));
+      //   // Si no es feriado fijo, verificar si la fecha actual está dentro del rango
+      //   return (
+      //     isWithinInterval(today, { start: startDate, end: endDate }) ||
+      //     isSameDay(today, startDate) ||
+      //     isSameDay(today, endDate)
+      //   );
+      // }
     });
 
     return matchingDays; // Devolver todos los registros que coinciden con la fecha actual
   }
+  
   remove(id: number) {
     return `This action removes a #${id} nonWorkingDay`;
   }

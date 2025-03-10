@@ -338,6 +338,8 @@ export class RegistrationsService {
                 validateNonWorkingDay.length > 0 ? 'NO_LABORABLE' : 'AUSENTE',
               entryDate: currentDate,
               user: user,
+              type: validateNonWorkingDay.length > 0 ? validateNonWorkingDay[0].type : null,
+              description: validateNonWorkingDay.length > 0 ? validateNonWorkingDay[0].description : null,
             });
             // console.log(newRegistration);
             await queryRunner.manager.save(newRegistration);
@@ -375,6 +377,8 @@ export class RegistrationsService {
               validateNonWorkingDay.length > 0 ? 'NO_LABORABLE' : 'AUSENTE',
             entryDate: currentDate,
             user: user,
+            type: validateNonWorkingDay.length > 0 ? validateNonWorkingDay[0].type : null,
+              description: validateNonWorkingDay.length > 0 ? validateNonWorkingDay[0].description : null,
           });
           // console.log(newRegistration);
           await queryRunner.manager.save(newRegistration);
