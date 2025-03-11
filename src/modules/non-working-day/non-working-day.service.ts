@@ -3,7 +3,13 @@ import { CreateNonWorkingDayDto } from './dto/create-non-working-day.dto';
 import { UpdateNonWorkingDayDto } from './dto/update-non-working-day.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { NonWorkingDay } from './entities/non-working-day.entity';
-import { DataSource, Repository } from 'typeorm';
+import {
+  DataSource,
+  LessThanOrEqual,
+  MoreThanOrEqual,
+  Raw,
+  Repository,
+} from 'typeorm';
 import {
   isWithinInterval,
   parseISO,
@@ -47,7 +53,7 @@ export class NonWorkingDayService {
       });
       await queryRunner.manager.save(newNonWorkingDay);
       await queryRunner.commitTransaction();
-      console.log('createNonWorkingDayDto', newNonWorkingDay);
+      // console.log('createNonWorkingDayDto', newNonWorkingDay);
       return {
         message: 'Fechas no laborables creadas con éxito',
         data: {
@@ -104,108 +110,112 @@ export class NonWorkingDayService {
     }
   }
 
-  // async isTodayNonWorkingDay(currentDate: Date) {
-  //   const today = currentDate; // Usar la fecha que pasas como argumento
-  //   const todayMonthDay = format(today, 'MM-dd'); // Formato MM-dd (mes-día) para feriados fijos
-  //   const currentYear = today.getFullYear();
-
-  //   const nonWorkingDays = await this.nonWorkingDayRepository.find();
-
-  //   return nonWorkingDays.some((day) => {
-  //     const sd =
-  //       day.startDate instanceof Date ? day.startDate : new Date(day.startDate);
-  //     console.log('startDate convertido:', sd.toISOString());
-  //     const startDate = parseISO(sd.toISOString());
-  //     const ed =
-  //       day.endDate instanceof Date ? day.endDate : new Date(day.endDate);
-  //     const endDate = parseISO(ed.toISOString());
-
-  //     if (day.type === 'FERIADO_FIJO') {
-  //       // Comparar solo MM-dd
-  //       return (
-  //         format(startDate, 'MM-dd') === todayMonthDay &&
-  //         (!day.year || day.year === currentYear)
-  //       );
-  //     }
-
-  //     // Comparar rango de fechas para feriados móviles y otros
-  //     return isWithinInterval(today, { start: startDate, end: endDate });
-  //   });
-  // }
-
   async isTodayNonWorkingDay(currentDate: Date) {
-    const timeZone = 'America/Argentina/Buenos_Aires';
-    const today = currentDate; // Ignorar la hora (00:00:00.000)
-    console.log('today', today);
-const todayDate = currentDate.toISOString().split('T')[0]; // Obtiene solo la parte de la fecha
-console.log('todayDate', todayDate);
-// if (todayDate >= startDate && todayDate <= endDate) {
-//   console.log('La fecha actual está dentro del rango');
-// } else {
-//   console.log('La fecha actual está fuera del rango');
-    // Obtener todos los días no laborables
-    const nonWorkingDays = await this.nonWorkingDayRepository.find();
-
-    // Filtrar los días no laborables que coincidan con la fecha actual
-    const matchingDays = nonWorkingDays.filter((day) => {
-      // Convertir startDate y endDate a objetos Date y ignorar la hora
-      // const startDate = day.startDate.toISOString();
-      // const endDate = day.endDate.toISOString();
-      // console.log('startDate', startDate);
-      // if (todayDate >= startDate && todayDate <= endDate) {
-      //   return true;
-      // } else {
-      //   return false;
-      // }
-      
-      return true
-      // console.log('day', day);
-      // const startDate = toZonedTime(
-      //   day.startDate instanceof Date ? day.startDate : new Date(day.startDate),
-      //   timeZone,
-      // );
-      // const endDate = toZonedTime(
-      //   day.endDate instanceof Date ? day.endDate : new Date(day.endDate),
-      //   timeZone,
-      // );
-      // if (day.type === 'FERIADO_FIJO') {
-      //   // Si es feriado fijo, comparar solo el día y el mes
-      //   const fixedHolidayDateStart = new Date(
-      //     today.getFullYear(),
-      //     startDate.getMonth(),
-      //     startDate.getDate(),
-      //   );
-      //   const fixedHolidayDateEnd = new Date(
-      //     today.getFullYear(),
-      //     startDate.getMonth(),
-      //     startDate.getDate(),
-      //   );
-      //   console.log('fixedHolidayDateStart', fixedHolidayDateStart);
-      //   console.log('fixedHolidayDateEnd', fixedHolidayDateEnd);
-      //   console.log(isSameDay(fixedHolidayDateStart, today));
-      //   return isWithinInterval(today, {
-      //     start: fixedHolidayDateStart,
-      //     end: fixedHolidayDateEnd,
-      //   });
-      // } else {
-      //   console.log('startDate', startDate, 'endDate', endDate);
-      //   console.log(
-      //     isWithinInterval(today, { start: startDate, end: endDate }),
-      //   );
-      //   console.log(isSameDay(today, startDate));
-      //   console.log(isSameDay(today, endDate));
-      //   // Si no es feriado fijo, verificar si la fecha actual está dentro del rango
-      //   return (
-      //     isWithinInterval(today, { start: startDate, end: endDate }) ||
-      //     isSameDay(today, startDate) ||
-      //     isSameDay(today, endDate)
-      //   );
-      // }
+    const todayMonthDay = format(currentDate, 'MM-dd'); // MM-DD para feriados fijos
+    console.log('todayMonthDay', todayMonthDay);
+    const nonWorkingDays = await this.nonWorkingDayRepository.find({
+      where: [
+        // 1. Días no laborables con rango de fechas
+        {
+          startDate: LessThanOrEqual(currentDate),
+          endDate: MoreThanOrEqual(currentDate),
+        },
+        // 2. Feriados fijos que aplican todos los años
+        {
+          type: 'FERIADO_FIJO',
+          startDate: Raw(
+            (alias) => `TO_CHAR(${alias}, 'MM-DD') = :todayMonthDay`,
+            { todayMonthDay },
+          ),
+        },
+        // 3. Feriados fijos con un año específico
+        // {
+        //   type: 'FERIADO_FIJO',
+        //   year: currentDate.getFullYear(), // Solo aplica si coincide con el año actual
+        //   startDate: Raw(
+        //     (alias) => `TO_CHAR(${alias}, 'MM-DD') = :todayMonthDay`,
+        //     { todayMonthDay },
+        //   ),
+        // },
+      ],
     });
 
-    return matchingDays; // Devolver todos los registros que coinciden con la fecha actual
+    return nonWorkingDays;
   }
-  
+
+  // async isTodayNonWorkingDay(currentDate: Date) {
+  //   const timeZone = 'America/Argentina/Buenos_Aires';
+  //   const today = currentDate; // Ignorar la hora (00:00:00.000)
+  //   console.log('today', today);
+  //   const todayDate = currentDate.toISOString().split('T')[0]; // Obtiene solo la parte de la fecha
+  //   console.log('todayDate', todayDate);
+  //   // if (todayDate >= startDate && todayDate <= endDate) {
+  //   //   console.log('La fecha actual está dentro del rango');
+  //   // } else {
+  //   //   console.log('La fecha actual está fuera del rango');
+  //   // Obtener todos los días no laborables
+  //   const nonWorkingDays = await this.nonWorkingDayRepository.find();
+
+  //   // Filtrar los días no laborables que coincidan con la fecha actual
+  //   const matchingDays = nonWorkingDays.filter((day) => {
+  //     // Convertir startDate y endDate a objetos Date y ignorar la hora
+  //     // const startDate = day.startDate.toISOString();
+  //     // const endDate = day.endDate.toISOString();
+  //     // console.log('startDate', startDate);
+  //     // if (todayDate >= startDate && todayDate <= endDate) {
+  //     //   return true;
+  //     // } else {
+  //     //   return false;
+  //     // }
+
+  //     return true;
+  //     // console.log('day', day);
+  //     // const startDate = toZonedTime(
+  //     //   day.startDate instanceof Date ? day.startDate : new Date(day.startDate),
+  //     //   timeZone,
+  //     // );
+  //     // const endDate = toZonedTime(
+  //     //   day.endDate instanceof Date ? day.endDate : new Date(day.endDate),
+  //     //   timeZone,
+  //     // );
+  //     // if (day.type === 'FERIADO_FIJO') {
+  //     //   // Si es feriado fijo, comparar solo el día y el mes
+  //     //   const fixedHolidayDateStart = new Date(
+  //     //     today.getFullYear(),
+  //     //     startDate.getMonth(),
+  //     //     startDate.getDate(),
+  //     //   );
+  //     //   const fixedHolidayDateEnd = new Date(
+  //     //     today.getFullYear(),
+  //     //     startDate.getMonth(),
+  //     //     startDate.getDate(),
+  //     //   );
+  //     //   console.log('fixedHolidayDateStart', fixedHolidayDateStart);
+  //     //   console.log('fixedHolidayDateEnd', fixedHolidayDateEnd);
+  //     //   console.log(isSameDay(fixedHolidayDateStart, today));
+  //     //   return isWithinInterval(today, {
+  //     //     start: fixedHolidayDateStart,
+  //     //     end: fixedHolidayDateEnd,
+  //     //   });
+  //     // } else {
+  //     //   console.log('startDate', startDate, 'endDate', endDate);
+  //     //   console.log(
+  //     //     isWithinInterval(today, { start: startDate, end: endDate }),
+  //     //   );
+  //     //   console.log(isSameDay(today, startDate));
+  //     //   console.log(isSameDay(today, endDate));
+  //     //   // Si no es feriado fijo, verificar si la fecha actual está dentro del rango
+  //     //   return (
+  //     //     isWithinInterval(today, { start: startDate, end: endDate }) ||
+  //     //     isSameDay(today, startDate) ||
+  //     //     isSameDay(today, endDate)
+  //     //   );
+  //     // }
+  //   });
+
+  //   return matchingDays; // Devolver todos los registros que coinciden con la fecha actual
+  // }
+
   remove(id: number) {
     return `This action removes a #${id} nonWorkingDay`;
   }

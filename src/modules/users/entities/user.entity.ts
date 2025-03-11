@@ -11,6 +11,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Shift } from './shift.entity';
+import { EmployeeAbsence } from 'src/modules/employee-absences/entities/employee-absence.entity';
 
 @Entity({ name: 'users' })
 export class User {
@@ -126,4 +127,7 @@ export class User {
 
   @ManyToOne(() => Shift, (shift) => shift.users) // 👈 Cada usuario tiene un solo turno
   shift: Shift;
+
+  @OneToMany(() => EmployeeAbsence, (employeeAbsence) => employeeAbsence.user)
+  employeeAbsences: EmployeeAbsence[];
 }

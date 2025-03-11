@@ -15,6 +15,7 @@ import { Inciso } from 'src/modules/articulos/entities/inciso.entity';
 import { SubInciso } from 'src/modules/articulos/entities/sub-inciso.entity';
 import { Shift } from 'src/modules/users/entities/shift.entity';
 import { NonWorkingDayModule } from 'src/modules/non-working-day/non-working-day.module';
+import { EmployeeAbsencesModule } from 'src/modules/employee-absences/employee-absences.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { NonWorkingDayModule } from 'src/modules/non-working-day/non-working-day
     ]),
     NotificationsModule,
     NonWorkingDayModule,
+    EmployeeAbsencesModule,
   ],
   controllers: [SeedController],
   providers: [SeedService, UsersService, RegistrationsService],

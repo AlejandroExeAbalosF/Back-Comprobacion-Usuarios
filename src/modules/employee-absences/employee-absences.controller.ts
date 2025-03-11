@@ -1,20 +1,35 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { EmployeeAbsencesService } from './employee-absences.service';
 import { CreateEmployeeAbsenceDto } from './dto/create-employee-absence.dto';
 import { UpdateEmployeeAbsenceDto } from './dto/update-employee-absence.dto';
 
 @Controller('employee-absences')
 export class EmployeeAbsencesController {
-  constructor(private readonly employeeAbsencesService: EmployeeAbsencesService) {}
+  constructor(
+    private readonly employeeAbsencesService: EmployeeAbsencesService,
+  ) {}
 
-  @Post()
-  create(@Body() createEmployeeAbsenceDto: CreateEmployeeAbsenceDto) {
-    return this.employeeAbsencesService.create(createEmployeeAbsenceDto);
+  @Post('user/:id')
+  create(
+    @Param('id') id: string,
+    @Body() createEmployeeAbsenceDto: CreateEmployeeAbsenceDto,
+  ) {
+    // return { id, ...createEmployeeAbsenceDto };
+    return this.employeeAbsencesService.create(id, createEmployeeAbsenceDto);
   }
 
-  @Get()
-  findAll() {
-    return this.employeeAbsencesService.findAll();
+  @Get('user/:id')
+  findAllByUser(@Param('id') id: string) {
+    console.log('id', id);
+    return this.employeeAbsencesService.findAllByUser(id);
   }
 
   @Get(':id')
@@ -23,7 +38,10 @@ export class EmployeeAbsencesController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateEmployeeAbsenceDto: UpdateEmployeeAbsenceDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateEmployeeAbsenceDto: UpdateEmployeeAbsenceDto,
+  ) {
     return this.employeeAbsencesService.update(+id, updateEmployeeAbsenceDto);
   }
 

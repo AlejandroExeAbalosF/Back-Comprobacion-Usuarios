@@ -31,6 +31,7 @@ import { UserWithLastRegistration } from 'src/helpers/types';
 import { Secretariat } from '../secretariats/entities/secretariat.entity';
 import { Shift } from '../users/entities/shift.entity';
 import { NonWorkingDayService } from '../non-working-day/non-working-day.service';
+import { EmployeeAbsencesService } from '../employee-absences/employee-absences.service';
 
 const toleranceMinutes = 10;
 
@@ -48,6 +49,7 @@ export class RegistrationsService {
     private readonly dataSource: DataSource,
     private readonly notificationsGateway: NotificationsGateway,
     private readonly nonWorkingDayService: NonWorkingDayService,
+    private readonly employeeAbsenceService: EmployeeAbsencesService,
   ) {}
 
   create(createRegistrationDto: CreateRegistrationDto) {
@@ -201,6 +203,8 @@ export class RegistrationsService {
         }
       }
     }
+    const validateNonWorkingDay =
+      await this.nonWorkingDayService.isTodayNonWorkingDay(currentDate);
 
     // Creación de nuevo registro sin consultas extra
     const queryRunner = this.dataSource.createQueryRunner();
@@ -239,10 +243,17 @@ export class RegistrationsService {
       entryTime.setHours(Number(hours), Number(minutes), 0);
       const newRegistration = queryRunner.manager.create(Registration, {
         entryCapture: file,
-        status: 'TRABAJANDO',
+        status:
+          validateNonWorkingDay.length > 0 ? 'NO_LABORABLE' : 'TRABAJANDO',
         entryDate: entryDateUtc,
+        exitDate: validateNonWorkingDay.length > 0 ? entryDateUtc : null,
         user: userValidate,
-        type: !isLate ? 'LLEGADA_TARDE' : null,
+        type:
+          validateNonWorkingDay.length > 0
+            ? validateNonWorkingDay[0].type
+            : !isLate
+              ? 'LLEGADA_TARDE'
+              : null,
       });
       // console.log(newRegistration);
       await queryRunner.manager.save(newRegistration);
@@ -267,7 +278,13 @@ export class RegistrationsService {
         toZonedTime(newRegistration.entryDate as Date, timeZone),
       );
 
-      return { message: 'Registrada la Entrada Correctamente' };
+      return {
+        message:
+          newRegistration.status === 'NO_LABORABLE'
+            ? 'Registro no disponiple por que es un dia no laborable'
+            : 'Registrada la Entrada Correctamente',
+        status: newRegistration.status,
+      };
     } catch (error) {
       await queryRunner.rollbackTransaction();
       throw error;
@@ -311,11 +328,15 @@ export class RegistrationsService {
       throw new NotFoundException(`No se encontraron registros`);
     // console.log(usersRegisters);
     const currentDate = new Date();
-
+    const validateNonWorkingDay =
+      await this.nonWorkingDayService.isTodayNonWorkingDay(currentDate);
+    console.log('validateNonWorkingDay', validateNonWorkingDay);
     for (const user of usersRegisters) {
-      const validateNonWorkingDay =
-        await this.nonWorkingDayService.isTodayNonWorkingDay(currentDate);
-      console.log('validateNonWorkingDay', validateNonWorkingDay);
+      const validateEmployeeAbsence =
+        await this.employeeAbsenceService.isTodayEmployeeAbsence(
+          currentDate,
+          user,
+        );
       if (user.registrations.length > 0) {
         const lastRegistrationDate = dayjs(user.registrations[0].entryDate);
 
@@ -335,11 +356,30 @@ export class RegistrationsService {
           try {
             const newRegistration = queryRunner.manager.create(Registration, {
               status:
-                validateNonWorkingDay.length > 0 ? 'NO_LABORABLE' : 'AUSENTE',
+                validateEmployeeAbsence.length > 0
+                  ? 'AUSENTE'
+                  : validateNonWorkingDay.length > 0
+                    ? 'NO_LABORABLE'
+                    : 'AUSENTE',
               entryDate: currentDate,
+              exitDate: currentDate,
               user: user,
-              type: validateNonWorkingDay.length > 0 ? validateNonWorkingDay[0].type : null,
-              description: validateNonWorkingDay.length > 0 ? validateNonWorkingDay[0].description : null,
+              type:
+                validateEmployeeAbsence.length > 0
+                  ? validateEmployeeAbsence[0].type
+                  : validateNonWorkingDay.length > 0
+                    ? validateNonWorkingDay[0].type
+                    : null,
+              description:
+                validateEmployeeAbsence.length > 0
+                  ? validateEmployeeAbsence[0].description
+                  : validateNonWorkingDay.length > 0
+                    ? validateNonWorkingDay[0].description
+                    : null,
+              articulo:
+                validateEmployeeAbsence.length > 0
+                  ? validateEmployeeAbsence[0].articulo
+                  : null,
             });
             // console.log(newRegistration);
             await queryRunner.manager.save(newRegistration);
@@ -374,11 +414,30 @@ export class RegistrationsService {
         try {
           const newRegistration = queryRunner.manager.create(Registration, {
             status:
-              validateNonWorkingDay.length > 0 ? 'NO_LABORABLE' : 'AUSENTE',
+              validateEmployeeAbsence.length > 0
+                ? 'AUSENTE'
+                : validateNonWorkingDay.length > 0
+                  ? 'NO_LABORABLE'
+                  : 'AUSENTE',
             entryDate: currentDate,
+            exitDate: currentDate,
             user: user,
-            type: validateNonWorkingDay.length > 0 ? validateNonWorkingDay[0].type : null,
-              description: validateNonWorkingDay.length > 0 ? validateNonWorkingDay[0].description : null,
+            type:
+              validateEmployeeAbsence.length > 0
+                ? validateEmployeeAbsence[0].type
+                : validateNonWorkingDay.length > 0
+                  ? validateNonWorkingDay[0].type
+                  : null,
+            description:
+              validateEmployeeAbsence.length > 0
+                ? validateEmployeeAbsence[0].description
+                : validateNonWorkingDay.length > 0
+                  ? validateNonWorkingDay[0].description
+                  : null,
+            articulo:
+              validateEmployeeAbsence.length > 0
+                ? validateEmployeeAbsence[0].articulo
+                : null,
           });
           // console.log(newRegistration);
           await queryRunner.manager.save(newRegistration);

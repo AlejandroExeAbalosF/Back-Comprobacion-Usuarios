@@ -10,12 +10,14 @@ import { UsersModule } from '../users/users.module';
 import { Secretariat } from '../secretariats/entities/secretariat.entity';
 import { Shift } from '../users/entities/shift.entity';
 import { NonWorkingDayModule } from '../non-working-day/non-working-day.module';
+import { EmployeeAbsencesModule } from '../employee-absences/employee-absences.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Registration, User, Shift, Secretariat]),
     UsersModule,
     NonWorkingDayModule,
+    EmployeeAbsencesModule,
   ],
   controllers: [RegistrationsController],
   providers: [RegistrationsService, UsersService, NotificationsGateway],

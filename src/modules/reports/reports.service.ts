@@ -553,8 +553,8 @@ export class ReportsService {
         .font('Helvetica-Bold')
         .fillColor('black')
         .fontSize(9)
-        .text('Original', 260, invoiceTableTop)
-        .text('Final', 413, invoiceTableTop);
+        .text('Presentismo', 245, invoiceTableTop)
+        .text('Puntualidad', 395, invoiceTableTop);
 
       // linea verticales
       const xPositionsEncabezado = [200, 350, 500]; // posiciones de las columnas
@@ -593,7 +593,7 @@ export class ReportsService {
         .strokeColor('black')
         .lineWidth(1)
         .moveTo(100, invoiceTableTop + 38)
-        .lineTo(350, invoiceTableTop + 38)
+        .lineTo(500, invoiceTableTop + 38)
         .stroke();
       doc
         .strokeColor('black')
@@ -653,8 +653,8 @@ export class ReportsService {
         .text(`${contAusente}`, 203, invoiceTableTop + 14)
         .text(`${porcentajeFaltas} %`, 265, invoiceTableTop + 14)
         .text('Retardos', 110, invoiceTableTop + 28)
-        .text(`${contLlegadaTarde}`, 203, invoiceTableTop + 28)
-        .text(`${porcentajeRetardos} %`, 265, invoiceTableTop + 28)
+        .text(`${contLlegadaTarde}`, 358, invoiceTableTop + 28)
+        .text(`${porcentajeRetardos} %`, 413, invoiceTableTop + 28)
         .text('Permisos', 110, invoiceTableTop + 42)
         .text('Total', 110, invoiceTableTop + 56)
         .text(`${totalDiasHabilAusentes}`, 203, invoiceTableTop + 56)
@@ -671,16 +671,17 @@ export class ReportsService {
           .stroke();
       });
 
+      // doc
+      //   .strokeColor('black')
+      //   .lineWidth(1)
+      //   .moveTo(410, invoiceTableTop - 4.5) // inicio de la celda
+      //   .lineTo(410, invoiceTableTop + 24) // fin de la celda, ajusta la altura según lo necesites
+      //   .stroke();
+      //linea vertical de Puntualidad
       doc
         .strokeColor('black')
         .lineWidth(1)
         .moveTo(410, invoiceTableTop - 4.5) // inicio de la celda
-        .lineTo(410, invoiceTableTop + 24) // fin de la celda, ajusta la altura según lo necesites
-        .stroke();
-      doc
-        .strokeColor('black')
-        .lineWidth(1)
-        .moveTo(410, invoiceTableTop + 52) // inicio de la celda
         .lineTo(410, invoiceTableTop + 66) // fin de la celda, ajusta la altura según lo necesites
         .stroke();
 
