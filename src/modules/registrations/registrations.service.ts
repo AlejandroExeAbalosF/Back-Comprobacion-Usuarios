@@ -123,7 +123,7 @@ export class RegistrationsService {
       if (
         isSameDay(startOfDay(lastRegistrationDate), startOfDay(currentDate))
       ) {
-        if (['present', 'absent'].includes(lastRegistration.status)) {
+        if (['PRESENTE', 'AUSENTE'].includes(lastRegistration.status)) {
           throw new BadRequestException(
             'Ya se ha registrado la Salida o está registrado como Ausente.',
           );
@@ -198,7 +198,7 @@ export class RegistrationsService {
             type: updatedValues.type,
           });
 
-          return { message: 'Registrada la Salida Correctamente' };
+          return { message: 'Registrada la Salida Correctamente' , status: updatedValues.status, type: updatedValues.type };
         } catch (error) {
           await queryRunner.rollbackTransaction();
           throw error;
@@ -659,6 +659,9 @@ export class RegistrationsService {
         exitDate: dateUpdated.exitDate
           ? dateUpdated.exitDate
           : registerFinded.exitDate,
+          type: updateRegistrationDto.status === "PRESENTE" && !updateRegistrationDto.type ? null : updateRegistrationDto.type,
+          articulo: updateRegistrationDto.status === "PRESENTE" && !updateRegistrationDto.articulo ? null : updateRegistrationDto.articulo,
+          description: updateRegistrationDto.status === "PRESENTE" &&  updateRegistrationDto.type !== "PERMISO"  ? null : updateRegistrationDto.description
       });
       const registerModified = await queryRunner.manager.save(updateRegister);
       await queryRunner.commitTransaction();
