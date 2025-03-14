@@ -88,7 +88,11 @@ export class RegistrationsService {
     if (!userValidate) {
       throw new NotFoundException(`Documento no encontrado`);
     }
-
+    const validateEmployeeAbsence =
+      await this.employeeAbsenceService.isTodayEmployeeAbsence(
+        currentDate,
+        userValidate,
+      );
     // 📌 1. Obtener turno del usuario
     // const userShift = await this.shiftRepository.findOne({
     //   where: { id: userValidate.shift.id },
@@ -244,15 +248,34 @@ export class RegistrationsService {
       const newRegistration = queryRunner.manager.create(Registration, {
         entryCapture: file,
         status:
-          validateNonWorkingDay.length > 0 ? 'NO_LABORABLE' : 'TRABAJANDO',
+          validateEmployeeAbsence.length > 0
+            ? 'AUSENTE'
+            : validateNonWorkingDay.length > 0
+              ? 'NO_LABORABLE'
+              : 'TRABAJANDO',
         entryDate: entryDateUtc,
-        exitDate: validateNonWorkingDay.length > 0 ? entryDateUtc : null,
+        exitDate:
+          validateEmployeeAbsence.length > 0 || validateNonWorkingDay.length > 0
+            ? entryDateUtc
+            : null,
         user: userValidate,
         type:
-          validateNonWorkingDay.length > 0
-            ? validateNonWorkingDay[0].type
-            : !isLate
-              ? 'LLEGADA_TARDE'
+          validateEmployeeAbsence.length > 0
+            ? validateEmployeeAbsence[0].type
+            : validateNonWorkingDay.length > 0
+              ? validateNonWorkingDay[0].type
+              : !isLate
+                ? 'LLEGADA_TARDE'
+                : null,
+        articulo:
+          validateEmployeeAbsence.length > 0
+            ? validateEmployeeAbsence[0].articulo
+            : null,
+        description:
+          validateEmployeeAbsence.length > 0
+            ? validateEmployeeAbsence[0].description
+            : validateNonWorkingDay.length > 0
+              ? validateNonWorkingDay[0].description
               : null,
       });
       // console.log(newRegistration);
@@ -282,7 +305,9 @@ export class RegistrationsService {
         message:
           newRegistration.status === 'NO_LABORABLE'
             ? 'Registro no disponiple por que es un dia no laborable'
-            : 'Registrada la Entrada Correctamente',
+            : newRegistration.status === 'AUSENTE'
+              ? 'Registro no disponiple por Licencia'
+              : 'Registrada la Entrada Correctamente',
         status: newRegistration.status,
       };
     } catch (error) {

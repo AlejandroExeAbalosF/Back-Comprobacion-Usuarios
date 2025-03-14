@@ -119,7 +119,7 @@ export class UsersController {
     const urlFile = file
       ? process.env.URL_BACKEND + '/uploads/' + file.filename
       : null;
-    console.log('id', id, 'updateUserDto', updateUserDto, 'file', urlFile);
+    // console.log('id', id, 'updateUserDto', updateUserDto, 'file', urlFile);
     return this.usersService.updateUser(id, updateUserDto, urlFile);
   }
 

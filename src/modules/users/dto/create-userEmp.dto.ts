@@ -70,7 +70,7 @@ export class CreateUserEmpDto {
 
   @IsOptional()
   @IsString()
-  @Matches(/^[\p{L}\p{N}\s,._&-]+$/u)
+  @Matches(/^[\p{L}\p{N}\s,._&-ü]+$/u)
   readonly privateAddress: string;
 
   @IsOptional()
