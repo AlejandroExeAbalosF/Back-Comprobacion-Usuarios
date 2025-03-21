@@ -4,17 +4,20 @@ import {
   Get,
   Query,
   Res,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 import { ReportsService } from './reports.service';
 import { Response } from 'express';
 import { CreateReportDto } from './dto/create-report.dto';
+import { AuthGuard } from 'src/guards/auth.guard';
 
 @Controller('reports')
 export class ReportsController {
   constructor(private readonly reportsService: ReportsService) {}
 
+  @UseGuards(AuthGuard)
   @Get('pdf/planilla-mes')
   @UsePipes(new ValidationPipe({ transform: true })) // Convierte los valores a números automáticamente
   async generatePDFplanillaMes(
@@ -32,6 +35,7 @@ export class ReportsController {
     res.end(pdfBuffer);
   }
 
+  @UseGuards(AuthGuard)
   @Get('pdf/porcentaje-mes')
   // @UsePipes(new ValidationPipe({ transform: true })) // Convierte los valores a números automáticamente
   async generatePDFporcentajeMes(
@@ -51,6 +55,7 @@ export class ReportsController {
     res.end(pdfBuffer);
   }
 
+  @UseGuards(AuthGuard)
   @Get('excel/planilla-mes')
   async generateExcelplanillaMes(
     @Res() res: Response,

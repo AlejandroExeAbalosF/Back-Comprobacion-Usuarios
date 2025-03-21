@@ -1,7 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { SecretariatsService } from './secretariats.service';
 import { CreateSecretariatDto } from './dto/create-secretariat.dto';
 import { UpdateSecretariatDto } from './dto/update-secretariat.dto';
+import { AuthGuard } from 'src/guards/auth.guard';
 
 @Controller('secretariats')
 export class SecretariatsController {
@@ -22,8 +32,12 @@ export class SecretariatsController {
     return this.secretariatsService.findOne(+id);
   }
 
+  @UseGuards(AuthGuard)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSecretariatDto: UpdateSecretariatDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateSecretariatDto: UpdateSecretariatDto,
+  ) {
     return this.secretariatsService.update(+id, updateSecretariatDto);
   }
 

@@ -6,10 +6,12 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { EmployeeAbsencesService } from './employee-absences.service';
 import { CreateEmployeeAbsenceDto } from './dto/create-employee-absence.dto';
 import { UpdateEmployeeAbsenceDto } from './dto/update-employee-absence.dto';
+import { AuthGuard } from 'src/guards/auth.guard';
 
 @Controller('employee-absences')
 export class EmployeeAbsencesController {
@@ -17,6 +19,7 @@ export class EmployeeAbsencesController {
     private readonly employeeAbsencesService: EmployeeAbsencesService,
   ) {}
 
+  @UseGuards(AuthGuard)
   @Post('user/:id')
   create(
     @Param('id') id: string,
@@ -37,6 +40,7 @@ export class EmployeeAbsencesController {
     return this.employeeAbsencesService.findOne(+id);
   }
 
+  @UseGuards(AuthGuard)
   @Patch(':id')
   update(
     @Param('id') id: string,

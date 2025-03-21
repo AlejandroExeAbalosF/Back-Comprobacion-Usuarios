@@ -7,15 +7,18 @@ import {
   Param,
   Delete,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { NonWorkingDayService } from './non-working-day.service';
 import { CreateNonWorkingDayDto } from './dto/create-non-working-day.dto';
 import { UpdateNonWorkingDayDto } from './dto/update-non-working-day.dto';
+import { AuthGuard } from 'src/guards/auth.guard';
 
 @Controller('non-working-day')
 export class NonWorkingDayController {
   constructor(private readonly nonWorkingDayService: NonWorkingDayService) {}
 
+  @UseGuards(AuthGuard)
   @Post()
   create(@Body() createNonWorkingDayDto: CreateNonWorkingDayDto) {
     // return createNonWorkingDayDto;

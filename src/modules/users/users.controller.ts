@@ -31,6 +31,7 @@ export class UsersController {
     // return this.usersService.create(createUserDto);
   }
 
+  @UseGuards(AuthGuard)
   @Get('/shifts')
   findAllShift() {
     return this.usersService.findAllShift();
@@ -43,11 +44,13 @@ export class UsersController {
     return this.usersService.getUsersWithLastRegistration();
   }
 
+  @UseGuards(AuthGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(id);
   }
 
+  @UseGuards(AuthGuard)
   @Post('/createEmployee')
   @UseInterceptors(
     FileInterceptor('file', {
@@ -87,6 +90,7 @@ export class UsersController {
     // return { msj: 'hola' };
   }
 
+  @UseGuards(AuthGuard)
   @Put('update/:id')
   @UseInterceptors(
     FileInterceptor('file', {
@@ -123,6 +127,7 @@ export class UsersController {
     return this.usersService.updateUser(id, updateUserDto, urlFile);
   }
 
+  @UseGuards(AuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(+id);

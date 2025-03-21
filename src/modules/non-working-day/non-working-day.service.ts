@@ -112,7 +112,7 @@ export class NonWorkingDayService {
 
   async isTodayNonWorkingDay(currentDate: Date) {
     const todayMonthDay = format(currentDate, 'MM-dd'); // MM-DD para feriados fijos
-    console.log('todayMonthDay', todayMonthDay);
+    // console.log('todayMonthDay', todayMonthDay);
     const nonWorkingDays = await this.nonWorkingDayRepository.find({
       where: [
         // 1. Días no laborables con rango de fechas

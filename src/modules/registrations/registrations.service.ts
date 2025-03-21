@@ -198,7 +198,11 @@ export class RegistrationsService {
             type: updatedValues.type,
           });
 
-          return { message: 'Registrada la Salida Correctamente' , status: updatedValues.status, type: updatedValues.type };
+          return {
+            message: 'Registrada la Salida Correctamente',
+            status: updatedValues.status,
+            type: updatedValues.type,
+          };
         } catch (error) {
           await queryRunner.rollbackTransaction();
           throw error;
@@ -376,7 +380,7 @@ export class RegistrationsService {
           const queryRunner = this.dataSource.createQueryRunner();
           await queryRunner.connect();
           await queryRunner.startTransaction();
-          console.log('fecha actual ', currentDate);
+          // console.log('fecha actual ', currentDate);
 
           try {
             const newRegistration = queryRunner.manager.create(Registration, {
@@ -422,7 +426,7 @@ export class RegistrationsService {
               capture: newRegistration.entryCapture,
               status: newRegistration.status,
             });
-            console.log('se crea el registro de ausencia');
+            // console.log('se crea el registro de ausencia');
             // console.log('aver nuevo register', newRegistration);
           } catch (error) {
             await queryRunner.rollbackTransaction();
@@ -500,7 +504,7 @@ export class RegistrationsService {
         'registration',
         `registration.id = (
         SELECT r.id FROM registrations r
-        WHERE r."userId" = "user"."id"
+        WHERE r."user_id" = "user"."id"
         ORDER BY r."entry_date" DESC
         LIMIT 1
       )`,
@@ -509,12 +513,22 @@ export class RegistrationsService {
       .andWhere('user.rol = :rol', { rol: 'user' })
       .getMany();
 
-    if (usersRegisters.length === 0) console.log(`No se encontraron registros`);
-
+    if (usersRegisters.length === 0) {
+      return { msg: 'No se encontraron usuarios' };
+      console.log(`No se encontraron registros`);
+    }
+    const currentDate = new Date();
+    const validateNonWorkingDay =
+      await this.nonWorkingDayService.isTodayNonWorkingDay(currentDate);
     for (const user of usersRegisters) {
+      const validateEmployeeAbsence =
+        await this.employeeAbsenceService.isTodayEmployeeAbsence(
+          currentDate,
+          user,
+        );
       if (user.registrations.length > 0) {
         const lastRegistrationDate = dayjs(user.registrations[0].entryDate);
-        const currentDate = dayjs();
+
         //el ultimo registro se realizao el dia de hoy?
         if (lastRegistrationDate.isSame(currentDate, 'day')) {
           // console.log(
@@ -526,12 +540,34 @@ export class RegistrationsService {
           const queryRunner = this.dataSource.createQueryRunner();
           await queryRunner.connect();
           await queryRunner.startTransaction();
-          console.log('fecha actual ', currentDate.toDate());
+          // console.log('fecha actual ', currentDate.toDate());
           try {
             const newRegistration = queryRunner.manager.create(Registration, {
-              status: 'AUSENTE',
-              entryDate: currentDate.toDate(),
+              status:
+                validateEmployeeAbsence.length > 0
+                  ? 'AUSENTE'
+                  : validateNonWorkingDay.length > 0
+                    ? 'NO_LABORABLE'
+                    : 'AUSENTE',
+              entryDate: currentDate,
+              exitDate: currentDate,
               user: user,
+              type:
+                validateEmployeeAbsence.length > 0
+                  ? validateEmployeeAbsence[0].type
+                  : validateNonWorkingDay.length > 0
+                    ? validateNonWorkingDay[0].type
+                    : null,
+              description:
+                validateEmployeeAbsence.length > 0
+                  ? validateEmployeeAbsence[0].description
+                  : validateNonWorkingDay.length > 0
+                    ? validateNonWorkingDay[0].description
+                    : null,
+              articulo:
+                validateEmployeeAbsence.length > 0
+                  ? validateEmployeeAbsence[0].articulo
+                  : null,
             });
             // console.log(newRegistration);
             await queryRunner.manager.save(newRegistration);
@@ -558,16 +594,37 @@ export class RegistrationsService {
           }
         }
       } else {
-        const currentDate = dayjs();
         // Creación de nuevo registro de ausencia
         const queryRunner = this.dataSource.createQueryRunner();
         await queryRunner.connect();
         await queryRunner.startTransaction();
         try {
           const newRegistration = queryRunner.manager.create(Registration, {
-            status: 'AUSENTE',
-            entryDate: currentDate.toDate(),
+            status:
+              validateEmployeeAbsence.length > 0
+                ? 'AUSENTE'
+                : validateNonWorkingDay.length > 0
+                  ? 'NO_LABORABLE'
+                  : 'AUSENTE',
+            entryDate: currentDate,
+            exitDate: currentDate,
             user: user,
+            type:
+              validateEmployeeAbsence.length > 0
+                ? validateEmployeeAbsence[0].type
+                : validateNonWorkingDay.length > 0
+                  ? validateNonWorkingDay[0].type
+                  : null,
+            description:
+              validateEmployeeAbsence.length > 0
+                ? validateEmployeeAbsence[0].description
+                : validateNonWorkingDay.length > 0
+                  ? validateNonWorkingDay[0].description
+                  : null,
+            articulo:
+              validateEmployeeAbsence.length > 0
+                ? validateEmployeeAbsence[0].articulo
+                : null,
           });
           // console.log(newRegistration);
           await queryRunner.manager.save(newRegistration);
@@ -659,9 +716,21 @@ export class RegistrationsService {
         exitDate: dateUpdated.exitDate
           ? dateUpdated.exitDate
           : registerFinded.exitDate,
-          type: updateRegistrationDto.status === "PRESENTE" && !updateRegistrationDto.type ? null : updateRegistrationDto.type,
-          articulo: updateRegistrationDto.status === "PRESENTE" && !updateRegistrationDto.articulo ? null : updateRegistrationDto.articulo,
-          description: updateRegistrationDto.status === "PRESENTE" &&  updateRegistrationDto.type !== "PERMISO"  ? null : updateRegistrationDto.description
+        type:
+          updateRegistrationDto.status === 'PRESENTE' &&
+          !updateRegistrationDto.type
+            ? null
+            : updateRegistrationDto.type,
+        articulo:
+          updateRegistrationDto.status === 'PRESENTE' &&
+          !updateRegistrationDto.articulo
+            ? null
+            : updateRegistrationDto.articulo,
+        description:
+          updateRegistrationDto.status === 'PRESENTE' &&
+          updateRegistrationDto.type !== 'PERMISO'
+            ? null
+            : updateRegistrationDto.description,
       });
       const registerModified = await queryRunner.manager.save(updateRegister);
       await queryRunner.commitTransaction();

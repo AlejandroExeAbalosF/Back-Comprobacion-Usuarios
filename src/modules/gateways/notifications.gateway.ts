@@ -17,7 +17,7 @@ export class NotificationsGateway {
 
   //
   sendNotification(data: unknown) {
-    console.log('Enviando notificación:', data);
+    // console.log('Enviando notificación:', data);
     this.server.emit('employeeValidated', data); // Envía la notificación a todos los clientes
   }
 }

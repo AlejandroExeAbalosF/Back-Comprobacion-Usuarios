@@ -78,7 +78,7 @@ export class EmployeeAbsencesService {
 
   async isTodayEmployeeAbsence(currentDate: Date, user: User) {
     const todayMonthDay = format(currentDate, 'MM-dd'); // MM-DD para feriados fijos
-    console.log('todayMonthDay', todayMonthDay);
+    // console.log('todayMonthDay', todayMonthDay);
     const nonWorkingDays = await this.employeeAbsenceRepository.find({
       where: [
         // 1. Días no laborables con rango de fechas

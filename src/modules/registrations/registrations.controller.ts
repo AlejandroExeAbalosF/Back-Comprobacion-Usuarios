@@ -9,6 +9,7 @@ import {
   UseInterceptors,
   UploadedFile,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { RegistrationsService } from './registrations.service';
 import { CreateRegistrationDto } from './dto/create-registration.dto';
@@ -21,6 +22,7 @@ import { extname } from 'path';
 import { config as dotenvConfig } from 'dotenv';
 import { CreateRegistrationEmpDniDto } from './dto/create-registrationEmpDni.dto';
 import { UserWithLastRegistration } from 'src/helpers/types';
+import { AuthGuard } from 'src/guards/auth.guard';
 
 dotenvConfig({ path: '.env' });
 
@@ -28,6 +30,7 @@ dotenvConfig({ path: '.env' });
 export class RegistrationsController {
   constructor(private readonly registrationsService: RegistrationsService) {}
 
+  @UseGuards(AuthGuard)
   @Get('user/:id')
   async getUserRegistrations(@Param('id') userId: string) {
     return this.registrationsService.getRegistrationsByUserId(userId);
@@ -75,6 +78,7 @@ export class RegistrationsController {
     );
   }
 
+  @UseGuards(AuthGuard)
   @Post('/validationsRegistrationsToday')
   async validationsRegistrations(@Body() secretariat) {
     console.log('secretariat', secretariat.secretariatName);
@@ -83,6 +87,7 @@ export class RegistrationsController {
     );
   }
 
+  @UseGuards(AuthGuard)
   @Put('update/:id')
   async updateRegister(
     @Param('id') id: string,

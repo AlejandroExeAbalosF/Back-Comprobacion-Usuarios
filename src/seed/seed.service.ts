@@ -117,8 +117,13 @@ export class SeedService implements OnModuleInit {
       },
     ];
     for (const shift of shifts) {
-      const newShift = this.shiftRepository.create(shift);
-      await this.shiftRepository.save(newShift);
+      const existingShift = await this.shiftRepository.findOne({
+        where: { name: 'M' },
+      });
+      if (!existingShift) {
+        const newShift = this.shiftRepository.create(shift);
+        await this.shiftRepository.save(newShift);
+      }
     }
 
     for (const user of users) {
@@ -283,6 +288,10 @@ export class SeedService implements OnModuleInit {
 
     for (const article of articles) {
       // 1️⃣ Crear y guardar el artículo
+      const articleFinded = await this.articuloRepository.findOneBy({
+        name: article.name.toString(),
+      });
+      if (articleFinded) continue;
       const newArticle = this.articuloRepository.create({
         name: article.name.toString(),
         description: article.description,
