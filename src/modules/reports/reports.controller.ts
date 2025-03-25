@@ -78,4 +78,29 @@ export class ReportsController {
     await excelBuffer.xlsx.write(res);
     res.end();
   }
+
+  @UseGuards(AuthGuard)
+  @Get('excel/porcentaje-mes')
+  async generateExcelporcentajeMes(
+    @Res() res: Response,
+    @Query() query: CreateReportDto,
+  ) {
+    console.log('asdas');
+    const { name, excelBuffer } =
+      await this.reportsService.generateEXCELporcentajeMes(query);
+    const { year, month } = query;
+    // Configurar la respuesta para la descarga
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    );
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="planilla-${name}-${year}-${month}.xlsx"`,
+    );
+
+    // Enviar el archivo al cliente
+    await excelBuffer.xlsx.write(res);
+    res.end();
+  }
 }

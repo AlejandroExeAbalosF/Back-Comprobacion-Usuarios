@@ -1,6 +1,4 @@
-import { Transform } from 'class-transformer';
 import {
-  IsDate,
   IsDateString,
   IsIn,
   IsNotEmpty,
@@ -8,7 +6,9 @@ import {
   IsOptional,
   IsPositive,
   IsString,
+  Validate,
 } from 'class-validator';
+import { IsEndtDateValidConstraint } from 'src/decorators/isEndDateValidConstraint.decorator';
 
 export class CreateNonWorkingDayDto {
   @IsNotEmpty()
@@ -31,7 +31,7 @@ export class CreateNonWorkingDayDto {
   // )
   // @IsDate()
   @IsDateString()
-  readonly startDate: string;
+  readonly startDate: Date;
 
   @IsNotEmpty()
   // @Transform(({ value }: { value: string | null }) =>
@@ -39,6 +39,7 @@ export class CreateNonWorkingDayDto {
   // )
   // @IsDate()
   @IsDateString()
+  @Validate(IsEndtDateValidConstraint)
   readonly endDate: Date;
 
   @IsOptional()

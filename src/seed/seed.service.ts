@@ -118,12 +118,11 @@ export class SeedService implements OnModuleInit {
     ];
     for (const shift of shifts) {
       const existingShift = await this.shiftRepository.findOne({
-        where: { name: 'M' },
+        where: { name: shift.name },
       });
-      if (!existingShift) {
-        const newShift = this.shiftRepository.create(shift);
-        await this.shiftRepository.save(newShift);
-      }
+      if (existingShift) continue;
+      const newShift = this.shiftRepository.create(shift);
+      await this.shiftRepository.save(newShift);
     }
 
     for (const user of users) {

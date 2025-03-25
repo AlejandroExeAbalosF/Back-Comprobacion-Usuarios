@@ -58,7 +58,6 @@ export class NonWorkingDayService {
         message: 'Fechas no laborables creadas con éxito',
         data: {
           ...newNonWorkingDay,
-          startDate: toZonedTime(newNonWorkingDay.startDate, timeZone),
         },
       };
     } catch (error) {
@@ -70,7 +69,9 @@ export class NonWorkingDayService {
   }
 
   async findAll() {
-    const nonWorkingDays = await this.nonWorkingDayRepository.find();
+    const nonWorkingDays = await this.nonWorkingDayRepository.find({
+      order: { createdAt: 'DESC' },
+    });
     if (!nonWorkingDays)
       throw new NotFoundException('No se encontraron Fechas no laborables');
     return nonWorkingDays;

@@ -21,6 +21,7 @@ import {
   isBefore,
   setHours,
   setMinutes,
+  isWeekend,
 } from 'date-fns';
 import { toZonedTime, fromZonedTime } from 'date-fns-tz';
 import { NotificationsGateway } from '../gateways/notifications.gateway';
@@ -357,6 +358,9 @@ export class RegistrationsService {
       throw new NotFoundException(`No se encontraron registros`);
     // console.log(usersRegisters);
     const currentDate = new Date();
+    if (isWeekend(currentDate)) {
+      return { msg: 'No se gereran registros de fin de semana' };
+    }
     const validateNonWorkingDay =
       await this.nonWorkingDayService.isTodayNonWorkingDay(currentDate);
     console.log('validateNonWorkingDay', validateNonWorkingDay);
@@ -517,7 +521,11 @@ export class RegistrationsService {
       return { msg: 'No se encontraron usuarios' };
       console.log(`No se encontraron registros`);
     }
+
     const currentDate = new Date();
+    if (isWeekend(currentDate)) {
+      return { msg: 'No se gereran registros de fin de semana' };
+    }
     const validateNonWorkingDay =
       await this.nonWorkingDayService.isTodayNonWorkingDay(currentDate);
     for (const user of usersRegisters) {

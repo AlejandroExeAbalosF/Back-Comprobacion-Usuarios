@@ -57,6 +57,7 @@ export class EmployeeAbsencesService {
     if (!user) throw new NotFoundException('No se encontro el usuario');
     const employeeAbsences = await this.employeeAbsenceRepository.find({
       where: { user: { id: id } },
+      order: { createdAt: 'DESC' },
     });
     console.log('employeeAbsences', employeeAbsences);
     if (!employeeAbsences)
@@ -68,8 +69,36 @@ export class EmployeeAbsencesService {
     return `This action returns a #${id} employeeAbsence`;
   }
 
-  update(id: number, updateEmployeeAbsenceDto: UpdateEmployeeAbsenceDto) {
-    return `This action updates a #${id} employeeAbsence`;
+  async update(id: string, updateEmployeeAbsenceDto: UpdateEmployeeAbsenceDto) {
+    const employeeAbsenceFinded =
+      await this.employeeAbsenceRepository.findOneBy({
+        id: id,
+      });
+    if (!employeeAbsenceFinded)
+      throw new NotFoundException('No se encontro el registro');
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      const employeeAbsence = await queryRunner.manager.preload(
+        EmployeeAbsence,
+        {
+          id,
+          ...updateEmployeeAbsenceDto,
+        },
+      );
+      const userModified = await queryRunner.manager.save(employeeAbsence);
+      await queryRunner.commitTransaction();
+      return {
+        message: 'Registro de ausencia de empleado actualizado con exito',
+        data: userModified,
+      };
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   remove(id: number) {
