@@ -8,7 +8,7 @@ const config = {
   type: 'postgres',
   // host: '',
   host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
+  port: Number(process.env.DB_PORT),
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
@@ -23,4 +23,11 @@ const config = {
 // para el load: [typeormConfig] del module main
 export default registerAs('typeorm', () => config);
 
-export const connectionSource = new DataSource(config as DataSourceOptions);
+// export const connectionSource = new DataSource(config as DataSourceOptions);
+
+// Configuración especial para CLI de TypeORM
+// export const connectionSource = new DataSource({
+//   ...config,
+//   entities: ['src/**/*.entity.ts'],
+//   migrations: ['src/migrations/*.ts'],
+// } as DataSourceOptions);

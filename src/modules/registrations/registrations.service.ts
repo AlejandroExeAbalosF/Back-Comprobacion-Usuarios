@@ -124,9 +124,13 @@ export class RegistrationsService {
       if (
         isSameDay(startOfDay(lastRegistrationDate), startOfDay(currentDate))
       ) {
-        if (['PRESENTE', 'AUSENTE'].includes(lastRegistration.status)) {
+        if (
+          ['PRESENTE', 'AUSENTE', 'NO_LABORABLE'].includes(
+            lastRegistration.status,
+          )
+        ) {
           throw new BadRequestException(
-            'Ya se ha registrado la Salida o está registrado como Ausente.',
+            'Ya se ha registrado la Salida o está registrado como Ausente/Día no Laborable.',
           );
         }
 

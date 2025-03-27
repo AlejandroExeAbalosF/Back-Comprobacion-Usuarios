@@ -291,10 +291,10 @@ export class UsersService {
         where: { id: userModified?.id },
         relations: ['secretariat', 'secretariat.ministry', 'shift'], // Cargar las relaciones necesarias
       });
-
+      const { password, ...result } = userWithRelations as User;
       return {
         message: `Usuario actualizado correctamente`,
-        user: userWithRelations,
+        user: result,
       };
     } catch (error) {
       await queryRunner.rollbackTransaction();
