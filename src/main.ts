@@ -7,12 +7,39 @@ import { join } from 'path';
 import * as cookieParser from 'cookie-parser';
 import { config as dotenvConfig } from 'dotenv';
 import { json, urlencoded } from 'express';
+import helmet from 'helmet';
 
 dotenvConfig({ path: '.env' });
 
 async function bootstrap() {
   // 👇 Asegurar que la app se crea con Express con NestExpressApplication
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  if (process.env.NODE_ENV === 'production') {
+    app.use(
+      helmet({
+        contentSecurityPolicy: {
+          directives: {
+            defaultSrc: ["'self'"], // Solo permite cargar contenido del mismo origen
+            scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"], // Permite scripts internos y eval (ajustar según necesidades)
+            styleSrc: ["'self'", "'unsafe-inline'"], // Permite estilos internos
+            imgSrc: [
+              "'self'",
+              process.env.URL_BACKEND || 'http://localhost:3000',
+              'data:',
+              'https:',
+            ], // Permite imágenes desde el mismo origen y enlaces HTTPS
+            connectSrc: [
+              "'self'",
+              process.env.URL_BACKEND || 'http://localhost:3000',
+            ], // Permite conexiones a tu API
+            frameSrc: ["'none'"], // Bloquea iframes
+            objectSrc: ["'none'"], // Bloquea Flash y otros objetos
+          },
+        },
+      }),
+    );
+  }
 
   app.enableCors({
     origin: process.env.URL_FRONTEND, // Reemplaza con la URL de tu frontend
