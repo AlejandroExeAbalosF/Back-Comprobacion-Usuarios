@@ -56,7 +56,7 @@ export class UsersController {
     FileInterceptor('file', {
       storage: diskStorage({
         destination: (req, file, cb) => {
-          const uploadPath = './uploads';
+          const uploadPath = './uploadsProfiles';
 
           // Verificar si la carpeta 'uploads' existe, si no, crearla
           if (!fs.existsSync(uploadPath)) {
@@ -83,7 +83,7 @@ export class UsersController {
     // console.log('file de empleado', file);
 
     const urlFile = file
-      ? process.env.URL_BACKEND + '/uploads/' + file.filename
+      ? process.env.URL_BACKEND + '/uploadsProfiles/' + file.filename
       : null;
     // console.log('urlFile', urlFile);
     return this.usersService.createEmployee(createUserDto, urlFile);
@@ -96,7 +96,7 @@ export class UsersController {
     FileInterceptor('file', {
       storage: diskStorage({
         destination: (req, file, cb) => {
-          const uploadPath = './uploads';
+          const uploadPath = './uploadsProfiles';
 
           // Verificar si la carpeta 'uploads' existe, si no, crearla
           if (!fs.existsSync(uploadPath)) {
@@ -121,7 +121,7 @@ export class UsersController {
     @UploadedFile() file: Express.Multer.File,
   ) {
     const urlFile = file
-      ? process.env.URL_BACKEND + '/uploads/' + file.filename
+      ? process.env.URL_BACKEND + '/uploadsProfiles/' + file.filename
       : null;
     // console.log('id', id, 'updateUserDto', updateUserDto, 'file', urlFile);
     return this.usersService.updateUser(id, updateUserDto, urlFile);

@@ -31,8 +31,9 @@ export class AuthController {
 
   @UseGuards(AuthGuard)
   @Get('validate-token')
-  validateToken(@Req() req: JwtPayload) {
-    const user = req.user;
+  async validateToken(@Req() req: JwtPayload) {
+    const userd = req.user as { id: string };
+    const user = await this.authService.validateUserId(userd.id);
     return { user };
   }
 

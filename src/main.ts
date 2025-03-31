@@ -66,6 +66,9 @@ async function bootstrap() {
   // app.use(json()); // 💡 Asegura que acepte JSON
   // app.use(urlencoded({ extended: true })); // 💡 Permite recibir datos form-urlencoded
   app.useStaticAssets(join(__dirname, '..', 'uploads'), { prefix: '/uploads' });
+  app.useStaticAssets(join(__dirname, '..', 'uploadsProfiles'), {
+    prefix: '/uploadsProfiles',
+  });
   app.use(loggerGlobal); // midd-loginLog global
   app.useGlobalPipes(
     new ValidationPipe({

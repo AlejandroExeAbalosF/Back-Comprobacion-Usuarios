@@ -14,6 +14,10 @@ import { CreateUserEmpDto } from './dto/create-userEmp.dto';
 import { Ministry } from '../ministries/entities/ministry.entity';
 import { Secretariat } from '../secretariats/entities/secretariat.entity';
 import { Shift } from './entities/shift.entity';
+import * as fs from 'fs';
+import { promisify } from 'util';
+
+const unlinkAsync = promisify(fs.unlink);
 
 @Injectable()
 export class UsersService {
@@ -154,6 +158,13 @@ export class UsersService {
       relations: ['secretariat', 'secretariat.ministry'],
     });
   }
+
+  async searchId(id: string) {
+    return await this.userService.findOne({
+      where: { id: id },
+      relations: ['secretariat', 'secretariat.ministry'],
+    });
+  }
   async create(createUserDto: CreateUserDto) {
     const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
     const userData = {
@@ -256,6 +267,26 @@ export class UsersService {
 
     if (!shift) {
       throw new BadRequestException('Turno inválido');
+    }
+
+    // Eliminar imagen anterior si se está subiendo una nueva
+    if (file && userExists.image) {
+      try {
+        // Extraer el nombre del archivo de la URL
+        const oldFilename = userExists.image.split('/uploadsProfiles/')[1];
+
+        if (oldFilename) {
+          const oldFilePath = `./uploadsProfiles/${oldFilename}`;
+
+          // Verificar si el archivo existe y eliminarlo
+          if (fs.existsSync(oldFilePath)) {
+            await unlinkAsync(oldFilePath);
+          }
+        }
+      } catch (err) {
+        console.error('Error al eliminar la imagen anterior:', err);
+        // Puedes decidir si quieres continuar o lanzar el error
+      }
     }
 
     // Comparar horarios

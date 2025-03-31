@@ -68,7 +68,7 @@ export class AuthService {
       nameSecretariat: userValidated.secretariat.name,
       nameMinistry: userValidated.secretariat.ministry.name,
     };
-    console.log('payload', userValidated);
+    // console.log('payload', userValidated);
     const token = this.jwtService.sign(payload);
 
     const userLoginData = {
@@ -76,5 +76,24 @@ export class AuthService {
       user: payload,
     };
     return userLoginData;
+  }
+
+  async validateUserId(id: string) {
+    const userValidated = await this.userService.searchId(id);
+    if (!userValidated)
+      throw new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
+    // const { password, ...user } = userValidated;
+    const user = {
+      id: userValidated.id,
+      email: userValidated.email,
+      rol: userValidated.rol,
+      image: userValidated.image,
+      name: userValidated.name,
+      lastName: userValidated.lastName,
+      nameSecretariat: userValidated.secretariat.name,
+      nameMinistry: userValidated.secretariat.ministry.name,
+    };
+    // console.log('asd', user);
+    return user;
   }
 }
