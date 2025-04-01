@@ -33,6 +33,7 @@ import { Secretariat } from '../secretariats/entities/secretariat.entity';
 import { Shift } from '../users/entities/shift.entity';
 import { NonWorkingDayService } from '../non-working-day/non-working-day.service';
 import { EmployeeAbsencesService } from '../employee-absences/employee-absences.service';
+import { da } from 'date-fns/locale';
 
 const toleranceMinutes = 10;
 
@@ -201,7 +202,8 @@ export class RegistrationsService {
             name: userValidate.name,
             lastName: userValidate.lastName,
             document: userValidate.document,
-            date: toZonedTime(updatedValues.exitDate as Date, timeZone),
+            // date: toZonedTime(updatedValues.exitDate as Date, timeZone),
+            date: updatedValues.exitDate,
             capture: updatedValues.exitCapture,
             status: updatedValues.status,
             type: updatedValues.type,
@@ -304,7 +306,8 @@ export class RegistrationsService {
         name: userValidate.name,
         lastName: userValidate.lastName,
         document: userValidate.document,
-        date: toZonedTime(newRegistration.entryDate as Date, timeZone), // newRegistration.entryDate,
+        // date: toZonedTime(newRegistration.entryDate as Date, timeZone), // newRegistration.entryDate,
+        date: newRegistration.entryDate,
         capture: newRegistration.entryCapture,
         status: newRegistration.status,
         type: newRegistration.type,
