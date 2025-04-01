@@ -371,7 +371,7 @@ export class RegistrationsService {
     // console.log(usersRegisters);
     const currentDate = new Date();
     if (isWeekend(currentDate)) {
-      return { msg: 'No se gereran registros de fin de semana' };
+      return { msg: 'No se gereran registros el fin de semana' };
     }
     const validateNonWorkingDay =
       await this.nonWorkingDayService.isTodayNonWorkingDay(currentDate);
@@ -536,7 +536,7 @@ export class RegistrationsService {
 
     const currentDate = new Date();
     if (isWeekend(currentDate)) {
-      return { msg: 'No se gereran registros de fin de semana' };
+      return { msg: 'No se gereran registros el fin de semana' };
     }
     const validateNonWorkingDay =
       await this.nonWorkingDayService.isTodayNonWorkingDay(currentDate);
