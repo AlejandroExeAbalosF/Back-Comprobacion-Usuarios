@@ -80,7 +80,10 @@ export class RegistrationsService {
     file: string | null,
   ) {
     const timeZone = 'America/Argentina/Buenos_Aires';
+    const date = new Date();
+    console.log(date);
     const currentDate = toZonedTime(new Date(), timeZone); // Convertimos la fecha actual a Argentina
+    console.log('currentDate', currentDate);
     const entryTime = toZonedTime(new Date(), timeZone);
 
     const userValidate = await this.userService.searchDni(
@@ -139,7 +142,7 @@ export class RegistrationsService {
         await queryRunner.startTransaction();
 
         try {
-          const exitDateUtc = toZonedTime(currentDate, timeZone); // Convertimos a UTC antes de guardar
+          const exitDateUtc = fromZonedTime(currentDate, timeZone); //
 
           // 📌 2. Validar salida temprana
           // Parseamos la hora de entrada "HH:mm" a un objeto Date
@@ -191,6 +194,7 @@ export class RegistrationsService {
           await queryRunner.commitTransaction();
 
           // Enviar la notificación directamente con `updatedValues`
+          console.log('registro de salida', updatedValues.exitDate);
           this.notificationsGateway.sendNotification({
             id: userValidate.id,
             idR: lastRegistration.id, // `id` sigue siendo el mismo
@@ -292,6 +296,7 @@ export class RegistrationsService {
 
       await queryRunner.commitTransaction();
 
+      console.log('registro de entrada', newRegistration.entryDate);
       // Se envía la notificación directamente con los datos que ya tenemos
       this.notificationsGateway.sendNotification({
         id: userValidate.id,
