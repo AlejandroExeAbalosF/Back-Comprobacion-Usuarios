@@ -4,13 +4,13 @@ import { config as dotenvConfig } from 'dotenv';
 
 dotenvConfig({ path: '.env' });
 
-@WebSocketGateway({
+@WebSocketGateway(3000, {
   cors: {
     origin: process.env.URL_FRONTEND, // Cambia esto a la URL de tu frontend en producción
     credentials: true, // Permite cookies si las usas
-    methods: ['GET', 'POST'],
   },
   transports: ['websocket'], // Asegura que se use WebSockets directamente
+  namespace: '/socket.io', // Asegura que esté en el namespace correcto
 })
 export class NotificationsGateway {
   @WebSocketServer()

@@ -8,12 +8,16 @@ import * as cookieParser from 'cookie-parser';
 import { config as dotenvConfig } from 'dotenv';
 import { json, urlencoded } from 'express';
 import helmet from 'helmet';
+import { IoAdapter } from '@nestjs/platform-socket.io';
 
 dotenvConfig({ path: '.env' });
 
 async function bootstrap() {
   // 👇 Asegurar que la app se crea con Express con NestExpressApplication
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  // Habilita WebSockets manualmente
+  app.useWebSocketAdapter(new IoAdapter(app));
 
   if (process.env.NODE_ENV === 'production') {
     app.use(
