@@ -4,7 +4,7 @@ import { config as dotenvConfig } from 'dotenv';
 
 dotenvConfig({ path: '.env' });
 
-@WebSocketGateway(3000, {
+@WebSocketGateway({
   cors: {
     origin: process.env.URL_FRONTEND, // Cambia esto a la URL de tu frontend en producción
     credentials: true, // Permite cookies si las usas
@@ -16,13 +16,6 @@ export class NotificationsGateway {
   @WebSocketServer()
   private server: Server;
 
-  afterInit(server: Server) {
-    const options = (server as any).opts as ServerOptions;
-    console.log(
-      'WebSocket server initialized with transports:',
-      options.transports,
-    );
-  }
   //
   sendNotification(data: unknown) {
     console.log('Enviando notificación:', data);
