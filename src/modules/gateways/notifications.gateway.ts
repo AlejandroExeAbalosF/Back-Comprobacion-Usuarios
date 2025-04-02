@@ -8,8 +8,9 @@ dotenvConfig({ path: '.env' });
   cors: {
     origin: process.env.URL_FRONTEND, // Cambia esto a la URL de tu frontend en producción
     credentials: true, // Permite cookies si las usas
+    methods: ['GET', 'POST'],
   },
-  transports: ['websocket', 'polling'], // Asegura que se use WebSockets directamente
+  transports: ['websocket'], // Asegura que se use WebSockets directamente
 })
 export class NotificationsGateway {
   @WebSocketServer()
