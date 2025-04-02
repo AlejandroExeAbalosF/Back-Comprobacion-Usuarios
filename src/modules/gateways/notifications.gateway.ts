@@ -1,4 +1,8 @@
-import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import {
+  WebSocketGateway,
+  SubscribeMessage,
+  WebSocketServer,
+} from '@nestjs/websockets';
 import { Server, ServerOptions } from 'socket.io';
 import { config as dotenvConfig } from 'dotenv';
 
@@ -16,6 +20,11 @@ export class NotificationsGateway {
   @WebSocketServer()
   private server: Server;
 
+  @SubscribeMessage('message')
+  handleMessage(client: any, payload: string): string {
+    console.log('Mensaje recibido:', payload);
+    return `Mensaje recibido: ${payload}`;
+  }
   //
   sendNotification(data: unknown) {
     console.log('Enviando notificación:', data);

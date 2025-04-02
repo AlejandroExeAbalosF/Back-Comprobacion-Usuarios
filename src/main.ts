@@ -36,11 +36,12 @@ async function bootstrap() {
             connectSrc: [
               "'self'",
               process.env.URL_BACKEND || 'http://localhost:3000',
+              'ws://localhost:3000',
+              'wss://localhost:3000',
               'ws://registrodeingreso.salta.gob.ar',
               'wss://registrodeingreso.salta.gob.ar',
               'ws://registrodeingreso.salta.gob.ar/socket.io/',
               'wss://registrodeingreso.salta.gob.ar/socket.io/',
-              '**wss://echo.websocket.org**', // 🔹 AGREGA ESTO TEMPORALMENTE
             ], // Permite conexiones a tu API
             frameSrc: ["'none'"], // Bloquea iframes
             objectSrc: ["'none'"], // Bloquea Flash y otros objetos
