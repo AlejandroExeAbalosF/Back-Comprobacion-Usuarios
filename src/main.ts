@@ -8,7 +8,7 @@ import * as cookieParser from 'cookie-parser';
 import { config as dotenvConfig } from 'dotenv';
 import { json, urlencoded } from 'express';
 import helmet from 'helmet';
-import { IoAdapter } from '@nestjs/platform-socket.io';
+// import { IoAdapter } from '@nestjs/platform-socket.io';
 
 dotenvConfig({ path: '.env' });
 
@@ -17,7 +17,7 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   // Habilita WebSockets manualmente
-  app.useWebSocketAdapter(new IoAdapter(app));
+  // app.useWebSocketAdapter(new IoAdapter(app));
 
   if (process.env.NODE_ENV === 'production') {
     app.use(
@@ -52,10 +52,7 @@ async function bootstrap() {
   }
 
   app.enableCors({
-    origin: [
-      process.env.URL_FRONTEND || 'http://localhost:3000',
-      'http://localhost:3000',
-    ], // Reemplaza con la URL de tu frontend
+    origin: process.env.URL_FRONTEND, // Reemplaza con la URL de tu frontend
     credentials: true, // Permite el envío de cookies
   });
 
@@ -89,7 +86,7 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
-  // await app.listen(process.env.PORT ?? 3000);
-  await app.listen(process.env.PORT || 3000, '0.0.0.0');
+  await app.listen(process.env.PORT ?? 3000);
+  // await app.listen(process.env.PORT || 3000, '0.0.0.0');
 }
 bootstrap();

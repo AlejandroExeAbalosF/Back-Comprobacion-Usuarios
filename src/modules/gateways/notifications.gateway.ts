@@ -1,9 +1,5 @@
-import {
-  WebSocketGateway,
-  SubscribeMessage,
-  WebSocketServer,
-} from '@nestjs/websockets';
-import { Server, ServerOptions } from 'socket.io';
+import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { Server } from 'socket.io';
 import { config as dotenvConfig } from 'dotenv';
 
 dotenvConfig({ path: '.env' });
@@ -14,17 +10,17 @@ dotenvConfig({ path: '.env' });
     credentials: true, // Permite cookies si las usas
   },
   transports: ['websocket'], // Asegura que se use WebSockets directamente
-  namespace: '/socket.io', // Asegura que esté en el namespace correcto
+  // namespace: '/socket.io', // Asegura que esté en el namespace correcto
 })
 export class NotificationsGateway {
   @WebSocketServer()
   private server: Server;
 
-  @SubscribeMessage('message')
-  handleMessage(client: any, payload: string): string {
-    console.log('Mensaje recibido:', payload);
-    return `Mensaje recibido: ${payload}`;
-  }
+  // @SubscribeMessage('message')
+  // handleMessage(client: any, payload: string): string {
+  //   console.log('Mensaje recibido:', payload);
+  //   return `Mensaje recibido: ${payload}`;
+  // }
   //
   sendNotification(data: unknown) {
     console.log('Enviando notificación:', data);
