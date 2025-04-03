@@ -533,8 +533,8 @@ export class RegistrationsService {
       return { msg: 'No se encontraron usuarios' };
       console.log(`No se encontraron registros`);
     }
-
-    const currentDate = new Date();
+    const timeZone = 'America/Argentina/Buenos_Aires';
+    const currentDate = toZonedTime(new Date(), timeZone); // Convertimos la fecha actual a Argentina
     if (isWeekend(currentDate)) {
       return { msg: 'No se gereran registros el fin de semana' };
     }
@@ -547,10 +547,15 @@ export class RegistrationsService {
           user,
         );
       if (user.registrations.length > 0) {
-        const lastRegistrationDate = dayjs(user.registrations[0].entryDate);
+        const lastRegistrationDate = toZonedTime(
+          user.registrations[0].entryDate as Date,
+          'America/Argentina/Buenos_Aires',
+        );
 
         //el ultimo registro se realizao el dia de hoy?
-        if (lastRegistrationDate.isSame(currentDate, 'day')) {
+        if (
+          isSameDay(startOfDay(lastRegistrationDate), startOfDay(currentDate))
+        ) {
           // console.log(
           //   'aver true',
           //   lastRegistrationDate.isSame(currentDate, 'day'),
@@ -562,6 +567,7 @@ export class RegistrationsService {
           await queryRunner.startTransaction();
           // console.log('fecha actual ', currentDate.toDate());
           try {
+            const dateUtc = fromZonedTime(currentDate, timeZone);
             const newRegistration = queryRunner.manager.create(Registration, {
               status:
                 validateEmployeeAbsence.length > 0
@@ -569,8 +575,8 @@ export class RegistrationsService {
                   : validateNonWorkingDay.length > 0
                     ? 'NO_LABORABLE'
                     : 'AUSENTE',
-              entryDate: currentDate,
-              exitDate: currentDate,
+              entryDate: dateUtc,
+              exitDate: dateUtc,
               user: user,
               type:
                 validateEmployeeAbsence.length > 0
@@ -619,6 +625,7 @@ export class RegistrationsService {
         await queryRunner.connect();
         await queryRunner.startTransaction();
         try {
+          const dateUtc = fromZonedTime(currentDate, timeZone);
           const newRegistration = queryRunner.manager.create(Registration, {
             status:
               validateEmployeeAbsence.length > 0
@@ -626,8 +633,8 @@ export class RegistrationsService {
                 : validateNonWorkingDay.length > 0
                   ? 'NO_LABORABLE'
                   : 'AUSENTE',
-            entryDate: currentDate,
-            exitDate: currentDate,
+            entryDate: dateUtc,
+            exitDate: dateUtc,
             user: user,
             type:
               validateEmployeeAbsence.length > 0

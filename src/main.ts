@@ -52,7 +52,10 @@ async function bootstrap() {
   }
 
   app.enableCors({
-    origin: process.env.URL_FRONTEND, // Reemplaza con la URL de tu frontend
+    origin: [
+      process.env.URL_FRONTEND || 'http://localhost:3000',
+      'http://localhost:3000',
+    ], // Reemplaza con la URL de tu frontend
     credentials: true, // Permite el envío de cookies
   });
 

@@ -189,6 +189,10 @@ export class UsersService {
         'Ya existe un usuario registrado con ese email.',
       );
 
+    const validatedDni = await this.searchDni(createUserDto.document);
+    if (validatedDni)
+      throw new BadRequestException('Ya existe un usuario con ese DNI');
+
     // Obtener el turno seleccionado
     const shift = await this.shiftRepository.findOne({
       where: { id: createUserDto.shiftId },
